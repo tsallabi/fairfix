@@ -1,0 +1,1328 @@
+<title>FairFix.ie — Wireframes v1</title>
+<style>
+  :root {
+    --ground: #FAF7F2;
+    --ground-2: #F3EEE3;
+    --ground-3: #ECE5D6;
+    --ink: #0F1E2E;
+    --ink-2: #3A4A5C;
+    --ink-3: #7C8794;
+    --line: #E0D8C7;
+    --line-2: #CFC5B0;
+    --accent: #0E9F6E;
+    --accent-2: #0B7F58;
+    --accent-soft: #DCF0E6;
+    --amber: #C88A2A;
+    --amber-soft: #F5EAD3;
+    --coral: #C4573F;
+
+    --wire-bg: #F5F1E7;
+    --wire-frame: #1F2A38;
+    --wire-fill: #E5DFCE;
+    --wire-fill-2: #EFEADC;
+    --wire-line: #C4BBA6;
+    --wire-text: #6D6659;
+    --wire-ink: #1F2A38;
+    --wire-accent: #0E9F6E;
+    --wire-accent-soft: #D9EEE3;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0E1B28;
+      --ground-2: #16283A;
+      --ground-3: #1D3247;
+      --ink: #F3EEE3;
+      --ink-2: #C0C8D2;
+      --ink-3: #7C8794;
+      --line: #223244;
+      --line-2: #2E415A;
+      --accent: #22B98A;
+      --accent-2: #16A574;
+      --accent-soft: #12362A;
+      --amber: #E8B14E;
+      --amber-soft: #3B2E13;
+      --coral: #E27561;
+
+      --wire-bg: #14212F;
+      --wire-frame: #F3EEE3;
+      --wire-fill: #1E3145;
+      --wire-fill-2: #182A3D;
+      --wire-line: #2E415A;
+      --wire-text: #8A94A0;
+      --wire-ink: #F3EEE3;
+      --wire-accent: #22B98A;
+      --wire-accent-soft: #12362A;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --ground: #FAF7F2;
+    --ground-2: #F3EEE3;
+    --ground-3: #ECE5D6;
+    --ink: #0F1E2E;
+    --ink-2: #3A4A5C;
+    --ink-3: #7C8794;
+    --line: #E0D8C7;
+    --line-2: #CFC5B0;
+    --accent: #0E9F6E;
+    --accent-2: #0B7F58;
+    --accent-soft: #DCF0E6;
+    --amber: #C88A2A;
+    --amber-soft: #F5EAD3;
+    --coral: #C4573F;
+    --wire-bg: #F5F1E7;
+    --wire-frame: #1F2A38;
+    --wire-fill: #E5DFCE;
+    --wire-fill-2: #EFEADC;
+    --wire-line: #C4BBA6;
+    --wire-text: #6D6659;
+    --wire-ink: #1F2A38;
+    --wire-accent: #0E9F6E;
+    --wire-accent-soft: #D9EEE3;
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0E1B28;
+    --ground-2: #16283A;
+    --ground-3: #1D3247;
+    --ink: #F3EEE3;
+    --ink-2: #C0C8D2;
+    --ink-3: #7C8794;
+    --line: #223244;
+    --line-2: #2E415A;
+    --accent: #22B98A;
+    --accent-2: #16A574;
+    --accent-soft: #12362A;
+    --amber: #E8B14E;
+    --amber-soft: #3B2E13;
+    --coral: #E27561;
+    --wire-bg: #14212F;
+    --wire-frame: #F3EEE3;
+    --wire-fill: #1E3145;
+    --wire-fill-2: #182A3D;
+    --wire-line: #2E415A;
+    --wire-text: #8A94A0;
+    --wire-ink: #F3EEE3;
+    --wire-accent: #22B98A;
+    --wire-accent-soft: #12362A;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .serif { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif; font-feature-settings: "liga", "kern"; }
+  .mono  { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, "Cascadia Code", Consolas, monospace; }
+  .label { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  /* ----- Top bar ----- */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: var(--ground);
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: saturate(1.4) blur(6px);
+  }
+  .topbar .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 14px; padding-bottom: 14px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    display: inline-block; position: relative;
+  }
+  .brand .mark::after {
+    content: ""; position: absolute; left: 6px; top: 6px; width: 12px; height: 12px;
+    border-radius: 999px; border: 2px solid var(--ground); box-sizing: border-box;
+  }
+  .brand strong { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 18px; letter-spacing: -0.01em; }
+  .brand span.doc { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; }
+
+  .meta { display: flex; gap: 22px; color: var(--ink-3); font-size: 12px; letter-spacing: 0.05em; }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  .themetoggle {
+    border: 1px solid var(--line); background: transparent; color: var(--ink-2);
+    font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 999px;
+    cursor: pointer; letter-spacing: 0.04em;
+  }
+  .themetoggle:hover { border-color: var(--line-2); color: var(--ink); }
+
+  /* ----- Hero ----- */
+  .hero { padding: 100px 0 60px; }
+  .hero .kicker { display: flex; align-items: center; gap: 14px; margin-bottom: 34px; }
+  .hero .kicker .rule { flex: 0 0 56px; height: 1px; background: var(--ink); }
+  .hero h1 {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: clamp(44px, 6.4vw, 88px);
+    line-height: 1.02; letter-spacing: -0.025em;
+    margin: 0 0 28px; text-wrap: balance;
+    font-weight: 400;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--ink-2);
+  }
+  .hero .lede {
+    font-size: 20px; line-height: 1.55; color: var(--ink-2);
+    max-width: 640px; margin: 0;
+  }
+  .hero .facts {
+    margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px;
+  }
+  .fact .n { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 34px; line-height: 1; letter-spacing: -0.02em; }
+  .fact .t { margin-top: 8px; color: var(--ink-3); font-size: 13px; }
+
+  /* ----- Flow strip ----- */
+  .flow {
+    padding: 72px 0; border-top: 1px solid var(--line);
+  }
+  .flow h2 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400; font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .flow p.sub { color: var(--ink-2); margin: 0 0 36px; max-width: 640px; }
+  .flow-strip {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0;
+    align-items: stretch; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .flow-step {
+    padding: 20px 20px 22px; border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .flow-step:last-child { border-right: 0; }
+  .flow-step .num { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--ink-3); letter-spacing: 0.14em; }
+  .flow-step .name { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 20px; margin-top: 6px; line-height: 1.15; }
+  .flow-step .desc { color: var(--ink-2); font-size: 13px; margin-top: 6px; }
+  .flow-step::after {
+    content: ""; position: absolute; right: -6px; top: 50%; width: 12px; height: 12px;
+    transform: translateY(-50%) rotate(45deg); background: var(--ground);
+    border-top: 1px solid var(--line); border-right: 1px solid var(--line);
+  }
+  .flow-step:last-child::after { display: none; }
+
+  /* ----- Screen section ----- */
+  .screen {
+    padding: 96px 0 40px; border-top: 1px solid var(--line);
+  }
+  .screen-head {
+    display: grid; grid-template-columns: 96px 1fr auto; gap: 24px; align-items: baseline;
+    margin-bottom: 44px;
+  }
+  .screen-head .idx { font-family: ui-monospace, Menlo, monospace; font-size: 14px; color: var(--ink-3); letter-spacing: 0.1em; }
+  .screen-head h3 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400; font-size: 44px; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+  .screen-head h3 span { display: block; color: var(--ink-3); font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; font-family: ui-monospace, Menlo, monospace; margin-bottom: 8px; }
+  .screen-head .tag {
+    align-self: center;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: 0.1em;
+    color: var(--accent-2); border: 1px solid var(--accent); padding: 5px 10px; border-radius: 999px;
+    background: var(--accent-soft);
+  }
+  @media (prefers-color-scheme: dark) {
+    .screen-head .tag { color: var(--accent); }
+  }
+  :root[data-theme="dark"] .screen-head .tag { color: var(--accent); }
+
+  .screen-body { display: grid; grid-template-columns: minmax(340px, 400px) 1fr; gap: 72px; align-items: start; }
+  @media (max-width: 900px) {
+    .screen-body { grid-template-columns: 1fr; gap: 48px; }
+    .screen-head { grid-template-columns: 60px 1fr; }
+    .screen-head .tag { grid-column: 2; justify-self: start; }
+  }
+
+  .notes .n-block { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .notes .n-block:first-child { padding-top: 0; }
+  .notes .n-block:last-child { border-bottom: 0; }
+  .notes .n-block h4 {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400;
+    font-size: 22px; letter-spacing: -0.01em; margin: 0 0 6px;
+  }
+  .notes .n-block p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
+  .notes .n-block .label { margin-bottom: 8px; display: block; }
+  .notes ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); }
+  .notes ul li { padding: 3px 0; }
+  .notes ul li::marker { color: var(--accent); }
+
+  /* ----- Phone frame ----- */
+  .phone-shell {
+    background: var(--wire-bg);
+    border: 1px solid var(--wire-line);
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 30px 60px -30px rgba(15, 30, 46, 0.35), 0 2px 4px rgba(15,30,46,0.08);
+    width: 360px;
+    max-width: 100%;
+  }
+  :root[data-theme="dark"] .phone-shell,
+  @media (prefers-color-scheme: dark) {
+    .phone-shell { box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7); }
+  }
+  .phone {
+    background: var(--wire-bg);
+    border: 1px solid var(--wire-line);
+    border-radius: 34px;
+    overflow: hidden;
+    color: var(--wire-ink);
+    font-size: 13px;
+    line-height: 1.4;
+    position: relative;
+    min-height: 680px;
+  }
+  .status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 22px 6px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; color: var(--wire-ink); font-weight: 600;
+  }
+  .status .r { display: flex; gap: 6px; align-items: center; }
+  .status .sig, .status .wifi, .status .batt {
+    display: inline-block; height: 10px; border-radius: 2px; background: var(--wire-ink); opacity: 0.75;
+  }
+  .status .sig { width: 14px; }
+  .status .wifi { width: 12px; }
+  .status .batt { width: 20px; border: 1px solid var(--wire-ink); background: transparent; position: relative; opacity: 0.75; }
+  .status .batt::after { content: ""; position: absolute; left: 2px; top: 2px; bottom: 2px; width: 55%; background: var(--wire-ink); border-radius: 1px; }
+
+  .p-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 20px 12px;
+  }
+  .p-header .loc { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .p-header .loc .pin { width: 12px; height: 12px; border: 1.5px solid var(--wire-ink); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); }
+  .p-header .icons { display: flex; gap: 12px; }
+  .p-header .ic { width: 18px; height: 18px; border: 1.5px solid var(--wire-ink); border-radius: 4px; opacity: 0.8; }
+
+  .p-title {
+    padding: 8px 20px 4px;
+  }
+  .p-title h1 {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-weight: 400; font-size: 22px; margin: 0; letter-spacing: -0.01em;
+    color: var(--wire-ink);
+  }
+  .p-title p { margin: 2px 0 0; color: var(--wire-text); font-size: 13px; }
+
+  .p-search {
+    margin: 14px 20px 6px;
+    background: var(--wire-fill-2);
+    border: 1px solid var(--wire-line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--wire-text);
+    font-size: 13px;
+  }
+  .p-search .mag { width: 14px; height: 14px; border: 1.5px solid var(--wire-text); border-radius: 50%; position: relative; flex: 0 0 14px; }
+  .p-search .mag::after { content: ""; position: absolute; right: -4px; bottom: -4px; width: 6px; height: 1.5px; background: var(--wire-text); transform: rotate(45deg); }
+
+  .p-banner {
+    margin: 16px 20px 20px;
+    padding: 16px 16px;
+    border-radius: 14px;
+    background: var(--wire-accent-soft);
+    border: 1px solid var(--wire-accent);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .p-banner .spark {
+    flex: 0 0 36px; height: 36px; border-radius: 8px;
+    background: var(--wire-accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 20px;
+  }
+  .p-banner .txt { flex: 1; }
+  .p-banner .txt strong { display: block; font-size: 13px; color: var(--wire-ink); font-weight: 600; }
+  .p-banner .txt span { display: block; font-size: 12px; color: var(--wire-text); margin-top: 2px; }
+  .p-banner .cta {
+    background: var(--wire-ink); color: var(--wire-bg);
+    font-size: 11px; padding: 6px 10px; border-radius: 999px;
+    font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.06em;
+  }
+
+  .p-section-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 20px 10px;
+  }
+  .p-section-label .h {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: 16px; color: var(--wire-ink);
+  }
+  .p-section-label .more { font-size: 11px; color: var(--wire-text); font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.06em; }
+
+  .p-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; padding: 0 20px;
+  }
+  .tile {
+    background: var(--wire-fill-2);
+    border: 1px solid var(--wire-line);
+    border-radius: 10px;
+    padding: 10px 6px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    text-align: center;
+  }
+  .tile .glyph {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--wire-fill); border: 1px solid var(--wire-line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--wire-ink);
+  }
+  .tile .glyph svg { width: 18px; height: 18px; }
+  .tile .name { font-size: 10px; color: var(--wire-ink); font-weight: 500; line-height: 1.15; }
+
+  .p-trust {
+    margin: 20px 20px 24px;
+    padding: 14px 16px;
+    border: 1px dashed var(--wire-line);
+    border-radius: 12px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+  }
+  .p-trust .item { text-align: center; }
+  .p-trust .item b { display: block; font-family: "Iowan Old Style", Palatino, serif; font-size: 16px; color: var(--wire-ink); font-weight: 400; }
+  .p-trust .item span { display: block; font-size: 10px; color: var(--wire-text); margin-top: 2px; letter-spacing: 0.02em; }
+
+  .p-nav {
+    position: absolute; left: 12px; right: 12px; bottom: 12px;
+    background: var(--wire-bg); border: 1px solid var(--wire-line);
+    border-radius: 20px; padding: 8px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+    box-shadow: 0 -4px 12px rgba(15,30,46,0.05);
+  }
+  .p-nav .nv {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 6px 0; font-size: 10px; color: var(--wire-text);
+    font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.04em;
+  }
+  .p-nav .nv .g { width: 20px; height: 20px; border: 1.5px solid var(--wire-text); border-radius: 4px; }
+  .p-nav .nv.active { color: var(--wire-accent); }
+  .p-nav .nv.active .g { border-color: var(--wire-accent); background: var(--wire-accent); }
+
+  /* ----- screen 2 category ----- */
+  .p-backbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px 12px;
+  }
+  .p-backbar .back { width: 20px; height: 20px; border: 1.5px solid var(--wire-ink); border-radius: 6px; position: relative; flex: 0 0 20px; }
+  .p-backbar .back::after { content: ""; position: absolute; left: 6px; top: 7px; width: 6px; height: 6px; border-left: 1.5px solid var(--wire-ink); border-bottom: 1.5px solid var(--wire-ink); transform: rotate(45deg); }
+  .p-backbar .t { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 18px; }
+
+  .p-cat-list {
+    padding: 0 20px 100px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .cat-row {
+    display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center;
+    padding: 14px 16px;
+    background: var(--wire-fill-2);
+    border: 1px solid var(--wire-line);
+    border-radius: 14px;
+  }
+  .cat-row .g {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--wire-fill); border: 1px solid var(--wire-line);
+    display: flex; align-items: center; justify-content: center; color: var(--wire-ink);
+  }
+  .cat-row .g svg { width: 22px; height: 22px; }
+  .cat-row .txt { line-height: 1.25; }
+  .cat-row .txt b { display: block; font-weight: 500; font-size: 14px; color: var(--wire-ink); }
+  .cat-row .txt span { display: block; font-size: 11px; color: var(--wire-text); margin-top: 2px; }
+  .cat-row .price {
+    text-align: right; font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; color: var(--wire-text); letter-spacing: 0.02em;
+  }
+  .cat-row .price b { color: var(--wire-ink); font-family: "Iowan Old Style", Palatino, serif; font-size: 15px; display: block; font-weight: 400; margin-bottom: 2px; }
+  .cat-row.emergency { border-color: var(--coral); background: color-mix(in srgb, var(--coral) 8%, var(--wire-fill-2)); }
+  .cat-row.emergency .g { background: var(--coral); color: white; border-color: var(--coral); }
+
+  /* ----- screen 3 describe ----- */
+  .p-progress {
+    margin: 0 20px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .p-progress .bar { flex: 1; height: 4px; background: var(--wire-fill); border-radius: 2px; overflow: hidden; }
+  .p-progress .fill { display: block; height: 100%; background: var(--wire-accent); width: 50%; }
+  .p-progress .num { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--wire-text); }
+
+  .p-field { padding: 0 20px 12px; }
+  .p-field .lab { font-size: 11px; color: var(--wire-text); letter-spacing: 0.05em; font-family: ui-monospace, Menlo, monospace; margin-bottom: 6px; text-transform: uppercase; }
+  .p-field .box {
+    background: var(--wire-fill-2); border: 1px solid var(--wire-line); border-radius: 12px;
+    padding: 14px 14px; min-height: 78px; color: var(--wire-text);
+    font-size: 13px; line-height: 1.5;
+  }
+  .p-field .box .caret { display: inline-block; width: 1.5px; height: 14px; background: var(--wire-accent); vertical-align: -3px; margin-left: 2px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { to { opacity: 0; } }
+  @media (prefers-reduced-motion) { .p-field .box .caret { animation: none; } }
+
+  .p-uploads {
+    padding: 0 20px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .up-slot {
+    aspect-ratio: 1;
+    background: var(--wire-fill-2);
+    border: 1.5px dashed var(--wire-line);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--wire-text); font-size: 20px;
+  }
+  .up-slot.filled { background: var(--wire-fill); border-style: solid; }
+  .up-slot.filled::after {
+    content: ""; width: 18px; height: 14px; border: 1.5px solid var(--wire-text);
+    border-radius: 2px; position: relative;
+  }
+
+  .p-ai-price {
+    margin: 6px 20px 14px;
+    padding: 16px 16px;
+    background: var(--wire-fill);
+    border: 1px solid var(--wire-line);
+    border-left: 3px solid var(--wire-accent);
+    border-radius: 12px;
+  }
+  .p-ai-price .head { display: flex; justify-content: space-between; align-items: baseline; }
+  .p-ai-price .head .h { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--wire-accent); font-family: ui-monospace, Menlo, monospace; }
+  .p-ai-price .head .conf { font-size: 10px; color: var(--wire-text); font-family: ui-monospace, Menlo, monospace; }
+  .p-ai-price .range { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 32px; letter-spacing: -0.02em; margin: 8px 0 4px; }
+  .p-ai-price .range .to { color: var(--wire-text); font-size: 22px; margin: 0 8px; }
+  .p-ai-price .note { font-size: 11px; color: var(--wire-text); line-height: 1.5; }
+  .p-ai-price .track {
+    margin-top: 12px; height: 6px; border-radius: 3px; background: var(--wire-fill-2); position: relative;
+  }
+  .p-ai-price .track::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 20%; right: 30%;
+    background: var(--wire-accent); opacity: 0.35; border-radius: 3px;
+  }
+  .p-ai-price .track::after {
+    content: ""; position: absolute; top: -3px; bottom: -3px; left: 40%;
+    width: 2px; background: var(--wire-ink);
+  }
+
+  .p-slider {
+    margin: 0 20px 16px; padding: 14px 16px;
+    background: var(--wire-fill-2); border: 1px solid var(--wire-line); border-radius: 12px;
+  }
+  .p-slider .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .p-slider .row .l { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wire-text); font-family: ui-monospace, Menlo, monospace; }
+  .p-slider .row .v { font-family: "Iowan Old Style", Palatino, serif; font-size: 22px; color: var(--wire-ink); }
+  .p-slider .bar { height: 4px; background: var(--wire-fill); border-radius: 2px; position: relative; }
+  .p-slider .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 45%; background: var(--wire-accent); border-radius: 2px; }
+  .p-slider .bar .knob { position: absolute; left: 43%; top: -6px; width: 16px; height: 16px; border-radius: 50%; background: var(--wire-ink); }
+
+  .p-cta {
+    position: absolute; left: 12px; right: 12px; bottom: 12px;
+    background: var(--wire-ink); color: var(--wire-bg);
+    padding: 16px 18px; border-radius: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px; letter-spacing: 0.04em;
+  }
+  .p-cta .arr { width: 20px; height: 12px; position: relative; }
+  .p-cta .arr::before, .p-cta .arr::after { content: ""; position: absolute; background: var(--wire-bg); }
+  .p-cta .arr::before { left: 0; top: 5px; height: 2px; width: 100%; }
+  .p-cta .arr::after { right: 0; top: 1px; width: 10px; height: 10px; border-right: 2px solid var(--wire-bg); border-top: 2px solid var(--wire-bg); transform: rotate(45deg); }
+
+  /* ----- screen 4 matches ----- */
+  .p-chips {
+    padding: 4px 20px 14px; display: flex; gap: 8px; overflow-x: auto;
+  }
+  .chip {
+    flex: 0 0 auto; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--wire-line);
+    background: var(--wire-fill-2); font-size: 12px; color: var(--wire-text);
+  }
+  .chip.on { background: var(--wire-ink); color: var(--wire-bg); border-color: var(--wire-ink); }
+
+  .p-matches { padding: 0 20px 100px; display: flex; flex-direction: column; gap: 12px; }
+  .match {
+    background: var(--wire-fill-2); border: 1px solid var(--wire-line); border-radius: 14px;
+    padding: 14px 14px;
+  }
+  .match.top { border: 1.5px solid var(--wire-accent); background: var(--wire-fill); position: relative; }
+  .match.top::before {
+    content: "TOP MATCH"; position: absolute; top: -8px; left: 14px;
+    background: var(--wire-accent); color: white;
+    font-family: ui-monospace, Menlo, monospace; font-size: 9px; letter-spacing: 0.14em;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .match .row1 { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; }
+  .match .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--wire-fill); border: 1px solid var(--wire-line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 16px; color: var(--wire-ink);
+  }
+  .match .name { font-weight: 500; font-size: 14px; color: var(--wire-ink); }
+  .match .sub { font-size: 11px; color: var(--wire-text); margin-top: 1px; display: flex; gap: 8px; align-items: center; }
+  .match .sub .dot { width: 3px; height: 3px; background: var(--wire-text); border-radius: 50%; }
+  .match .price {
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 20px; color: var(--wire-ink); text-align: right;
+  }
+  .match .price small { display: block; font-family: ui-monospace, Menlo, monospace; font-size: 9px; color: var(--wire-accent); letter-spacing: 0.1em; margin-top: 2px; }
+  .match .price small.counter { color: var(--amber); }
+  .match .foot { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .match .badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 999px;
+    background: var(--wire-fill); color: var(--wire-text); border: 1px solid var(--wire-line);
+    font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.03em;
+  }
+  .match .badge.verified { background: var(--wire-accent-soft); color: var(--wire-accent); border-color: var(--wire-accent); }
+  .match .msg { margin-top: 10px; padding: 10px 12px; background: var(--wire-fill); border-radius: 8px; font-size: 12px; color: var(--wire-text); font-style: italic; line-height: 1.45; }
+
+  /* ----- screen 5 confirm ----- */
+  .p-summary {
+    margin: 8px 20px 16px; padding: 16px;
+    background: var(--wire-fill-2); border: 1px solid var(--wire-line); border-radius: 14px;
+  }
+  .p-summary .line { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; }
+  .p-summary .line.total { border-top: 1px solid var(--wire-line); margin-top: 6px; padding-top: 12px; }
+  .p-summary .l { color: var(--wire-text); font-size: 12px; }
+  .p-summary .r { font-family: "Iowan Old Style", Palatino, serif; font-size: 15px; color: var(--wire-ink); }
+  .p-summary .line.total .l { color: var(--wire-ink); font-weight: 500; text-transform: uppercase; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: 0.1em; }
+  .p-summary .line.total .r { font-size: 26px; }
+
+  .p-escrow {
+    margin: 0 20px 16px; padding: 14px 16px;
+    border: 1px dashed var(--wire-accent);
+    border-radius: 12px;
+    background: var(--wire-accent-soft);
+    display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start;
+  }
+  .p-escrow .shield {
+    width: 22px; height: 26px;
+    background: var(--wire-accent);
+    clip-path: path("M11 0 L22 4 L22 14 Q22 22 11 26 Q0 22 0 14 L0 4 Z");
+  }
+  .p-escrow p { margin: 0; font-size: 11px; color: var(--wire-ink); line-height: 1.5; }
+  .p-escrow p b { display: block; font-weight: 500; margin-bottom: 3px; }
+
+  .p-pay {
+    padding: 0 20px 16px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .pay-opt {
+    padding: 14px 16px; border: 1px solid var(--wire-line); border-radius: 12px;
+    display: grid; grid-template-columns: 24px 1fr 24px; align-items: center; gap: 12px;
+    background: var(--wire-fill-2);
+    font-size: 13px;
+  }
+  .pay-opt.on { border: 1.5px solid var(--wire-accent); background: var(--wire-fill); }
+  .pay-opt .radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--wire-line); }
+  .pay-opt.on .radio { border-color: var(--wire-accent); background: radial-gradient(circle at center, var(--wire-accent) 0 5px, transparent 5px); }
+  .pay-opt .logo { width: 40px; height: 22px; background: var(--wire-fill); border-radius: 4px; font-family: ui-monospace, Menlo, monospace; font-size: 10px; display: flex; align-items: center; justify-content: center; color: var(--wire-ink); font-weight: 700; letter-spacing: 0.04em; }
+  .pay-opt .n { color: var(--wire-ink); font-weight: 500; }
+  .pay-opt .n span { display: block; color: var(--wire-text); font-size: 11px; font-weight: 400; margin-top: 1px; }
+
+  .p-fineprint { padding: 0 20px 100px; font-size: 10px; color: var(--wire-text); line-height: 1.5; }
+
+  /* ----- Design system section ----- */
+  .system {
+    padding: 96px 0; border-top: 1px solid var(--line);
+  }
+  .system h2 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400; font-size: 40px; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .system .sub { color: var(--ink-2); margin: 0 0 40px; max-width: 560px; }
+  .sys-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 48px; }
+  @media (max-width: 900px) { .sys-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .sys h5 { font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 16px; font-weight: 500; }
+
+  .sw-row { display: flex; margin-bottom: 20px; gap: 10px; align-items: stretch; }
+  .sw { flex: 1; padding: 20px 12px 12px; border-radius: 8px; color: var(--ink); display: flex; flex-direction: column; justify-content: space-between; min-height: 88px; border: 1px solid var(--line); }
+  .sw .lbl { font-size: 11px; opacity: 0.9; font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.04em; }
+  .sw .hex { font-family: ui-monospace, Menlo, monospace; font-size: 11px; opacity: 0.7; }
+
+  .sw.navy { background: #0F1E2E; color: #FAF7F2; }
+  .sw.paper { background: #FAF7F2; color: #0F1E2E; }
+  .sw.emerald { background: #0E9F6E; color: #FAF7F2; }
+  .sw.amber { background: #C88A2A; color: #FAF7F2; }
+  .sw.coral { background: #C4573F; color: #FAF7F2; }
+
+  .type-spec .row { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .type-spec .row:last-child { border-bottom: 0; }
+  .type-spec .name { font-size: 11px; letter-spacing: 0.06em; font-family: ui-monospace, Menlo, monospace; color: var(--ink-3); text-transform: uppercase; margin-bottom: 6px; }
+  .type-spec .demo-display { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; }
+  .type-spec .demo-body { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .type-spec .demo-mono { font-family: ui-monospace, Menlo, monospace; font-size: 13px; letter-spacing: 0.02em; color: var(--ink-2); }
+
+  .principles { display: flex; flex-direction: column; gap: 22px; }
+  .principle { padding-left: 16px; border-left: 2px solid var(--accent); }
+  .principle .n { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .principle .h { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 18px; margin-top: 3px; letter-spacing: -0.005em; }
+  .principle .p { font-size: 13px; color: var(--ink-2); margin-top: 4px; line-height: 1.55; }
+
+  /* ----- Next section ----- */
+  .next {
+    padding: 96px 0 140px; border-top: 1px solid var(--line);
+  }
+  .next h2 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400; font-size: clamp(36px, 5vw, 58px); letter-spacing: -0.02em; margin: 0 0 20px; max-width: 700px; text-wrap: balance; }
+  .next .sub { color: var(--ink-2); font-size: 18px; margin: 0 0 44px; max-width: 620px; }
+  .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .next-grid { grid-template-columns: 1fr; } }
+  .nx {
+    padding: 24px 24px 28px; border: 1px solid var(--line); border-radius: 16px;
+    display: flex; flex-direction: column; gap: 10px; background: var(--ground-2);
+  }
+  .nx .n { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; }
+  .nx h4 { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 400; font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+  .nx p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+  .nx .est { margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line); font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-3); display: flex; justify-content: space-between; }
+
+  footer {
+    padding: 40px 0 60px; border-top: 1px solid var(--line);
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    color: var(--ink-3); letter-spacing: 0.04em;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer .wrap { display: flex; justify-content: space-between; width: 100%; }
+
+  /* small utils */
+  .hr { height: 1px; background: var(--line); border: 0; margin: 32px 0; }
+
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 L4 14 h6 l-1 8 l9 -12 h-6 l1 -8 z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14 3 a5 5 0 0 0 -3 8 L3 19 l2 2 l8 -8 a5 5 0 0 0 8 -3 l-3 -1 l-2 2 l-3 -3 l2 -2 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3 c 1 4 5 5 5 10 a5 5 0 0 1 -10 0 c 0 -3 3 -5 3 -8 c 0 1 1 1 2 -2 z" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-broom" viewBox="0 0 24 24"><path d="M14 3 l6 6 M13 4 L4 13 l3 3 l9 -9 z M6 15 l-3 6 l6 -3 l6 -6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-paint" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M17 6 h4 v4 h-8 v3 h-2 v8 h-2 v-8 h-2 v-3 h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4 c -12 0 -14 8 -14 12 c 0 3 2 5 5 5 c 4 0 12 -2 12 -14 z M6 21 L14 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6 h11 v10 h-11 z M13 9 h5 l3 3 v4 h-8 z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8 L12 3 L21 8 L21 17 L12 22 L3 17 z M3 8 L12 13 L21 8 M12 13 L12 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24"><path d="M8 2 v6 M16 2 v6 M6 8 h12 v3 a6 6 0 0 1 -12 0 z M12 17 v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-fuse" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7" y="6" width="10" height="3" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="11" width="10" height="3" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="16" width="10" height="3" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-ev" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 9 h3 v4 a2 2 0 0 1 -2 2 v3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 8 L7 13 h3 l -1 4 l 4 -6 h -3 z" fill="currentColor"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 15 v-4 a6 6 0 0 1 12 0 v4 l2 3 h-16 z M10 20 a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="i-emergency" viewBox="0 0 24 24"><path d="M12 3 v18 M3 12 h18" stroke="currentColor" stroke-width="2.6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8 h4 l2 -3 h6 l2 3 h4 v12 h-18 z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"></span>
+      <strong>FairFix.ie</strong>
+      <span class="doc">— WIREFRAMES v1</span>
+    </div>
+    <div class="meta">
+      <span><b>Client</b> Tarek Sallabi</span>
+      <span><b>Date</b> Aug 2026</span>
+      <button class="themetoggle" type="button" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">Theme</button>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="rule"></span>
+      <span class="label">Design Brief · One of one</span>
+    </div>
+    <h1>A pricing platform, <em>disguised</em> as a hiring platform.</h1>
+    <p class="lede">FairFix opens with the number a homeowner actually wants: a fair estimate before any tradesman is even chosen. Five screens carry them from that first tap to a paid inspection — inspired by what makes Khadmaty easy to scan, redrawn for the Irish market it will actually live in.</p>
+    <div class="facts">
+      <div class="fact"><div class="n">5</div><div class="t">Core screens in the MVP flow</div></div>
+      <div class="fact"><div class="n">3</div><div class="t">Taps from open to price estimate</div></div>
+      <div class="fact"><div class="n">€15</div><div class="t">Held-in-escrow inspection fee</div></div>
+      <div class="fact"><div class="n">LTR</div><div class="t">Redrawn for English-first Ireland</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="flow">
+  <div class="wrap">
+    <h2>The flow, at a glance</h2>
+    <p class="sub">A homeowner in Dublin lands, taps into a category, describes the problem with photos, sees an AI-generated price band, sets their budget, and picks from craftsmen who accepted or countered. Five screens; roughly two minutes.</p>
+
+    <div class="flow-strip">
+      <div class="flow-step"><div class="num">01</div><div class="name">Home</div><div class="desc">Location, search, categories, trust</div></div>
+      <div class="flow-step"><div class="num">02</div><div class="name">Category</div><div class="desc">Sub-services with typical price bands</div></div>
+      <div class="flow-step"><div class="num">03</div><div class="name">Describe &amp; Price</div><div class="desc">Photos, text, AI estimate, budget</div></div>
+      <div class="flow-step"><div class="num">04</div><div class="name">Matches</div><div class="desc">Craftsmen who accept or counter</div></div>
+      <div class="flow-step"><div class="num">05</div><div class="name">Confirm</div><div class="desc">Escrowed inspection fee, booked</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN 1 ─── HOME ─────────────────────────────────────────── -->
+<section class="screen">
+  <div class="wrap">
+    <div class="screen-head">
+      <div class="idx">01 / 05</div>
+      <h3><span>Landing</span>Home</h3>
+      <div class="tag">First 6 seconds</div>
+    </div>
+
+    <div class="screen-body">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="status">
+            <span>9:41</span>
+            <div class="r">
+              <span class="sig"></span>
+              <span class="wifi"></span>
+              <span class="batt"></span>
+            </div>
+          </div>
+
+          <div class="p-header">
+            <div class="loc"><span class="pin"></span> Dublin 2 · D02</div>
+            <div class="icons">
+              <span class="ic" style="border-radius:50%"></span>
+              <span class="ic"></span>
+            </div>
+          </div>
+
+          <div class="p-title">
+            <h1>Good morning, Tarek.</h1>
+            <p>What needs fixing today?</p>
+          </div>
+
+          <div class="p-search">
+            <span class="mag"></span>
+            <span>Search a service or trade…</span>
+          </div>
+
+          <div class="p-banner">
+            <div class="spark">✦</div>
+            <div class="txt">
+              <strong>AI Price Estimate</strong>
+              <span>Describe your job, get a fair price in 30s.</span>
+            </div>
+            <div class="cta">TRY</div>
+          </div>
+
+          <div class="p-section-label">
+            <div class="h">Most requested</div>
+            <div class="more">SEE ALL →</div>
+          </div>
+          <div class="p-grid">
+            <div class="tile"><div class="glyph"><svg><use href="#i-bolt"/></svg></div><div class="name">Electrician</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-wrench"/></svg></div><div class="name">Plumber</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-flame"/></svg></div><div class="name">Heating</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-broom"/></svg></div><div class="name">Cleaning</div></div>
+          </div>
+
+          <div class="p-section-label" style="padding-top:18px">
+            <div class="h">Home &amp; garden</div>
+            <div class="more">SEE ALL →</div>
+          </div>
+          <div class="p-grid">
+            <div class="tile"><div class="glyph"><svg><use href="#i-paint"/></svg></div><div class="name">Painter</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-leaf"/></svg></div><div class="name">Gardener</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-truck"/></svg></div><div class="name">Removals</div></div>
+            <div class="tile"><div class="glyph"><svg><use href="#i-box"/></svg></div><div class="name">Assembly</div></div>
+          </div>
+
+          <div class="p-trust">
+            <div class="item"><b>2,500+</b><span>RECI verified</span></div>
+            <div class="item"><b>4.9</b><span>Google reviews</span></div>
+            <div class="item"><b>€2M</b><span>Public liability</span></div>
+          </div>
+
+          <div class="p-nav">
+            <div class="nv active"><span class="g"></span>Home</div>
+            <div class="nv"><span class="g"></span>Jobs</div>
+            <div class="nv"><span class="g"></span>Chat</div>
+            <div class="nv"><span class="g"></span>Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="n-block">
+          <span class="label">Job of the screen</span>
+          <h4>Prove trust and speed in the first fold.</h4>
+          <p>The header opens with location (Eircode-aware) and greeting; the AI banner sits directly under search so the platform's one true differentiator lands before scroll.</p>
+        </div>
+        <div class="n-block">
+          <span class="label">Deliberate choices</span>
+          <ul>
+            <li>Copy is Irish English: "Good morning" not "Hi", "trade" not "profession".</li>
+            <li>Trust row uses local proof points (RECI, Google, public liability) — not made-up star badges.</li>
+            <li>AI banner has a "TRY" chip, not a big button — invites, doesn't shove.</li>
+            <li>Bottom nav is four items, not five. Five is the app-store cliché; four scans faster.</li>
+          </ul>
+        </div>
+        <div class="n-block">
+          <span class="label">What we borrowed from Khadmaty</span>
+          <p>The 4-column tile grid and sectioned categories. What we replaced: the illustration-heavy tiles (visual noise in English UI), the red-first palette (semantically "danger" in Ireland), and the RTL header.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN 2 ─── CATEGORY ─────────────────────────────────────── -->
+<section class="screen">
+  <div class="wrap">
+    <div class="screen-head">
+      <div class="idx">02 / 05</div>
+      <h3><span>Sub-services</span>Category</h3>
+      <div class="tag">One choice, one price band</div>
+    </div>
+
+    <div class="screen-body">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="status">
+            <span>9:41</span>
+            <div class="r"><span class="sig"></span><span class="wifi"></span><span class="batt"></span></div>
+          </div>
+
+          <div class="p-backbar">
+            <span class="back"></span>
+            <span class="t">Electrician</span>
+          </div>
+
+          <div class="p-cat-list">
+            <div class="cat-row emergency">
+              <span class="g"><svg><use href="#i-emergency"/></svg></span>
+              <div class="txt"><b>Emergency call-out</b><span>24/7 · Response ≤ 60min</span></div>
+              <div class="price"><b>€120+</b>Typical</div>
+            </div>
+            <div class="cat-row">
+              <span class="g"><svg><use href="#i-bolt"/></svg></span>
+              <div class="txt"><b>Fault-finding &amp; repair</b><span>Sockets, tripping, no power</span></div>
+              <div class="price"><b>€80–150</b>Typical</div>
+            </div>
+            <div class="cat-row">
+              <span class="g"><svg><use href="#i-plug"/></svg></span>
+              <div class="txt"><b>Socket &amp; light install</b><span>Per fitting or room</span></div>
+              <div class="price"><b>€60–120</b>Typical</div>
+            </div>
+            <div class="cat-row">
+              <span class="g"><svg><use href="#i-fuse"/></svg></span>
+              <div class="txt"><b>Consumer unit / fuse board</b><span>Upgrade or replacement</span></div>
+              <div class="price"><b>€450–900</b>Typical</div>
+            </div>
+            <div class="cat-row">
+              <span class="g"><svg><use href="#i-ev"/></svg></span>
+              <div class="txt"><b>EV charger installation</b><span>SEAI grant eligible · €300 off</span></div>
+              <div class="price"><b>€900–1,400</b>Typical</div>
+            </div>
+            <div class="cat-row">
+              <span class="g"><svg><use href="#i-bolt"/></svg></span>
+              <div class="txt"><b>Full rewire</b><span>Whole property, RECI cert</span></div>
+              <div class="price"><b>€3,500+</b>Typical</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="n-block">
+          <span class="label">Job of the screen</span>
+          <h4>Convert vague intent into a specific service.</h4>
+          <p>The homeowner rarely knows the label a tradesman uses. Each sub-service pairs the trade name with plain-English description (Sockets, tripping, no power) so people self-diagnose without help.</p>
+        </div>
+        <div class="n-block">
+          <span class="label">Deliberate choices</span>
+          <ul>
+            <li>Every row shows a typical price band — sets expectations before the AI even runs.</li>
+            <li>Emergency call-out is coral-tinted and pinned to the top. Real emergencies convert best when they're one tap.</li>
+            <li>SEAI grant callout on EV charger is a wedge — Ireland's most-searched electrician service in 2026.</li>
+            <li>No stock illustrations. Icons only. Faster to scan, cheaper to produce, no copyright risk.</li>
+          </ul>
+        </div>
+        <div class="n-block">
+          <span class="label">Why not Khadmaty's grid again?</span>
+          <p>Grid is right for shallow browsing (home). Once the user has picked a trade, a list is right — it lets each row hold price context and a description without cramping.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN 3 ─── DESCRIBE + PRICE ─────────────────────────────── -->
+<section class="screen">
+  <div class="wrap">
+    <div class="screen-head">
+      <div class="idx">03 / 05</div>
+      <h3><span>The magic moment</span>Describe &amp; Price</h3>
+      <div class="tag">AI runs here</div>
+    </div>
+
+    <div class="screen-body">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="status">
+            <span>9:41</span>
+            <div class="r"><span class="sig"></span><span class="wifi"></span><span class="batt"></span></div>
+          </div>
+
+          <div class="p-backbar">
+            <span class="back"></span>
+            <span class="t">Fault-finding &amp; repair</span>
+          </div>
+
+          <div class="p-progress">
+            <span class="num">STEP 02 / 04</span>
+            <span class="bar"><span class="fill"></span></span>
+          </div>
+
+          <div class="p-field">
+            <div class="lab">Describe what's happening</div>
+            <div class="box">Two sockets in the kitchen stopped working after the kettle tripped the fuse. Reset the board but they're still dead.<span class="caret"></span></div>
+          </div>
+
+          <div class="p-field">
+            <div class="lab">Add photos or a short video</div>
+          </div>
+          <div class="p-uploads">
+            <div class="up-slot filled"></div>
+            <div class="up-slot filled"></div>
+            <div class="up-slot">＋</div>
+            <div class="up-slot">＋</div>
+          </div>
+
+          <div class="p-ai-price">
+            <div class="head">
+              <span class="h">✦ AI Estimate</span>
+              <span class="conf">CONFIDENCE 82%</span>
+            </div>
+            <div class="range">€90 <span class="to">–</span> €160</div>
+            <div class="note">Based on 340 similar jobs in Dublin. AI never diagnoses the fault — only the typical labour + parts range.</div>
+            <div class="track"></div>
+          </div>
+
+          <div class="p-slider">
+            <div class="row"><span class="l">Your offer</span><span class="v">€120</span></div>
+            <div class="bar"><span class="fill"></span><span class="knob"></span></div>
+          </div>
+
+          <div class="p-cta">
+            <span>Send to nearby electricians</span>
+            <span class="arr"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="n-block">
+          <span class="label">Job of the screen</span>
+          <h4>Turn a photo + a sentence into a fair number.</h4>
+          <p>This is the whole differentiator. The AI never says <em>what</em> is wrong (that would create liability) — it only shows the price band similar jobs settled at. The homeowner then sets their own offer, anchored on that band.</p>
+        </div>
+        <div class="n-block">
+          <span class="label">Deliberate choices</span>
+          <ul>
+            <li>Live confidence score (82%). Undersells the AI a little, which builds trust rather than promising perfection.</li>
+            <li>The estimate is a <em>band</em>, never a single number. Single numbers get read as promises.</li>
+            <li>Slider defaults to just below the midpoint — behavioural nudge; tradesmen still get a fair offer.</li>
+            <li>The CTA copy names <em>who</em> receives it ("nearby electricians") — removes the mystery of what happens next.</li>
+          </ul>
+        </div>
+        <div class="n-block">
+          <span class="label">Compliance guardrails</span>
+          <p>Never generate diagnosis text. Never quote parts. Cache no image beyond 30 days. Every AI response logged for admin review (per your spec).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN 4 ─── MATCHES ──────────────────────────────────────── -->
+<section class="screen">
+  <div class="wrap">
+    <div class="screen-head">
+      <div class="idx">04 / 05</div>
+      <h3><span>Offers &amp; counters</span>Matches</h3>
+      <div class="tag">Real-time, arrives push</div>
+    </div>
+
+    <div class="screen-body">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="status">
+            <span>9:41</span>
+            <div class="r"><span class="sig"></span><span class="wifi"></span><span class="batt"></span></div>
+          </div>
+
+          <div class="p-backbar">
+            <span class="back"></span>
+            <span class="t">3 offers in 4 minutes</span>
+          </div>
+
+          <div class="p-chips">
+            <span class="chip on">Nearest</span>
+            <span class="chip">Rating</span>
+            <span class="chip">Response time</span>
+            <span class="chip">Accepted only</span>
+          </div>
+
+          <div class="p-matches">
+            <div class="match top">
+              <div class="row1">
+                <div class="avatar">JB</div>
+                <div>
+                  <div class="name">John Byrne</div>
+                  <div class="sub">★ 4.9 (127) <span class="dot"></span> 2.3 km <span class="dot"></span> Replied 3 min</div>
+                </div>
+                <div class="price">€120<small>ACCEPTED</small></div>
+              </div>
+              <div class="foot">
+                <span class="badge verified">✓ RECI verified</span>
+                <span class="badge">Safe Pass</span>
+                <span class="badge">Public liability €2M</span>
+              </div>
+            </div>
+
+            <div class="match">
+              <div class="row1">
+                <div class="avatar">SM</div>
+                <div>
+                  <div class="name">Sean Murphy</div>
+                  <div class="sub">★ 4.8 (89) <span class="dot"></span> 4.1 km <span class="dot"></span> Replied 8 min</div>
+                </div>
+                <div class="price">€145<small class="counter">COUNTER</small></div>
+              </div>
+              <div class="msg">"Happy to take it on. Sockets on that ring often need the RCD replaced — that's the €25 over your offer."</div>
+              <div class="foot">
+                <span class="badge verified">✓ RECI verified</span>
+                <span class="badge">RGII</span>
+              </div>
+            </div>
+
+            <div class="match">
+              <div class="row1">
+                <div class="avatar">CK</div>
+                <div>
+                  <div class="name">Ciarán Kelly</div>
+                  <div class="sub">★ 5.0 (34) <span class="dot"></span> 6.0 km <span class="dot"></span> Replied 12 min</div>
+                </div>
+                <div class="price">€115<small>ACCEPTED</small></div>
+              </div>
+              <div class="foot">
+                <span class="badge verified">✓ RECI verified</span>
+                <span class="badge">New this month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="n-block">
+          <span class="label">Job of the screen</span>
+          <h4>Make choosing a person feel low-stakes.</h4>
+          <p>Offers arrive over minutes; the header ("3 offers in 4 minutes") makes the wait feel like momentum, not delay. One "Top Match" is highlighted so decision-fatigued homeowners get a default without losing choice.</p>
+        </div>
+        <div class="n-block">
+          <span class="label">Deliberate choices</span>
+          <ul>
+            <li>Counter-offers show the tradesman's <em>reason</em> in their own words. This is the platform's answer to Bark's biggest complaint: no context, just prices.</li>
+            <li>Verification badges use Ireland's real credentials (RECI, RGII, Safe Pass) — cheap trust, high signal.</li>
+            <li>Distance in km, not miles. Response time in minutes, not "fast". Specifics build credibility.</li>
+            <li>"New this month" badge protects new tradesmen from the cold-start rating penalty that kills most marketplaces.</li>
+          </ul>
+        </div>
+        <div class="n-block">
+          <span class="label">What's under the hood</span>
+          <p>Sort weights: distance × 0.35, rating × 0.30, response time × 0.20, price fit × 0.15. All tunable from admin per your spec. Push notifies homeowner on first three offers only — after that, in-app only.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN 5 ─── CONFIRM ──────────────────────────────────────── -->
+<section class="screen">
+  <div class="wrap">
+    <div class="screen-head">
+      <div class="idx">05 / 05</div>
+      <h3><span>Booking</span>Confirm &amp; Pay</h3>
+      <div class="tag">Money enters escrow</div>
+    </div>
+
+    <div class="screen-body">
+      <div class="phone-shell">
+        <div class="phone">
+          <div class="status">
+            <span>9:41</span>
+            <div class="r"><span class="sig"></span><span class="wifi"></span><span class="batt"></span></div>
+          </div>
+
+          <div class="p-backbar">
+            <span class="back"></span>
+            <span class="t">Confirm booking</span>
+          </div>
+
+          <div class="p-summary">
+            <div class="line"><span class="l">Tradesman</span><span class="r">John Byrne</span></div>
+            <div class="line"><span class="l">Service</span><span class="r">Fault-finding &amp; repair</span></div>
+            <div class="line"><span class="l">When</span><span class="r">Today, 2–4 PM</span></div>
+            <div class="line"><span class="l">Where</span><span class="r">Dublin 2 · D02 XY45</span></div>
+            <div class="line"><span class="l">Agreed job price</span><span class="r">€120</span></div>
+            <div class="line total"><span class="l">Pay now</span><span class="r">€15</span></div>
+          </div>
+
+          <div class="p-escrow">
+            <div class="shield"></div>
+            <p><b>Held in escrow.</b>The €15 inspection fee only releases to John when he arrives. If he doesn't turn up, you get it back automatically. The remaining €120 is paid after the work.</p>
+          </div>
+
+          <div class="p-pay">
+            <div class="pay-opt on">
+              <span class="radio"></span>
+              <div class="n">Apple Pay<span>Face ID · Wallet</span></div>
+              <div class="logo"> Pay</div>
+            </div>
+            <div class="pay-opt">
+              <span class="radio"></span>
+              <div class="n">Card<span>Visa · Mastercard · Revolut</span></div>
+              <div class="logo">VISA</div>
+            </div>
+            <div class="pay-opt">
+              <span class="radio"></span>
+              <div class="n">Pay at door<span>Cash to tradesman, +€2 admin</span></div>
+              <div class="logo">CASH</div>
+            </div>
+          </div>
+
+          <div class="p-fineprint">
+            By confirming you agree to FairFix Terms. Cancellations more than 2 hours before arrival are refunded in full. GDPR-compliant · Data stored in Frankfurt (EU).
+          </div>
+
+          <div class="p-cta">
+            <span>Confirm &amp; hold €15</span>
+            <span class="arr"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="n-block">
+          <span class="label">Job of the screen</span>
+          <h4>Trade money for certainty, in one screen.</h4>
+          <p>The €15 inspection fee is the platform's defence against no-shows on both sides. Escrow copy is direct — "held", "releases when he arrives", "you get it back" — no legal fog.</p>
+        </div>
+        <div class="n-block">
+          <span class="label">Deliberate choices</span>
+          <ul>
+            <li>Apple Pay is default on iOS; Revolut Card second. Both are how Irish millennials actually pay.</li>
+            <li>Cash option is present but +€2. Cash-at-door still matters in rural Ireland; the surcharge covers admin without banning it.</li>
+            <li>Full breakdown (job price €120 + inspection €15) makes the total transparent. No hidden platform fee — commission comes from the tradesman side.</li>
+            <li>GDPR line at the bottom, factual, no dark pattern. Frankfurt data centre satisfies EU data residency by default.</li>
+          </ul>
+        </div>
+        <div class="n-block">
+          <span class="label">After confirm</span>
+          <p>Push to tradesman ("Job booked — leave now"), calendar entry auto-created for both, in-app chat unlocks, live location shared 30 min before ETA. Order tracking screen (out of MVP scope for these five).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DESIGN SYSTEM ─────────────────────────────────────────────── -->
+<section class="system">
+  <div class="wrap">
+    <h2>What holds it together</h2>
+    <p class="sub">A small, chosen palette; two typefaces earning their spots; and four rules the whole app defers to. Everything else falls out of that.</p>
+
+    <div class="sys-grid">
+      <div class="sys">
+        <h5>Palette</h5>
+        <div class="sw-row">
+          <div class="sw navy"><span class="lbl">Ink · Navy</span><span class="hex">#0F1E2E</span></div>
+          <div class="sw paper"><span class="lbl">Ground · Paper</span><span class="hex">#FAF7F2</span></div>
+        </div>
+        <div class="sw-row">
+          <div class="sw emerald"><span class="lbl">Accent · Emerald</span><span class="hex">#0E9F6E</span></div>
+          <div class="sw amber"><span class="lbl">Highlight · Amber</span><span class="hex">#C88A2A</span></div>
+          <div class="sw coral"><span class="lbl">Signal · Coral</span><span class="hex">#C4573F</span></div>
+        </div>
+        <p style="color:var(--ink-2); font-size:13px; margin-top:16px; line-height:1.55;">
+          Navy earns trust the way Irish banks do; emerald is our accent — a subtle nod, not a stereotype. Coral is the only red on the app — reserved for emergencies. Paper (warm off-white) replaces sterile #FFF: reads as considered on the shelf next to competitors.
+        </p>
+      </div>
+
+      <div class="sys type-spec">
+        <h5>Typography</h5>
+        <div class="row">
+          <div class="name">Display · serif</div>
+          <div class="demo-display">Fair pricing. Real tradesmen.</div>
+        </div>
+        <div class="row">
+          <div class="name">Body · system sans</div>
+          <div class="demo-body">A homeowner in Dublin needs a socket fixed. Two minutes later, three verified electricians have replied.</div>
+        </div>
+        <div class="row">
+          <div class="name">Utility · mono</div>
+          <div class="demo-mono">CONFIDENCE 82% · €90–160 · REPLIED 3 MIN</div>
+        </div>
+        <p style="color:var(--ink-2); font-size:13px; margin-top:16px; line-height:1.55;">
+          Old Style serif for anything that carries voice — headlines, prices, tradesman names. System sans for everything scanned. Mono for anything measured. No third face.
+        </p>
+      </div>
+
+      <div class="sys">
+        <h5>Rules</h5>
+        <div class="principles">
+          <div class="principle">
+            <div class="n">R1</div>
+            <div class="h">Numbers earn typography.</div>
+            <div class="p">Every price, rating, distance and confidence score uses the display serif. Nothing else in the interface does — so numbers always feel like answers.</div>
+          </div>
+          <div class="principle">
+            <div class="n">R2</div>
+            <div class="h">One accent per screen.</div>
+            <div class="p">Emerald marks progress and confirmation only. Coral marks emergency only. Amber marks earned attention (a counter, a rating). If everything glows, nothing does.</div>
+          </div>
+          <div class="principle">
+            <div class="n">R3</div>
+            <div class="h">Trust is specific.</div>
+            <div class="p">Never "verified" — always "RECI verified". Never "fast" — always "replied 3 min". Real certificates and real numbers beat any badge design.</div>
+          </div>
+          <div class="principle">
+            <div class="n">R4</div>
+            <div class="h">The AI shows its work.</div>
+            <div class="p">Always a band, not a number. Always with a confidence score. Always with a sample size ("340 similar jobs"). Never a diagnosis.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── NEXT ───────────────────────────────────────────────────────── -->
+<section class="next">
+  <div class="wrap">
+    <h2>What comes after you approve these five.</h2>
+    <p class="sub">Two options, honest about scope. Both start from the same wireframes; they diverge on how much visual polish precedes engineering.</p>
+
+    <div class="next-grid">
+      <div class="nx">
+        <span class="n">Path A · Fast</span>
+        <h4>Straight to prototype code.</h4>
+        <p>Take these wireframes into React Native or Flutter as-is. You get a tappable app on your phone in 2 weeks. Visual polish happens in-flight.</p>
+        <div class="est"><span>2 WEEKS</span><span>MVP-BUILD-01</span></div>
+      </div>
+      <div class="nx">
+        <span class="n">Path B · Considered</span>
+        <h4>High-fidelity mocks first.</h4>
+        <p>One full-colour mockup of the Home screen — final typography, illustrations, real photography. You approve the look before a single line of code. Adds a week; saves rework.</p>
+        <div class="est"><span>+1 WEEK</span><span>MOCKUP-01</span></div>
+      </div>
+      <div class="nx">
+        <span class="n">Path C · Extend</span>
+        <h4>Add three more screens.</h4>
+        <p>Onboarding, tradesman sign-up, admin dashboard. Wireframes only. Rounds out the picture before we commit to fidelity.</p>
+        <div class="est"><span>3–4 DAYS</span><span>WIRE-02</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>FairFix.ie · Wireframes v1</span>
+    <span>DUBLIN → BAGHDAD · CLAUDE ✕ TAREK</span>
+  </div>
+</footer>

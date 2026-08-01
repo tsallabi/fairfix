@@ -1,0 +1,1514 @@
+<title>FairFix.ie — Visual Preview</title>
+<style>
+  :root {
+    --paper: #FBF7EE;
+    --paper-2: #F3ECD9;
+    --ink: #0B1F33;
+    --ink-2: #34455A;
+    --ink-3: #7A879A;
+    --line: #E3DAC3;
+
+    --brand-1: #0B7F58;
+    --brand-2: #10B981;
+    --brand-3: #34D399;
+    --brand-glow: rgba(16, 185, 129, 0.35);
+
+    --navy-1: #0B1F33;
+    --navy-2: #14314D;
+    --navy-3: #1F4667;
+
+    --coral: #F26D5B;
+    --coral-2: #E85A47;
+    --amber: #E6A429;
+    --sky-1: #C5E8F5;
+    --sky-2: #A3D5EB;
+    --plum: #4B2E5B;
+
+    --tile-blue: linear-gradient(140deg, #2A4A7F 0%, #1F3966 100%);
+    --tile-teal: linear-gradient(140deg, #14876C 0%, #0B6350 100%);
+    --tile-orange: linear-gradient(140deg, #E67E3B 0%, #C55A1E 100%);
+    --tile-plum: linear-gradient(140deg, #6B3D7D 0%, #4B2A5B 100%);
+    --tile-rose: linear-gradient(140deg, #DE5F6D 0%, #B23F4E 100%);
+    --tile-forest: linear-gradient(140deg, #4A7346 0%, #2E5030 100%);
+    --tile-ochre: linear-gradient(140deg, #C99A3E 0%, #A67824 100%);
+    --tile-slate: linear-gradient(140deg, #4A5C6E 0%, #2E3D4F 100%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0A1826;
+      --paper-2: #142B42;
+      --ink: #F5EFDF;
+      --ink-2: #C7CED8;
+      --ink-3: #8A97AB;
+      --line: #223D57;
+      --brand-1: #14A574;
+      --brand-2: #22D093;
+      --brand-3: #4DE0AC;
+      --navy-1: #F5EFDF;
+      --navy-2: #DCDFE6;
+      --navy-3: #B5BFCC;
+      --sky-1: #1A3550;
+      --sky-2: #24466D;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --paper: #FBF7EE; --paper-2: #F3ECD9; --ink: #0B1F33; --ink-2: #34455A; --ink-3: #7A879A; --line: #E3DAC3;
+    --brand-1: #0B7F58; --brand-2: #10B981; --brand-3: #34D399;
+    --navy-1: #0B1F33; --navy-2: #14314D; --navy-3: #1F4667;
+    --sky-1: #C5E8F5; --sky-2: #A3D5EB;
+  }
+  :root[data-theme="dark"] {
+    --paper: #0A1826; --paper-2: #142B42; --ink: #F5EFDF; --ink-2: #C7CED8; --ink-3: #8A97AB; --line: #223D57;
+    --brand-1: #14A574; --brand-2: #22D093; --brand-3: #4DE0AC;
+    --navy-1: #F5EFDF; --navy-2: #DCDFE6; --navy-3: #B5BFCC;
+    --sky-1: #1A3550; --sky-2: #24466D;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  .serif { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif; }
+  .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, "Cascadia Code", Consolas, monospace; }
+  .kicker {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; position: relative; }
+
+  /* ─── Paper texture (subtle) ─── */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(16,185,129,0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 60%, rgba(242,109,91,0.03) 0%, transparent 40%);
+  }
+  main, .topbar { position: relative; z-index: 1; }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    padding: 22px 0; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: saturate(1.6) blur(10px);
+    z-index: 30;
+  }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand-2) 0%, var(--brand-1) 100%);
+    position: relative;
+    box-shadow: 0 4px 12px var(--brand-glow);
+  }
+  .brand-mark::after {
+    content: ""; position: absolute; inset: 6px;
+    border: 2px solid var(--paper); border-radius: 50%;
+    border-bottom-color: transparent; border-left-color: transparent;
+    transform: rotate(-45deg);
+  }
+  .brand strong { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 20px; letter-spacing: -0.01em; }
+  .brand .doc { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--ink-3); letter-spacing: 0.14em; margin-left: 6px; }
+  .topbar .nav { display: flex; gap: 28px; align-items: center; }
+  .topbar .nav a { color: var(--ink-2); font-size: 13px; text-decoration: none; letter-spacing: 0.02em; }
+  .topbar .nav a:hover { color: var(--brand-2); }
+  .theme-btn {
+    background: transparent; border: 1px solid var(--line); color: var(--ink-2);
+    font: inherit; font-size: 12px; padding: 7px 14px; border-radius: 999px;
+    cursor: pointer; letter-spacing: 0.04em;
+  }
+  .theme-btn:hover { border-color: var(--brand-2); color: var(--brand-2); }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 90px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-scene {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+  }
+  .blob.b1 { top: -120px; right: -80px; width: 480px; height: 480px; background: radial-gradient(circle, var(--brand-3) 0%, transparent 60%); }
+  .blob.b2 { top: 200px; left: -160px; width: 500px; height: 500px; background: radial-gradient(circle, var(--sky-1) 0%, transparent 60%); opacity: 0.6; }
+  .blob.b3 { bottom: 0; right: 20%; width: 400px; height: 400px; background: radial-gradient(circle, var(--coral) 0%, transparent 60%); opacity: 0.2; }
+
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    align-items: center; position: relative; z-index: 1;
+  }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+
+  .hero h1 {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: clamp(48px, 6vw, 84px); line-height: 1.02;
+    letter-spacing: -0.028em; margin: 0 0 24px;
+    text-wrap: balance; font-weight: 400;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--brand-1);
+    position: relative; white-space: nowrap;
+  }
+  .hero h1 em::after {
+    content: ""; position: absolute; left: -2px; right: -2px; bottom: 3px; height: 12px;
+    background: var(--brand-3); opacity: 0.35; z-index: -1; border-radius: 2px;
+  }
+  .hero .lede { font-size: 19px; color: var(--ink-2); max-width: 520px; line-height: 1.6; margin: 0 0 32px; }
+  .hero .cta-row { display: flex; gap: 14px; margin-bottom: 40px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--navy-1); color: var(--paper);
+    padding: 14px 24px; border-radius: 999px;
+    font-weight: 500; text-decoration: none; font-size: 15px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.15s ease;
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-ghost {
+    color: var(--ink); font-size: 15px; text-decoration: none;
+    border-bottom: 1px solid currentColor; padding-bottom: 2px;
+  }
+  .hero .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .tag-pill {
+    padding: 5px 12px; border-radius: 999px; background: var(--paper-2);
+    color: var(--ink-2); font-size: 12px; border: 1px solid var(--line);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .tag-pill::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-2);
+  }
+  .tag-pill.coral::before { background: var(--coral); }
+  .tag-pill.amber::before { background: var(--amber); }
+
+  /* ─── HERO PHONE STACK ─── */
+  .phone-stack {
+    position: relative; height: 620px;
+    perspective: 1600px;
+  }
+  .stack-phone {
+    position: absolute; top: 50%; left: 50%;
+    transform-origin: center center;
+    box-shadow: 0 40px 80px -30px rgba(11, 31, 51, 0.4);
+    border-radius: 44px;
+    transition: transform 0.4s ease;
+  }
+  .stack-phone.a { transform: translate(-70%, -50%) rotate(-8deg) rotateY(-6deg); z-index: 1; }
+  .stack-phone.b { transform: translate(-50%, -55%) rotate(0deg); z-index: 3; }
+  .stack-phone.c { transform: translate(-30%, -50%) rotate(8deg) rotateY(6deg); z-index: 2; }
+  @media (max-width: 900px) {
+    .phone-stack { height: 560px; margin-top: 20px; }
+    .stack-phone.a { transform: translate(-92%, -50%) rotate(-8deg) scale(0.85); }
+    .stack-phone.b { transform: translate(-50%, -55%) scale(0.95); }
+    .stack-phone.c { transform: translate(-8%, -50%) rotate(8deg) scale(0.85); }
+  }
+
+  /* ─── PHONE COMPONENT (color) ─── */
+  .phone-frame {
+    width: 300px;
+    background: #111827;
+    border-radius: 42px;
+    padding: 8px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+  .phone-frame .screen {
+    background: linear-gradient(180deg, var(--sky-1) 0%, var(--paper) 40%, var(--paper) 100%);
+    border-radius: 34px;
+    overflow: hidden;
+    min-height: 560px;
+    position: relative;
+    color: var(--navy-1);
+  }
+  .phone-frame.large { width: 360px; }
+  .phone-frame.large .screen { min-height: 700px; }
+
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 22px 0;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 600;
+    color: var(--navy-1);
+  }
+  .status-bar .r { display: flex; gap: 6px; align-items: center; }
+  .status-bar svg { color: var(--navy-1); }
+
+  .top-strip {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 22px 0;
+  }
+  .loc-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(11,31,51,0.06);
+    padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 500;
+  }
+  .loc-pill svg { color: var(--coral); }
+  .icon-row { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(11,31,51,0.06);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .icon-btn.avatar {
+    background: linear-gradient(135deg, #E6A429 0%, #C48414 100%);
+    color: white; font-family: "Iowan Old Style", Palatino, serif; font-size: 13px; font-weight: 400;
+  }
+  .icon-btn .badge-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--coral); border: 2px solid var(--paper); }
+
+  .greet {
+    padding: 20px 22px 10px;
+  }
+  .greet h1 {
+    font-family: "Iowan Old Style", Palatino, Georgia, serif;
+    font-size: 26px; line-height: 1.05; letter-spacing: -0.02em;
+    margin: 0; font-weight: 400;
+    color: var(--navy-1);
+  }
+  .greet h1 em { font-style: italic; color: var(--brand-1); }
+  .greet p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
+
+  .search-input {
+    margin: 14px 22px 4px;
+    background: white;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--ink-3);
+    box-shadow: 0 4px 20px rgba(11,31,51,0.06), 0 0 0 1px rgba(11,31,51,0.04);
+  }
+  .search-input svg { flex-shrink: 0; color: var(--brand-1); }
+  .search-input .cta-mini {
+    margin-left: auto; background: var(--navy-1); color: var(--paper);
+    padding: 5px 10px; border-radius: 8px; font-size: 10px;
+    font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.06em;
+  }
+
+  .ai-banner {
+    margin: 16px 22px 18px;
+    padding: 18px 18px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0B1F33 0%, #14314D 60%, #1F4667 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(11,31,51,0.5);
+  }
+  .ai-banner::before {
+    content: ""; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(52,211,153,0.35) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ai-banner::after {
+    content: ""; position: absolute; bottom: -60px; left: -20px; width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(242,109,91,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ai-banner .head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; position: relative; z-index: 1; }
+  .ai-banner .spark-badge {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--brand-3), var(--brand-2));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy-1); font-weight: 700; font-size: 12px;
+    box-shadow: 0 4px 12px var(--brand-glow);
+  }
+  .ai-banner .h { font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--brand-3); }
+  .ai-banner h3 {
+    position: relative; z-index: 1;
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: 20px; letter-spacing: -0.01em; margin: 0 0 4px; line-height: 1.15;
+  }
+  .ai-banner p { position: relative; z-index: 1; font-size: 12px; color: rgba(255,255,255,0.7); margin: 0 0 14px; line-height: 1.5; }
+  .ai-banner .go {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; color: var(--navy-1);
+    padding: 8px 16px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+  }
+  .ai-banner .go svg { width: 12px; height: 12px; }
+
+  .sec-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 6px 22px 12px;
+  }
+  .sec-head h4 {
+    font-family: "Iowan Old Style", Palatino, serif;
+    font-size: 17px; margin: 0; font-weight: 400; letter-spacing: -0.01em;
+    color: var(--navy-1);
+  }
+  .sec-head .see-all {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 0.1em; color: var(--brand-1); display: flex; align-items: center; gap: 4px;
+  }
+
+  .service-grid {
+    padding: 0 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .svc-tile {
+    aspect-ratio: 1;
+    border-radius: 18px;
+    padding: 10px 8px 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    color: white;
+    position: relative; overflow: hidden;
+    box-shadow: 0 6px 18px -8px rgba(11,31,51,0.3);
+  }
+  .svc-tile.t1 { background: var(--tile-blue); }
+  .svc-tile.t2 { background: var(--tile-teal); }
+  .svc-tile.t3 { background: var(--tile-orange); }
+  .svc-tile.t4 { background: var(--tile-plum); }
+  .svc-tile.t5 { background: var(--tile-forest); }
+  .svc-tile.t6 { background: var(--tile-rose); }
+  .svc-tile.t7 { background: var(--tile-slate); }
+  .svc-tile.t8 { background: var(--tile-ochre); }
+  .svc-tile::before {
+    content: ""; position: absolute; top: -20px; right: -20px; width: 60px; height: 60px;
+    border-radius: 50%; background: rgba(255,255,255,0.12); pointer-events: none;
+  }
+  .svc-tile .glyph {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+    margin-top: 6px;
+  }
+  .svc-tile .glyph svg { width: 22px; height: 22px; color: white; }
+  .svc-tile .n { font-size: 10px; font-weight: 600; text-align: center; letter-spacing: 0.01em; }
+
+  .trust-strip {
+    margin: 22px 22px 20px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--paper-2), var(--paper));
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+  }
+  .trust-strip .tr { text-align: center; position: relative; }
+  .trust-strip .tr:not(:last-child)::after {
+    content: ""; position: absolute; right: -6px; top: 4px; bottom: 4px; width: 1px; background: var(--line);
+  }
+  .trust-strip .n {
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 20px; font-weight: 400;
+    letter-spacing: -0.01em; color: var(--navy-1);
+    display: inline-flex; align-items: baseline; gap: 4px;
+  }
+  .trust-strip .n .u { font-size: 10px; color: var(--brand-1); font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.06em; }
+  .trust-strip .t { font-size: 10px; color: var(--ink-3); margin-top: 2px; letter-spacing: 0.04em; }
+
+  .bottom-nav {
+    position: absolute; left: 12px; right: 12px; bottom: 10px;
+    background: white; border-radius: 22px; padding: 10px;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    box-shadow: 0 -8px 32px rgba(11,31,51,0.08), 0 0 0 1px rgba(11,31,51,0.04);
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: var(--ink-3);
+  }
+  .nav-item.active { color: var(--brand-1); }
+  .nav-item .n { font-size: 9px; font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.06em; }
+  .nav-item .g {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-item.active .g {
+    background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
+    color: white; box-shadow: 0 4px 12px var(--brand-glow);
+  }
+  .nav-item svg { width: 18px; height: 18px; }
+
+  /* ─── EDITORIAL SECTIONS ─── */
+  .section {
+    padding: 96px 0 40px;
+    position: relative;
+  }
+  .section-lead {
+    max-width: 720px; margin: 0 auto 60px; text-align: center;
+  }
+  .section-lead h2 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: clamp(36px, 4.8vw, 56px);
+    letter-spacing: -0.02em; margin: 12px 0 20px;
+    text-wrap: balance;
+  }
+  .section-lead p {
+    font-size: 18px; color: var(--ink-2); margin: 0;
+    max-width: 580px; margin-left: auto; margin-right: auto;
+  }
+
+  /* ─── SCREEN DETAILS ─── */
+  .screen-detail {
+    display: grid; grid-template-columns: 380px 1fr; gap: 80px;
+    align-items: center;
+    padding: 60px 0;
+  }
+  .screen-detail.reverse { grid-template-columns: 1fr 380px; }
+  .screen-detail.reverse .detail-phone { order: 2; }
+  @media (max-width: 900px) {
+    .screen-detail, .screen-detail.reverse { grid-template-columns: 1fr; gap: 40px; padding: 30px 0; }
+    .screen-detail.reverse .detail-phone { order: 0; }
+  }
+  .detail-phone { display: flex; justify-content: center; position: relative; }
+  .detail-phone::before {
+    content: ""; position: absolute; inset: -40px; border-radius: 60px;
+    background: radial-gradient(circle at 50% 50%, var(--brand-glow) 0%, transparent 70%);
+    z-index: 0;
+  }
+  .detail-phone > * { position: relative; z-index: 1; }
+
+  .detail-copy .num {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.16em; color: var(--brand-1);
+    margin-bottom: 12px;
+  }
+  .detail-copy h3 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: clamp(30px, 3.6vw, 42px); letter-spacing: -0.02em;
+    margin: 0 0 20px; text-wrap: balance; line-height: 1.1;
+  }
+  .detail-copy .lede { font-size: 17px; color: var(--ink-2); line-height: 1.65; margin: 0 0 28px; }
+  .feature-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 16px;
+    padding: 16px 0; border-top: 1px solid var(--line);
+  }
+  .feature-row:last-of-type { border-bottom: 1px solid var(--line); }
+  .feature-row .ic {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--brand-3), var(--brand-2));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy-1); flex-shrink: 0;
+  }
+  .feature-row.rose .ic { background: linear-gradient(135deg, #F9A8B4, var(--coral)); color: white; }
+  .feature-row.amber .ic { background: linear-gradient(135deg, #FBBF77, var(--amber)); color: white; }
+  .feature-row.navy .ic { background: linear-gradient(135deg, var(--navy-3), var(--navy-1)); color: var(--brand-3); }
+  .feature-row h5 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: 18px; margin: 4px 0 4px; letter-spacing: -0.005em;
+  }
+  .feature-row p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+  /* ─── SCREEN 2: DESCRIBE & PRICE ─── */
+  .describe-screen .top-strip { padding-top: 6px; }
+  .step-progress {
+    padding: 6px 22px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .step-progress .pill {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 0.1em; color: var(--brand-1);
+    background: rgba(16,185,129,0.12); padding: 4px 10px; border-radius: 999px;
+  }
+  .step-progress .track {
+    flex: 1; height: 3px; background: rgba(11,31,51,0.08); border-radius: 2px; overflow: hidden;
+  }
+  .step-progress .fill {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--brand-2), var(--brand-3));
+    width: 50%;
+  }
+  .desc-title {
+    padding: 4px 22px 12px;
+  }
+  .desc-title h1 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: 24px; margin: 0; letter-spacing: -0.015em; line-height: 1.1;
+  }
+  .desc-title p { margin: 4px 0 0; font-size: 12px; color: var(--ink-2); }
+
+  .desc-textarea {
+    margin: 8px 22px 14px;
+    background: white; border-radius: 16px; padding: 16px;
+    font-size: 13px; color: var(--ink-2); line-height: 1.55;
+    min-height: 80px; box-shadow: 0 4px 20px rgba(11,31,51,0.05), 0 0 0 1px rgba(11,31,51,0.04);
+  }
+  .desc-photos { padding: 0 22px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .photo-slot {
+    aspect-ratio: 1; border-radius: 12px;
+    background: linear-gradient(135deg, #B8CFE0, #92B4CC);
+    position: relative; overflow: hidden;
+  }
+  .photo-slot.empty {
+    background: white; border: 1.5px dashed var(--line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-3);
+  }
+  .photo-slot.p1::before {
+    content: ""; position: absolute; inset: 20% 30% 30% 20%; background: #4A3B2E; border-radius: 4px;
+    box-shadow: 4px 4px 0 -1px #6B5642;
+  }
+  .photo-slot.p2 { background: linear-gradient(135deg, #E8DACD, #C9B7A5); }
+  .photo-slot.p2::before {
+    content: ""; position: absolute; inset: 35% 35% 35% 35%; background: #2E2E2E; border-radius: 50%;
+  }
+  .photo-slot.p2::after {
+    content: ""; position: absolute; inset: 40% 40% 40% 40%; background: #E63946; border-radius: 50%;
+  }
+
+  .ai-estimate-card {
+    margin: 6px 22px 14px; padding: 18px 18px;
+    background: linear-gradient(135deg, #0B1F33 0%, #14314D 100%);
+    color: white; border-radius: 20px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(11,31,51,0.5);
+  }
+  .ai-estimate-card::before {
+    content: ""; position: absolute; top: -30px; right: -30px; width: 140px; height: 140px;
+    background: radial-gradient(circle, var(--brand-glow) 0%, transparent 70%);
+  }
+  .ai-estimate-card .row-t { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .ai-estimate-card .row-t .h {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px;
+    letter-spacing: 0.14em; color: var(--brand-3);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ai-estimate-card .conf { font-family: ui-monospace, Menlo, monospace; font-size: 10px; color: rgba(255,255,255,0.5); }
+  .ai-estimate-card .range {
+    position: relative; z-index: 1;
+    font-family: "Iowan Old Style", Palatino, serif;
+    font-size: 40px; margin: 10px 0 6px; letter-spacing: -0.03em; line-height: 1;
+  }
+  .ai-estimate-card .range .dash { color: rgba(255,255,255,0.4); margin: 0 8px; font-size: 30px; }
+  .ai-estimate-card .note { position: relative; z-index: 1; font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 14px; }
+  .ai-estimate-card .band {
+    position: relative; z-index: 1; height: 8px; border-radius: 4px;
+    background: rgba(255,255,255,0.08); overflow: hidden;
+  }
+  .ai-estimate-card .band::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 15%; right: 25%;
+    background: linear-gradient(90deg, var(--brand-2), var(--brand-3));
+    border-radius: 4px;
+  }
+  .ai-estimate-card .band::after {
+    content: ""; position: absolute; top: -2px; bottom: -2px; left: 42%;
+    width: 3px; background: white; border-radius: 2px;
+  }
+
+  .offer-slider {
+    margin: 0 22px 20px; padding: 16px 18px;
+    background: white; border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(11,31,51,0.06), 0 0 0 1px rgba(11,31,51,0.04);
+  }
+  .offer-slider .row {
+    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;
+  }
+  .offer-slider .l { font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-3); text-transform: uppercase; }
+  .offer-slider .v { font-family: "Iowan Old Style", Palatino, serif; font-size: 26px; letter-spacing: -0.02em; color: var(--navy-1); }
+  .offer-slider .slider-track {
+    height: 6px; background: rgba(11,31,51,0.06); border-radius: 3px; position: relative;
+  }
+  .offer-slider .slider-fill {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 48%;
+    background: linear-gradient(90deg, var(--brand-2), var(--brand-3)); border-radius: 3px;
+  }
+  .offer-slider .slider-knob {
+    position: absolute; left: 46%; top: -8px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: white; border: 3px solid var(--brand-2);
+    box-shadow: 0 4px 10px rgba(16,185,129,0.35);
+  }
+
+  .cta-bar {
+    position: absolute; left: 12px; right: 12px; bottom: 10px;
+    background: linear-gradient(135deg, var(--navy-1) 0%, var(--navy-2) 100%);
+    color: var(--paper); padding: 16px 20px; border-radius: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 500; box-shadow: 0 -8px 32px rgba(11,31,51,0.15);
+  }
+  .cta-bar .arr { display: flex; align-items: center; }
+
+  /* ─── SCREEN 3: MATCHES ─── */
+  .match-title { padding: 6px 22px 8px; }
+  .match-title h1 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: 22px; margin: 0; letter-spacing: -0.015em;
+  }
+  .match-title p {
+    margin: 4px 0 0; font-size: 12px; color: var(--ink-2);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .match-title p .live { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-2); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @media (prefers-reduced-motion) { .match-title p .live { animation: none; } }
+
+  .filter-chips { padding: 4px 22px 14px; display: flex; gap: 6px; overflow-x: auto; }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .fchip {
+    flex: 0 0 auto; padding: 7px 14px; border-radius: 999px;
+    background: white; font-size: 12px; color: var(--ink-2);
+    box-shadow: 0 2px 8px rgba(11,31,51,0.04), 0 0 0 1px rgba(11,31,51,0.04);
+  }
+  .fchip.on { background: var(--navy-1); color: white; box-shadow: 0 4px 12px rgba(11,31,51,0.25); }
+
+  .match-list { padding: 0 22px 90px; display: flex; flex-direction: column; gap: 12px; }
+  .match-card {
+    background: white; border-radius: 20px; padding: 16px;
+    box-shadow: 0 4px 20px rgba(11,31,51,0.05), 0 0 0 1px rgba(11,31,51,0.04);
+    position: relative;
+  }
+  .match-card.top {
+    background: linear-gradient(135deg, white 0%, #F0FDF9 100%);
+    box-shadow: 0 8px 30px rgba(16,185,129,0.15), 0 0 0 1.5px var(--brand-2);
+  }
+  .match-card.top::before {
+    content: "TOP MATCH";
+    position: absolute; top: -10px; left: 16px;
+    background: linear-gradient(135deg, var(--brand-2), var(--brand-1)); color: white;
+    font-family: ui-monospace, Menlo, monospace; font-size: 9px; letter-spacing: 0.18em;
+    padding: 4px 10px; border-radius: 999px;
+    box-shadow: 0 4px 12px var(--brand-glow);
+  }
+  .mc-row {
+    display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center;
+  }
+  .mc-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-family: "Iowan Old Style", Palatino, serif; font-weight: 400; font-size: 16px;
+    box-shadow: 0 4px 10px rgba(11,31,51,0.15);
+    position: relative;
+  }
+  .mc-avatar.a1 { background: linear-gradient(135deg, #F26D5B, #B23F4E); }
+  .mc-avatar.a2 { background: linear-gradient(135deg, #2A4A7F, #14314D); }
+  .mc-avatar.a3 { background: linear-gradient(135deg, #E6A429, #A67824); }
+  .mc-avatar .online {
+    position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--brand-2); border: 2px solid white;
+  }
+  .mc-name { font-weight: 600; font-size: 15px; color: var(--navy-1); }
+  .mc-meta {
+    font-size: 11px; color: var(--ink-3); margin-top: 3px;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .mc-meta .star { color: var(--amber); }
+  .mc-meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3); }
+  .mc-price {
+    text-align: right;
+  }
+  .mc-price .n {
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 22px;
+    color: var(--navy-1); letter-spacing: -0.015em; font-weight: 400;
+  }
+  .mc-price .status-label {
+    display: block; font-family: ui-monospace, Menlo, monospace; font-size: 9px;
+    letter-spacing: 0.14em; margin-top: 2px;
+  }
+  .mc-price .status-label.acc { color: var(--brand-1); }
+  .mc-price .status-label.cnt { color: var(--amber); }
+
+  .mc-message {
+    margin-top: 12px; padding: 12px 14px;
+    background: rgba(11,31,51,0.03); border-radius: 12px;
+    font-size: 12px; color: var(--ink-2); line-height: 1.5;
+    font-style: italic;
+    border-left: 3px solid var(--amber);
+  }
+
+  .mc-badges { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .mc-badge {
+    font-family: ui-monospace, Menlo, monospace; font-size: 9px;
+    letter-spacing: 0.06em; padding: 4px 8px; border-radius: 999px;
+    background: rgba(11,31,51,0.06); color: var(--ink-2);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .mc-badge.verified { background: rgba(16,185,129,0.12); color: var(--brand-1); }
+  .mc-badge.verified::before {
+    content: "✓"; font-weight: 700; font-size: 10px;
+  }
+
+  /* ─── ILLUSTRATION SHOWCASE ─── */
+  .illustrations {
+    padding: 100px 0;
+    background: linear-gradient(180deg, transparent 0%, var(--paper-2) 50%, transparent 100%);
+  }
+  .illus-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  @media (max-width: 900px) { .illus-grid { grid-template-columns: repeat(2, 1fr); } }
+  .illus-card {
+    aspect-ratio: 1;
+    border-radius: 24px; padding: 24px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: white; position: relative; overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(11,31,51,0.3);
+  }
+  .illus-card .glow {
+    position: absolute; width: 200px; height: 200px; border-radius: 50%;
+    filter: blur(50px); opacity: 0.4; pointer-events: none;
+  }
+  .illus-card .label {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.14em;
+    opacity: 0.7;
+  }
+  .illus-card .name {
+    font-family: "Iowan Old Style", Palatino, serif; font-size: 22px; letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .illus-card .art { flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+
+  .illus-card.a { background: linear-gradient(135deg, #14314D 0%, #0B1F33 100%); }
+  .illus-card.a .glow { background: #34D399; top: -40px; right: -40px; }
+  .illus-card.b { background: linear-gradient(135deg, #10B981 0%, #0B7F58 100%); }
+  .illus-card.b .glow { background: white; bottom: -40px; left: -40px; opacity: 0.3; }
+  .illus-card.c { background: linear-gradient(135deg, #F26D5B 0%, #B23F4E 100%); }
+  .illus-card.c .glow { background: #F9A8B4; top: -40px; right: -40px; }
+  .illus-card.d { background: linear-gradient(135deg, #6B3D7D 0%, #4B2A5B 100%); }
+  .illus-card.d .glow { background: #E6A429; bottom: -40px; right: -40px; opacity: 0.3; }
+
+  /* ─── SYSTEM PALETTE ─── */
+  .palette-section {
+    padding: 100px 0;
+  }
+  .palette-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  @media (max-width: 900px) { .palette-grid { grid-template-columns: repeat(2, 1fr); } }
+  .color-swatch {
+    padding: 24px 20px; border-radius: 20px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 180px;
+    position: relative; overflow: hidden;
+  }
+  .color-swatch h6 { font-family: "Iowan Old Style", Palatino, serif; font-weight: 400; font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .color-swatch .role { font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: 0.14em; opacity: 0.65; text-transform: uppercase; margin-bottom: 6px; }
+  .color-swatch .hex { font-family: ui-monospace, Menlo, monospace; font-size: 13px; opacity: 0.8; letter-spacing: 0.02em; }
+  .color-swatch .use { font-size: 12px; opacity: 0.8; line-height: 1.5; margin-top: 8px; }
+
+  .sw-navy { background: #0B1F33; color: #FBF7EE; }
+  .sw-paper { background: #FBF7EE; color: #0B1F33; border: 1px solid var(--line); }
+  .sw-emerald { background: #10B981; color: white; }
+  .sw-coral { background: #F26D5B; color: white; }
+  .sw-amber { background: #E6A429; color: white; }
+  .sw-sky { background: linear-gradient(135deg, #C5E8F5, #A3D5EB); color: #0B1F33; border: 1px solid var(--line); }
+  .sw-plum { background: #4B2E5B; color: white; }
+  .sw-forest { background: #2E5030; color: white; }
+
+  /* ─── NEXT STEP ─── */
+  .next-step {
+    padding: 100px 0 120px;
+    text-align: center;
+    background: radial-gradient(ellipse at center top, rgba(16,185,129,0.08) 0%, transparent 60%);
+  }
+  .next-step h2 {
+    font-family: "Iowan Old Style", Palatino, serif; font-weight: 400;
+    font-size: clamp(40px, 5vw, 64px); margin: 0 0 20px; letter-spacing: -0.025em;
+    text-wrap: balance; max-width: 800px; margin-left: auto; margin-right: auto;
+  }
+  .next-step p { font-size: 18px; color: var(--ink-2); max-width: 560px; margin: 0 auto 40px; }
+  .next-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .btn-big {
+    background: linear-gradient(135deg, var(--navy-2), var(--navy-1));
+    color: var(--paper); padding: 18px 32px; border-radius: 999px;
+    text-decoration: none; font-size: 16px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 10px;
+    box-shadow: 0 20px 40px -15px rgba(11,31,51,0.4);
+    transition: transform 0.15s ease;
+  }
+  .btn-big:hover { transform: translateY(-2px); }
+  .btn-big.alt {
+    background: transparent; color: var(--ink); box-shadow: none;
+    border: 1.5px solid var(--ink);
+  }
+
+  footer {
+    padding: 40px 0; border-top: 1px solid var(--line);
+    text-align: center;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    color: var(--ink-3); letter-spacing: 0.08em;
+  }
+</style>
+
+<!-- ─── ICON DEFINITIONS ─── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 L4 14 h6 l-1 8 l9 -12 h-6 l1 -8 z" fill="currentColor"/></symbol>
+    <symbol id="wrench" viewBox="0 0 24 24"><path d="M14 3 a5 5 0 0 0 -3 8 L3 19 l2 2 l8 -8 a5 5 0 0 0 8 -3 l-3 -1 l-2 2 l-3 -3 l2 -2 z" fill="currentColor"/></symbol>
+    <symbol id="flame" viewBox="0 0 24 24"><path d="M12 3 c 1 4 5 5 5 10 a5 5 0 0 1 -10 0 c 0 -3 3 -5 3 -8 c 0 1 1 1 2 -2 z" fill="currentColor"/></symbol>
+    <symbol id="broom" viewBox="0 0 24 24"><path d="M14 3 l6 6 M13 4 L4 13 l3 3 l9 -9 z M6 15 l-3 6 l6 -3 l6 -6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="paint" viewBox="0 0 24 24"><rect x="3" y="3" width="14" height="6" rx="1" fill="currentColor"/><path d="M17 6 h4 v4 h-8 v3 h-2 v8 h-2 v-8 h-2 v-3 h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="leaf" viewBox="0 0 24 24"><path d="M20 4 c -12 0 -14 8 -14 12 c 0 3 2 5 5 5 c 4 0 12 -2 12 -14 z" fill="currentColor"/><path d="M6 21 L14 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="truck" viewBox="0 0 24 24"><path d="M2 6 h11 v10 h-11 z M13 9 h5 l3 3 v4 h-8 z" fill="currentColor"/><circle cx="6" cy="18" r="2" fill="var(--paper)" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="18" r="2" fill="var(--paper)" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="box" viewBox="0 0 24 24"><path d="M3 8 L12 3 L21 8 L21 17 L12 22 L3 17 z" fill="currentColor" opacity="0.9"/><path d="M3 8 L12 13 L21 8 M12 13 L12 22" fill="none" stroke="var(--paper)" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="pin" viewBox="0 0 24 24"><path d="M12 22 s-8 -8 -8 -14 a8 8 0 0 1 16 0 c 0 6 -8 14 -8 14 z" fill="currentColor"/><circle cx="12" cy="8" r="2.5" fill="var(--paper)"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 17 L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="bell" viewBox="0 0 24 24"><path d="M6 15 v-4 a6 6 0 0 1 12 0 v4 l2 3 h-16 z M10 20 a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="home" viewBox="0 0 24 24"><path d="M4 11 L12 4 L20 11 V20 H14 V14 H10 V20 H4 Z" fill="currentColor"/></symbol>
+    <symbol id="clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9" y="2" width="6" height="4" rx="1" fill="currentColor"/><path d="M9 12 h6 M9 16 h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="chat" viewBox="0 0 24 24"><path d="M4 5 h16 v12 h-9 l-4 4 v-4 h-3 z" fill="currentColor"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 22 c 0 -5 4 -8 8 -8 s 8 3 8 8" fill="currentColor"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12 h14 M14 6 l6 6 -6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="camera" viewBox="0 0 24 24"><path d="M3 8 h4 l2 -3 h6 l2 3 h4 v12 h-18 z" fill="currentColor"/><circle cx="12" cy="14" r="4" fill="var(--paper)"/></symbol>
+    <symbol id="shield" viewBox="0 0 24 24"><path d="M12 2 l9 4 v6 c 0 6 -4 10 -9 10 s -9 -4 -9 -10 v-6 z M8 12 l3 3 l5 -6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="spark" viewBox="0 0 24 24"><path d="M12 3 L14 10 L21 12 L14 14 L12 21 L10 14 L3 12 L10 10 Z" fill="currentColor"/></symbol>
+    <symbol id="star" viewBox="0 0 24 24"><path d="M12 3 L14.5 9.5 L21 10 L16 14.5 L17.5 21 L12 17.5 L6.5 21 L8 14.5 L3 10 L9.5 9.5 Z" fill="currentColor"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2 v3 M12 19 v3 M2 12 h3 M19 12 h3 M4.9 4.9 l2 2 M17 17 l2 2 M4.9 19 l2 -2 M17 7 l2 -2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="signal" viewBox="0 0 18 12"><rect x="0" y="8" width="2" height="4" rx="1" fill="currentColor"/><rect x="4" y="6" width="2" height="6" rx="1" fill="currentColor"/><rect x="8" y="3" width="2" height="9" rx="1" fill="currentColor"/><rect x="12" y="0" width="2" height="12" rx="1" fill="currentColor"/></symbol>
+    <symbol id="wifi" viewBox="0 0 16 12"><path d="M2 4 c 3 -3 9 -3 12 0 M4 7 c 2 -2 6 -2 8 0 M6 10 l 2 2 l 2 -2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="battery" viewBox="0 0 22 12"><rect x="0.5" y="0.5" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1"/><rect x="19" y="4" width="2" height="4" rx="0.5" fill="currentColor"/><rect x="2" y="2" width="12" height="8" rx="1" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <strong>FairFix.ie</strong>
+      <span class="doc">— VISUAL PREVIEW</span>
+    </div>
+    <div class="nav">
+      <a href="#home">Home</a>
+      <a href="#estimate">Estimate</a>
+      <a href="#matches">Matches</a>
+      <a href="#system">Design</a>
+      <button class="theme-btn" type="button" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')">Theme</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-scene">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">— Visual direction · v1</div>
+        <h1 style="margin-top:20px">The interface, <em>alive</em>.</h1>
+        <p class="lede">Same five screens, now with the visual language they'll ship in: warm paper, deep navy, emerald as the accent that means "this is working." Every colour, every icon, every gradient has a job.</p>
+
+        <div class="cta-row">
+          <a href="#home" class="btn-primary">See the Home screen <svg width="14" height="14"><use href="#arrow"/></svg></a>
+          <a href="#system" class="btn-ghost">Design system</a>
+        </div>
+
+        <div class="tags">
+          <span class="tag-pill">Warm paper ground</span>
+          <span class="tag-pill">Illustrated tiles</span>
+          <span class="tag-pill amber">Serif for numbers</span>
+          <span class="tag-pill coral">Coral for emergencies</span>
+        </div>
+      </div>
+
+      <div class="phone-stack">
+        <!-- LEFT PHONE (Matches) -->
+        <div class="stack-phone a">
+          <div class="phone-frame">
+            <div class="screen">
+              <div class="status-bar">
+                <span>9:41</span>
+                <div class="r"><svg width="16" height="10" viewBox="0 0 18 12"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+              </div>
+              <div class="match-title" style="padding-top:14px">
+                <h1>3 offers in 4 min</h1>
+                <p><span class="live"></span> Live · updating</p>
+              </div>
+              <div class="filter-chips">
+                <span class="fchip on">Nearest</span>
+                <span class="fchip">Rating</span>
+                <span class="fchip">Reply</span>
+              </div>
+              <div class="match-list" style="padding-bottom:20px">
+                <div class="match-card top">
+                  <div class="mc-row">
+                    <div class="mc-avatar a1">JB<span class="online"></span></div>
+                    <div>
+                      <div class="mc-name">John Byrne</div>
+                      <div class="mc-meta"><svg class="star" width="10" height="10"><use href="#star"/></svg>4.9 (127)<span class="sep"></span>2.3km</div>
+                    </div>
+                    <div class="mc-price"><span class="n">€120</span><span class="status-label acc">ACCEPTED</span></div>
+                  </div>
+                  <div class="mc-badges"><span class="mc-badge verified">RECI</span><span class="mc-badge">Safe Pass</span></div>
+                </div>
+                <div class="match-card">
+                  <div class="mc-row">
+                    <div class="mc-avatar a2">SM</div>
+                    <div>
+                      <div class="mc-name">Sean Murphy</div>
+                      <div class="mc-meta"><svg class="star" width="10" height="10"><use href="#star"/></svg>4.8 (89)<span class="sep"></span>4.1km</div>
+                    </div>
+                    <div class="mc-price"><span class="n">€145</span><span class="status-label cnt">COUNTER</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER PHONE (Home) - hero -->
+        <div class="stack-phone b">
+          <div class="phone-frame large">
+            <div class="screen">
+              <div class="status-bar">
+                <span>9:41</span>
+                <div class="r"><svg width="16" height="10"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+              </div>
+              <div class="top-strip">
+                <div class="loc-pill"><svg width="12" height="12"><use href="#pin"/></svg>Dublin 2</div>
+                <div class="icon-row">
+                  <div class="icon-btn"><svg width="15" height="15" style="color:var(--navy-1)"><use href="#bell"/></svg><span class="badge-dot"></span></div>
+                  <div class="icon-btn avatar">T</div>
+                </div>
+              </div>
+              <div class="greet">
+                <h1>Good morning,<br><em>Tarek.</em></h1>
+                <p>What needs fixing today?</p>
+              </div>
+              <div class="search-input">
+                <svg width="16" height="16"><use href="#search"/></svg>
+                Search a service…
+              </div>
+              <div class="ai-banner">
+                <div class="head"><div class="spark-badge">✦</div><span class="h">AI PRICE ESTIMATE</span></div>
+                <h3>Fair price in 30 seconds.</h3>
+                <p>Describe your job. We'll show you the range 340 similar jobs settled at.</p>
+                <span class="go">Try it now <svg><use href="#arrow"/></svg></span>
+              </div>
+              <div class="sec-head">
+                <h4>Most requested</h4>
+                <span class="see-all">SEE ALL →</span>
+              </div>
+              <div class="service-grid">
+                <div class="svc-tile t1"><div class="glyph"><svg><use href="#bolt"/></svg></div><span class="n">Electrician</span></div>
+                <div class="svc-tile t2"><div class="glyph"><svg><use href="#wrench"/></svg></div><span class="n">Plumber</span></div>
+                <div class="svc-tile t3"><div class="glyph"><svg><use href="#flame"/></svg></div><span class="n">Heating</span></div>
+                <div class="svc-tile t4"><div class="glyph"><svg><use href="#broom"/></svg></div><span class="n">Cleaning</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PHONE (Describe & Price) -->
+        <div class="stack-phone c">
+          <div class="phone-frame">
+            <div class="screen describe-screen">
+              <div class="status-bar">
+                <span>9:41</span>
+                <div class="r"><svg width="16" height="10"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+              </div>
+              <div class="step-progress" style="padding-top:14px">
+                <span class="pill">STEP 2 / 4</span>
+                <span class="track"><span class="fill"></span></span>
+              </div>
+              <div class="desc-title">
+                <h1>Two sockets<br>in the kitchen.</h1>
+              </div>
+              <div class="desc-photos">
+                <div class="photo-slot p1"></div>
+                <div class="photo-slot p2"></div>
+                <div class="photo-slot empty"><svg width="18" height="18"><use href="#camera"/></svg></div>
+                <div class="photo-slot empty">＋</div>
+              </div>
+              <div class="ai-estimate-card">
+                <div class="row-t">
+                  <span class="h"><svg width="10" height="10"><use href="#spark"/></svg> AI ESTIMATE</span>
+                  <span class="conf">82% CONF</span>
+                </div>
+                <div class="range">€90<span class="dash">–</span>€160</div>
+                <div class="note">From 340 similar jobs in Dublin.</div>
+                <div class="band"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN DETAIL: HOME ─── -->
+<section class="section" id="home">
+  <div class="wrap">
+    <div class="section-lead">
+      <div class="kicker">01 / 03 · Home</div>
+      <h2>Warmth first. Precision second.</h2>
+      <p>A homeowner opens the app on a rainy Tuesday. The colours shouldn't feel like a bank — they should feel like a good tradesman just picked up the phone.</p>
+    </div>
+
+    <div class="screen-detail">
+      <div class="detail-phone">
+        <div class="phone-frame large">
+          <div class="screen">
+            <div class="status-bar">
+              <span>9:41</span>
+              <div class="r"><svg width="16" height="10"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+            </div>
+            <div class="top-strip">
+              <div class="loc-pill"><svg width="12" height="12"><use href="#pin"/></svg>Dublin 2 · D02</div>
+              <div class="icon-row">
+                <div class="icon-btn"><svg width="15" height="15" style="color:var(--navy-1)"><use href="#bell"/></svg><span class="badge-dot"></span></div>
+                <div class="icon-btn avatar">T</div>
+              </div>
+            </div>
+            <div class="greet">
+              <h1>Good morning,<br><em>Tarek.</em></h1>
+              <p>What needs fixing today?</p>
+            </div>
+            <div class="search-input">
+              <svg width="16" height="16"><use href="#search"/></svg>
+              Search a service or trade…
+              <span class="cta-mini">✦ AI</span>
+            </div>
+            <div class="ai-banner">
+              <div class="head"><div class="spark-badge">✦</div><span class="h">AI PRICE ESTIMATE</span></div>
+              <h3>Get a fair price in 30 seconds.</h3>
+              <p>Describe your job — we'll show you the range 340 similar jobs settled at last week.</p>
+              <span class="go">Try it now <svg><use href="#arrow"/></svg></span>
+            </div>
+            <div class="sec-head">
+              <h4>Most requested</h4>
+              <span class="see-all">SEE ALL →</span>
+            </div>
+            <div class="service-grid">
+              <div class="svc-tile t1"><div class="glyph"><svg><use href="#bolt"/></svg></div><span class="n">Electrician</span></div>
+              <div class="svc-tile t2"><div class="glyph"><svg><use href="#wrench"/></svg></div><span class="n">Plumber</span></div>
+              <div class="svc-tile t3"><div class="glyph"><svg><use href="#flame"/></svg></div><span class="n">Heating</span></div>
+              <div class="svc-tile t4"><div class="glyph"><svg><use href="#broom"/></svg></div><span class="n">Cleaning</span></div>
+            </div>
+            <div class="sec-head" style="padding-top:16px">
+              <h4>Home &amp; garden</h4>
+              <span class="see-all">SEE ALL →</span>
+            </div>
+            <div class="service-grid">
+              <div class="svc-tile t5"><div class="glyph"><svg><use href="#leaf"/></svg></div><span class="n">Gardener</span></div>
+              <div class="svc-tile t6"><div class="glyph"><svg><use href="#paint"/></svg></div><span class="n">Painter</span></div>
+              <div class="svc-tile t7"><div class="glyph"><svg><use href="#truck"/></svg></div><span class="n">Removals</span></div>
+              <div class="svc-tile t8"><div class="glyph"><svg><use href="#box"/></svg></div><span class="n">Assembly</span></div>
+            </div>
+            <div class="trust-strip">
+              <div class="tr"><span class="n">2,500<span class="u">+</span></span><div class="t">RECI VERIFIED</div></div>
+              <div class="tr"><span class="n">4.9</span><div class="t">GOOGLE STARS</div></div>
+              <div class="tr"><span class="n">€2<span class="u">M</span></span><div class="t">LIABILITY</div></div>
+            </div>
+            <div class="bottom-nav">
+              <div class="nav-item active"><div class="g"><svg><use href="#home"/></svg></div><span class="n">HOME</span></div>
+              <div class="nav-item"><div class="g"><svg style="color:var(--ink-3)"><use href="#clipboard"/></svg></div><span class="n">JOBS</span></div>
+              <div class="nav-item"><div class="g"><svg style="color:var(--ink-3)"><use href="#chat"/></svg></div><span class="n">CHAT</span></div>
+              <div class="nav-item"><div class="g"><svg style="color:var(--ink-3)"><use href="#user"/></svg></div><span class="n">ME</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-copy">
+        <div class="num">01 / 03 · HOME</div>
+        <h3>The first fold does five things at once.</h3>
+        <p class="lede">Location, greeting, search, AI hook, and category grid — all above the fold, none competing for attention. The trick is the AI banner: it's the darkest thing on the page, so the eye lands there without being pushed.</p>
+
+        <div class="feature-row">
+          <div class="ic"><svg width="18" height="18"><use href="#spark"/></svg></div>
+          <div>
+            <h5>The AI banner is the hero</h5>
+            <p>Deep navy against warm paper, a single emerald sparkle, and copy that names the outcome ("Fair price in 30 seconds"). It's the one glowing thing on a calm page — you can't miss it.</p>
+          </div>
+        </div>
+
+        <div class="feature-row amber">
+          <div class="ic"><svg width="18" height="18"><use href="#bolt"/></svg></div>
+          <div>
+            <h5>Each service tile has its own personality</h5>
+            <p>Electrician is deep blue (industrial), Plumber is teal (water), Heating is warm orange (fire), Gardener is forest green. Colour does the work of remembering — you learn the shapes.</p>
+          </div>
+        </div>
+
+        <div class="feature-row navy">
+          <div class="ic"><svg width="18" height="18"><use href="#shield"/></svg></div>
+          <div>
+            <h5>Trust in numbers, not badges</h5>
+            <p>"2,500+ RECI verified" beats a generic "Trusted" seal. The strip uses the display serif for the numbers so they read like answers, not decoration.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN DETAIL: DESCRIBE & PRICE ─── -->
+<section class="section" id="estimate" style="background: linear-gradient(180deg, transparent, var(--paper-2) 30%, transparent 100%);">
+  <div class="wrap">
+    <div class="section-lead">
+      <div class="kicker">02 / 03 · Describe &amp; Price</div>
+      <h2>The moment the price appears.</h2>
+      <p>Two photos and a sentence in; a fair price band out. This is the single interaction that separates FairFix from every other Irish tradesman platform.</p>
+    </div>
+
+    <div class="screen-detail reverse">
+      <div class="detail-copy">
+        <div class="num">02 / 03 · DESCRIBE &amp; PRICE</div>
+        <h3>A range, a confidence score, a receipt.</h3>
+        <p class="lede">The AI never diagnoses the fault (that would create liability). It shows the price range similar jobs settled at, with a confidence percentage and a sample size — a fair, verifiable, non-promissory answer.</p>
+
+        <div class="feature-row">
+          <div class="ic"><svg width="18" height="18"><use href="#spark"/></svg></div>
+          <div>
+            <h5>The estimate card is dark on purpose</h5>
+            <p>Everything else on the screen is warm paper. The estimate is deep navy with an emerald glow — the app's most important object gets its most important treatment.</p>
+          </div>
+        </div>
+
+        <div class="feature-row amber">
+          <div class="ic"><span style="font-family:'Iowan Old Style',serif;font-size:22px;line-height:1">€</span></div>
+          <div>
+            <h5>Numbers wear the serif</h5>
+            <p>€90 – €160. The Old Style serif shows up here for the first time on the screen — that visual weight tells the user this is <em>the answer</em>, not a suggestion.</p>
+          </div>
+        </div>
+
+        <div class="feature-row rose">
+          <div class="ic"><svg width="18" height="18"><use href="#camera"/></svg></div>
+          <div>
+            <h5>Photo slots that actually look like photos</h5>
+            <p>Filled slots show soft, colourful placeholder gradients so the user knows they've done the step. Empty slots stay dashed and quiet. No stock icons pretending to be images.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-phone">
+        <div class="phone-frame large">
+          <div class="screen describe-screen">
+            <div class="status-bar">
+              <span>9:41</span>
+              <div class="r"><svg width="16" height="10"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+            </div>
+            <div class="top-strip">
+              <div class="loc-pill"><svg width="12" height="12"><use href="#arrow" style="transform:rotate(180deg)"/></svg>Back</div>
+              <div style="font-family:'Iowan Old Style',serif; font-size:14px; color:var(--ink-2)">Fault-finding</div>
+              <div class="icon-btn avatar">T</div>
+            </div>
+            <div class="step-progress">
+              <span class="pill">STEP 2 / 4</span>
+              <span class="track"><span class="fill"></span></span>
+            </div>
+            <div class="desc-title">
+              <h1>Two sockets in the kitchen stopped working.</h1>
+              <p>Kettle tripped the fuse. Reset the board — still dead.</p>
+            </div>
+            <div class="desc-textarea">
+              After the kettle tripped the fuse, two sockets on the kitchen wall stopped working. Board reset but no power.
+            </div>
+            <div class="desc-photos">
+              <div class="photo-slot p1"></div>
+              <div class="photo-slot p2"></div>
+              <div class="photo-slot empty"><svg width="18" height="18"><use href="#camera"/></svg></div>
+              <div class="photo-slot empty">＋</div>
+            </div>
+            <div class="ai-estimate-card">
+              <div class="row-t">
+                <span class="h"><svg width="10" height="10"><use href="#spark"/></svg> AI ESTIMATE</span>
+                <span class="conf">CONFIDENCE 82%</span>
+              </div>
+              <div class="range">€90<span class="dash">–</span>€160</div>
+              <div class="note">Based on 340 similar jobs completed in Dublin. Not a diagnosis — just what similar work has settled at.</div>
+              <div class="band"></div>
+            </div>
+            <div class="offer-slider">
+              <div class="row">
+                <span class="l">YOUR OFFER</span>
+                <span class="v">€120</span>
+              </div>
+              <div class="slider-track">
+                <span class="slider-fill"></span>
+                <span class="slider-knob"></span>
+              </div>
+            </div>
+            <div class="cta-bar">
+              <span>Send to nearby electricians</span>
+              <span class="arr"><svg width="20" height="16"><use href="#arrow"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREEN DETAIL: MATCHES ─── -->
+<section class="section" id="matches">
+  <div class="wrap">
+    <div class="section-lead">
+      <div class="kicker">03 / 03 · Matches</div>
+      <h2>Real people, replying live.</h2>
+      <p>Offers arrive over minutes. The header turns wait into momentum. One "Top Match" is highlighted so decision-fatigued homeowners get a good default without losing choice.</p>
+    </div>
+
+    <div class="screen-detail">
+      <div class="detail-phone">
+        <div class="phone-frame large">
+          <div class="screen">
+            <div class="status-bar">
+              <span>9:41</span>
+              <div class="r"><svg width="16" height="10"><use href="#signal"/></svg><svg width="14" height="10"><use href="#wifi"/></svg><svg width="20" height="10"><use href="#battery"/></svg></div>
+            </div>
+            <div class="top-strip">
+              <div class="loc-pill"><svg width="12" height="12"><use href="#arrow" style="transform:rotate(180deg)"/></svg>Back</div>
+              <div class="icon-btn"><svg width="14" height="14" style="color:var(--navy-1)"><use href="#bell"/></svg></div>
+            </div>
+            <div class="match-title">
+              <h1>3 offers in 4 minutes</h1>
+              <p><span class="live"></span> Live — still coming in</p>
+            </div>
+            <div class="filter-chips">
+              <span class="fchip on">Nearest</span>
+              <span class="fchip">Rating</span>
+              <span class="fchip">Reply time</span>
+              <span class="fchip">Accepted only</span>
+            </div>
+            <div class="match-list">
+              <div class="match-card top">
+                <div class="mc-row">
+                  <div class="mc-avatar a1">JB<span class="online"></span></div>
+                  <div>
+                    <div class="mc-name">John Byrne</div>
+                    <div class="mc-meta">
+                      <svg class="star" width="10" height="10"><use href="#star"/></svg>4.9 (127)
+                      <span class="sep"></span>2.3 km
+                      <span class="sep"></span>Replied 3 min
+                    </div>
+                  </div>
+                  <div class="mc-price"><span class="n">€120</span><span class="status-label acc">ACCEPTED</span></div>
+                </div>
+                <div class="mc-badges">
+                  <span class="mc-badge verified">RECI</span>
+                  <span class="mc-badge">Safe Pass</span>
+                  <span class="mc-badge">€2M liability</span>
+                </div>
+              </div>
+
+              <div class="match-card">
+                <div class="mc-row">
+                  <div class="mc-avatar a2">SM</div>
+                  <div>
+                    <div class="mc-name">Sean Murphy</div>
+                    <div class="mc-meta">
+                      <svg class="star" width="10" height="10"><use href="#star"/></svg>4.8 (89)
+                      <span class="sep"></span>4.1 km
+                      <span class="sep"></span>Replied 8 min
+                    </div>
+                  </div>
+                  <div class="mc-price"><span class="n">€145</span><span class="status-label cnt">COUNTER</span></div>
+                </div>
+                <div class="mc-message">"Sockets on that ring often need the RCD replaced — that's the €25 over your offer."</div>
+                <div class="mc-badges">
+                  <span class="mc-badge verified">RECI</span>
+                  <span class="mc-badge">RGII</span>
+                </div>
+              </div>
+
+              <div class="match-card">
+                <div class="mc-row">
+                  <div class="mc-avatar a3">CK</div>
+                  <div>
+                    <div class="mc-name">Ciarán Kelly</div>
+                    <div class="mc-meta">
+                      <svg class="star" width="10" height="10"><use href="#star"/></svg>5.0 (34)
+                      <span class="sep"></span>6.0 km
+                      <span class="sep"></span>Replied 12 min
+                    </div>
+                  </div>
+                  <div class="mc-price"><span class="n">€115</span><span class="status-label acc">ACCEPTED</span></div>
+                </div>
+                <div class="mc-badges">
+                  <span class="mc-badge verified">RECI</span>
+                  <span class="mc-badge">New this month</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-copy">
+        <div class="num">03 / 03 · MATCHES</div>
+        <h3>Choosing a person, not scrolling through spam.</h3>
+        <p class="lede">Bark shows twenty. Airtasker shows fifty. FairFix shows three, one of them highlighted. Fewer, better, faster — that's the whole promise on this screen.</p>
+
+        <div class="feature-row">
+          <div class="ic"><svg width="18" height="18"><use href="#user"/></svg></div>
+          <div>
+            <h5>Avatars have colour, not photos</h5>
+            <p>Initials on branded gradients. No stock headshots, no privacy issues, no cold-start problem when a new tradesman joins without a photo.</p>
+          </div>
+        </div>
+
+        <div class="feature-row amber">
+          <div class="ic"><svg width="18" height="18"><use href="#star"/></svg></div>
+          <div>
+            <h5>The Top Match earns its glow</h5>
+            <p>An emerald ring and a soft green wash. Not everyone gets highlighted — one card, one moment of "here's my pick." Removes the paralysis of three good choices.</p>
+          </div>
+        </div>
+
+        <div class="feature-row rose">
+          <div class="ic"><svg width="18" height="18"><use href="#chat"/></svg></div>
+          <div>
+            <h5>Counters show reasoning</h5>
+            <p>When Sean asks for €25 more, he explains why. The message sits on an amber left rule so it reads as "attention" — not a complaint, an invitation to consider.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── ILLUSTRATIONS ─── -->
+<section class="illustrations">
+  <div class="wrap">
+    <div class="section-lead">
+      <div class="kicker">Illustration language</div>
+      <h2>Colourful, categorical, calm.</h2>
+      <p>Every category earns its own palette. Reused across tiles, badges, empty states and marketing — one system, everywhere.</p>
+    </div>
+
+    <div class="illus-grid">
+      <div class="illus-card a">
+        <div class="glow"></div>
+        <span class="label">01 · ELECTRIC</span>
+        <div class="art"><svg width="80" height="80" style="color:#34D399"><use href="#bolt"/></svg></div>
+        <div class="name">Deep navy,<br>emerald spark.</div>
+      </div>
+      <div class="illus-card b">
+        <div class="glow"></div>
+        <span class="label">02 · WATER</span>
+        <div class="art"><svg width="80" height="80" style="color:white"><use href="#wrench"/></svg></div>
+        <div class="name">Teal, tools,<br>working white.</div>
+      </div>
+      <div class="illus-card c">
+        <div class="glow"></div>
+        <span class="label">03 · HEAT</span>
+        <div class="art"><svg width="80" height="80" style="color:#FCD34D"><use href="#flame"/></svg></div>
+        <div class="name">Coral,<br>flame-lit.</div>
+      </div>
+      <div class="illus-card d">
+        <div class="glow"></div>
+        <span class="label">04 · CARE</span>
+        <div class="art"><svg width="80" height="80" style="color:#E6A429"><use href="#broom"/></svg></div>
+        <div class="name">Plum, gold,<br>clean lines.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DESIGN SYSTEM ─── -->
+<section class="palette-section" id="system">
+  <div class="wrap">
+    <div class="section-lead">
+      <div class="kicker">The palette</div>
+      <h2>Eight colours. Every one has a job.</h2>
+      <p>Not a rainbow. Every hex earns its place — navy for authority, emerald for progress, coral only for emergencies, amber only for earned attention. Nothing wanders.</p>
+    </div>
+
+    <div class="palette-grid">
+      <div class="color-swatch sw-navy">
+        <div>
+          <div class="role">Authority</div>
+          <h6>Ink Navy</h6>
+        </div>
+        <div>
+          <div class="hex">#0B1F33</div>
+          <div class="use">All text, primary buttons, the AI card. The colour trust is built with.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-paper">
+        <div>
+          <div class="role">Ground</div>
+          <h6>Warm Paper</h6>
+        </div>
+        <div>
+          <div class="hex">#FBF7EE</div>
+          <div class="use">The default background. Warmer than #FFF — reads as considered, not sterile.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-emerald">
+        <div>
+          <div class="role">Accent</div>
+          <h6>Emerald</h6>
+        </div>
+        <div>
+          <div class="hex">#10B981</div>
+          <div class="use">Confirmation, progress, the "top match" glow. Subtle Irish nod.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-coral">
+        <div>
+          <div class="role">Signal</div>
+          <h6>Coral</h6>
+        </div>
+        <div>
+          <div class="hex">#F26D5B</div>
+          <div class="use">Emergencies only. The one thing on the app allowed to shout.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-amber">
+        <div>
+          <div class="role">Attention</div>
+          <h6>Amber</h6>
+        </div>
+        <div>
+          <div class="hex">#E6A429</div>
+          <div class="use">Ratings, counter-offers, "look here" moments that aren't emergencies.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-sky">
+        <div>
+          <div class="role">Ambient</div>
+          <h6>Sky Wash</h6>
+        </div>
+        <div>
+          <div class="hex">#C5E8F5</div>
+          <div class="use">Header gradients, decorative glows. Never a foreground colour.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-plum">
+        <div>
+          <div class="role">Category</div>
+          <h6>Plum</h6>
+        </div>
+        <div>
+          <div class="hex">#4B2E5B</div>
+          <div class="use">Cleaning &amp; care category tiles. Warm, calm, a little indulgent.</div>
+        </div>
+      </div>
+      <div class="color-swatch sw-forest">
+        <div>
+          <div class="role">Category</div>
+          <h6>Forest</h6>
+        </div>
+        <div>
+          <div class="hex">#2E5030</div>
+          <div class="use">Garden, landscaping, outdoors. Never used for text.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── NEXT ─── -->
+<section class="next-step">
+  <div class="wrap">
+    <div class="kicker">— Approval unlocks build</div>
+    <h2>If this is the look, we start coding tomorrow.</h2>
+    <p>Wireframes gave us the skeleton. This gives us the skin. Approve the direction, and we move to buildable Figma files and the first React Native screens.</p>
+    <div class="next-actions">
+      <a href="#" class="btn-big">Approve the direction <svg width="14" height="14"><use href="#arrow"/></svg></a>
+      <a href="#" class="btn-big alt">Ask for a variant</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  FAIRFIX.IE · VISUAL PREVIEW v1 · CLAUDE ✕ TAREK · AUG 2026
+</footer>

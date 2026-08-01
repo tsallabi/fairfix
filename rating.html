@@ -1,0 +1,1809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FairFix — Rating System Prototype</title>
+<style>
+  :root {
+    --paper: #FBF7EE;
+    --paper-2: #F3ECD9;
+    --ink: #0B1F33;
+    --ink-2: #34455A;
+    --ink-3: #7A879A;
+    --line: #E3DAC3;
+    --brand-1: #0B7F58;
+    --brand-2: #10B981;
+    --brand-3: #34D399;
+    --brand-glow: rgba(16,185,129,0.35);
+    --navy-1: #0B1F33;
+    --navy-2: #14314D;
+    --coral: #F26D5B;
+    --amber: #E6A429;
+    --amber-glow: rgba(230,164,41,0.28);
+    --stage: #0A0F16;
+    --stage-2: #131A24;
+    --card-elev: 0 1px 0 rgba(11,31,51,0.04), 0 8px 24px rgba(11,31,51,0.06);
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0F1620;
+      --paper-2: #16202C;
+      --ink: #EAF0F8;
+      --ink-2: #B8C4D3;
+      --ink-3: #6C7B90;
+      --line: #24303F;
+      --stage: #050810;
+      --stage-2: #0B1220;
+      --card-elev: 0 1px 0 rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F1620;
+    --paper-2: #16202C;
+    --ink: #EAF0F8;
+    --ink-2: #B8C4D3;
+    --ink-3: #6C7B90;
+    --line: #24303F;
+    --stage: #050810;
+    --stage-2: #0B1220;
+    --card-elev: 0 1px 0 rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4);
+  }
+  :root[data-theme="light"] {
+    --paper: #FBF7EE;
+    --paper-2: #F3ECD9;
+    --ink: #0B1F33;
+    --ink-2: #34455A;
+    --ink-3: #7A879A;
+    --line: #E3DAC3;
+    --stage: #0A0F16;
+    --stage-2: #131A24;
+    --card-elev: 0 1px 0 rgba(11,31,51,0.04), 0 8px 24px rgba(11,31,51,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 700px at 15% -10%, rgba(16,185,129,0.10), transparent 60%),
+      radial-gradient(900px 600px at 90% 110%, rgba(230,164,41,0.09), transparent 60%),
+      linear-gradient(180deg, var(--stage) 0%, var(--stage-2) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 88px 20px 120px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Top controls */
+  .top-bar {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    z-index: 100;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100vw - 32px);
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: #EAF0F8;
+    border: 1px solid rgba(255,255,255,0.10);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .pill-label {
+    color: #8FA3BE;
+    padding-right: 4px;
+    border-right: 1px solid rgba(255,255,255,0.12);
+    margin-right: 4px;
+  }
+  .nav-chips { padding: 6px 6px; gap: 4px; }
+  .nav-chips .chip {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-family: var(--serif);
+    font-size: 13px;
+    color: #EAF0F8;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+  .nav-chips .chip:hover { background: rgba(255,255,255,0.08); }
+  .nav-chips .chip.active {
+    background: var(--amber);
+    color: #1a1200;
+    font-weight: 600;
+  }
+  .toggle-btn {
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    color: #EAF0F8;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .toggle-btn .role-opt { opacity: 0.5; padding: 0 4px; transition: opacity 160ms ease, color 160ms ease; }
+  .toggle-btn .role-opt.active { opacity: 1; color: var(--amber); }
+  .toggle-btn .role-sep { color: #6C7B90; }
+  .theme-btn {
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    color: #EAF0F8;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 999px;
+    padding: 8px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Phone stage */
+  .stage {
+    width: 100%;
+    max-width: 430px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .caption {
+    color: #8FA3BE;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .caption .caption-num {
+    color: var(--amber);
+    font-family: var(--serif);
+    font-size: 13px;
+    text-transform: none;
+    margin-right: 4px;
+  }
+
+  .phone {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    max-width: calc(100vw - 32px);
+    border-radius: 52px;
+    padding: 12px;
+    background: linear-gradient(180deg, #1a2230 0%, #0d131c 100%);
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,0.04),
+      0 30px 80px rgba(0,0,0,0.6),
+      0 8px 24px rgba(0,0,0,0.4);
+  }
+  @media (max-width: 430px) {
+    .phone {
+      height: 780px;
+      border-radius: 40px;
+      padding: 8px;
+    }
+  }
+
+  .screen-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 42px;
+    overflow: hidden;
+    background: var(--paper);
+    isolation: isolate;
+  }
+
+  /* iOS notch */
+  .notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 28px;
+    background: #05080D;
+    border-radius: 999px;
+    z-index: 60;
+  }
+  .status-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 44px;
+    padding: 12px 28px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 55;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    pointer-events: none;
+  }
+  .status-bar .status-icons {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* Screens */
+  .screen {
+    position: absolute;
+    inset: 0;
+    padding-top: 44px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    color: var(--ink);
+    opacity: 0;
+    transform: translateX(100%);
+    pointer-events: none;
+    transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1), opacity 320ms ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    z-index: 20;
+  }
+  .screen.exit-left {
+    opacity: 1;
+    transform: translateX(-30%);
+    pointer-events: none;
+    z-index: 10;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen { transition: none; }
+  }
+
+  .screen::-webkit-scrollbar { width: 0; }
+
+  /* App chrome */
+  .app-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 18px 4px;
+    min-height: 40px;
+  }
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .app-nav-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .screen-body {
+    padding: 8px 22px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .screen-body.tight { gap: 14px; }
+
+  /* Typographic helpers */
+  .display {
+    font-family: var(--serif);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    font-feature-settings: "lnum", "kern";
+  }
+  .display.xl { font-size: 34px; }
+  .display.lg { font-size: 28px; }
+  .display.md { font-size: 22px; }
+  .display.sm { font-size: 18px; }
+  .num { font-family: var(--serif); font-feature-settings: "lnum", "tnum"; }
+  .mono {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .mono.plain { text-transform: none; letter-spacing: 0.02em; }
+  .body {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+  .subtle { color: var(--ink-3); }
+
+  /* Shared components */
+  .card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: var(--card-elev);
+  }
+  .card.inset { padding: 16px; }
+  .divider {
+    height: 1px;
+    background: var(--line);
+    width: 100%;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 140ms ease, background 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .btn-primary {
+    background: var(--brand-1);
+    color: #F5FFF8;
+    box-shadow: 0 6px 18px -6px var(--brand-glow), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .btn-primary:hover { background: var(--brand-2); }
+  .btn-primary[disabled] {
+    background: var(--paper-2);
+    color: var(--ink-3);
+    box-shadow: none;
+    border-color: var(--line);
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover { background: var(--paper-2); }
+  .btn-ghost { background: transparent; color: var(--ink-3); }
+  .btn-block { width: 100%; }
+
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: white;
+    font-family: var(--serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+  }
+  .avatar-rose {
+    background: linear-gradient(135deg, #ffb199 0%, #ff6f61 60%, #d63d5b 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 14px rgba(214,61,91,0.35);
+  }
+  .avatar-navy {
+    background: linear-gradient(135deg, #4c6a8f 0%, #14314D 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .avatar-sage {
+    background: linear-gradient(135deg, #67b195 0%, #0B7F58 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  /* Screen 1 — celebrate */
+  .check-hero {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 4px;
+  }
+  .check-circle {
+    width: 84px;
+    height: 84px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--brand-3), var(--brand-1));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow:
+      0 0 0 8px rgba(16,185,129,0.10),
+      0 0 0 16px rgba(16,185,129,0.05),
+      0 12px 30px -6px var(--brand-glow);
+    animation: pop 480ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  }
+  @keyframes pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .check-circle { animation: none; } }
+
+  .job-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .job-summary-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .job-summary-head .who .display { line-height: 1.15; }
+  .job-summary-head .who .mono { margin-top: 4px; display: block; }
+  .job-summary-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+  }
+  .meta-cell .mono { display: block; margin-bottom: 3px; }
+  .meta-cell .num { font-size: 18px; color: var(--ink); }
+  .meta-cell .body { font-size: 14px; color: var(--ink); }
+
+  .footnote-strip {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(180deg, transparent, rgba(230,164,41,0.05));
+  }
+  .footnote-strip .mono { color: var(--ink-3); font-size: 10px; }
+
+  /* Screen 2 — rating grid */
+  .rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    padding-bottom: 4px;
+  }
+  .rating-header .title-block .mono { display: block; margin-top: 6px; }
+  .live-overall {
+    text-align: right;
+    line-height: 1;
+  }
+  .live-overall .mono { display: block; margin-bottom: 4px; color: var(--amber); }
+  .live-overall .num {
+    font-size: 42px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    transition: color 200ms ease;
+  }
+  .live-overall.filled .num { color: var(--amber); }
+
+  .dimension-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .dimension {
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dimension:last-child { border-bottom: 0; }
+  .dimension .label-block .display { font-size: 17px; margin-bottom: 3px; }
+  .dimension .label-block .body { font-size: 13px; color: var(--ink-3); }
+
+  .stars {
+    display: inline-flex;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px;
+    margin: -4px;
+  }
+  .star {
+    width: 32px;
+    height: 32px;
+    color: var(--line);
+    transition: color 200ms ease, transform 200ms cubic-bezier(0.34, 1.4, 0.64, 1);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .star.filled { color: var(--amber); }
+  .star.pop { transform: scale(1.25); }
+  @media (prefers-reduced-motion: reduce) {
+    .star, .star.pop { transition: color 100ms ease; transform: none; }
+  }
+
+  .continue-dock {
+    padding: 16px 22px 22px;
+    background: linear-gradient(180deg, transparent, var(--paper) 30%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .continue-dock .mono {
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 10px;
+  }
+
+  /* Screen 3 — written review */
+  .textarea-shell {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+  .textarea-shell:focus-within {
+    border-color: var(--brand-2);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+  }
+  .textarea-shell textarea {
+    width: 100%;
+    background: transparent;
+    color: var(--ink);
+    border: 0;
+    outline: 0;
+    resize: none;
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 120px;
+  }
+  .textarea-shell textarea::placeholder { color: var(--ink-3); }
+  .textarea-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+  }
+  .textarea-footer .mono { font-size: 10px; }
+  .textarea-footer .num { font-size: 12px; color: var(--ink-2); }
+
+  .prompt-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  .prompt-row .mono { font-size: 10px; }
+  .prompt-row .dot { color: var(--ink-3); margin: 0 2px; }
+
+  .tag-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  }
+  .tag:hover { border-color: var(--amber); color: var(--ink); }
+  .tag.used {
+    background: rgba(230,164,41,0.12);
+    border-color: var(--amber);
+    color: var(--ink);
+  }
+
+  .actions-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+  }
+
+  /* Screen 4 — success */
+  .success-hero {
+    padding: 22px 0 4px;
+    display: flex;
+    justify-content: center;
+  }
+  .movement-line {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.20);
+    border-radius: 999px;
+    color: var(--ink);
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .movement-line .num { font-size: 16px; }
+  .movement-line .mono { color: var(--brand-1); }
+  .movement-line .arrow { color: var(--brand-1); }
+
+  .preview-card {
+    position: relative;
+  }
+  .preview-card .preview-badge {
+    position: absolute;
+    top: -10px;
+    left: 18px;
+    background: var(--paper);
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .preview-quote {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--ink);
+    padding: 6px 0;
+  }
+  .preview-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  .stars-inline { display: inline-flex; gap: 2px; align-items: center; }
+  .stars-inline svg { width: 14px; height: 14px; color: var(--amber); }
+
+  /* Screen 5 — profile */
+  .profile-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0 8px;
+    text-align: center;
+  }
+  .profile-hero .badges {
+    display: inline-flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .badge-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(16,185,129,0.10);
+    border: 1px solid rgba(16,185,129,0.28);
+    color: var(--brand-1);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+  .badge-verified svg { width: 12px; height: 12px; }
+
+  .overall-block {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .overall-block .num { font-size: 56px; line-height: 1; color: var(--ink); letter-spacing: -0.03em; }
+  .overall-block .stars-inline svg { width: 18px; height: 18px; }
+  .overall-sub {
+    text-align: center;
+    display: block;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    margin-top: -4px;
+  }
+  .overall-sub .num { font-size: 11px; color: var(--brand-1); text-transform: none; margin-left: 2px; }
+
+  .breakdown-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .breakdown-row:last-child { border-bottom: 0; }
+  .breakdown-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .breakdown-label .body { font-size: 14px; color: var(--ink); font-weight: 500; }
+  .bar {
+    height: 6px;
+    width: 100%;
+    background: var(--paper);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-2), var(--brand-3));
+    border-radius: 999px;
+  }
+  .breakdown-row .num { font-size: 18px; color: var(--ink); font-family: var(--serif); min-width: 34px; text-align: right; }
+
+  .stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .stat-tile {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-tile .num { font-size: 22px; color: var(--ink); line-height: 1; }
+  .stat-tile .mono { font-size: 9px; }
+
+  .chip-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .cert-chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .cert-chip svg { width: 11px; height: 11px; color: var(--brand-1); }
+
+  .review-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .review-item:last-child { border-bottom: 0; }
+  .review-item .rev-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .review-item .rev-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .review-item .rev-quote {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .review-item.your-review {
+    background: linear-gradient(180deg, rgba(230,164,41,0.10), transparent);
+    border-radius: 12px;
+    padding: 14px 12px;
+    margin: 4px -12px;
+    border-bottom: 0;
+    border: 1px solid rgba(230,164,41,0.28);
+  }
+  .review-item .your-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--amber);
+    color: #1a1200;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+
+  .sticky-cta {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent, var(--paper) 35%);
+    padding: 20px 0 6px;
+    margin-top: 8px;
+  }
+
+  /* Utility */
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .col { display: flex; flex-direction: column; gap: 8px; }
+  .grow { flex-grow: 1; }
+
+  /* Star cluster for tradesman preview in Screen 5 top */
+  .tag-note-mono {
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  /* Amber glow accent for numbers */
+  .amber-num { color: var(--amber); }
+
+</style>
+</head>
+<body>
+
+<!-- SVG icon defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2.6l2.87 5.82 6.42.93-4.65 4.53 1.1 6.4L12 17.27 6.26 20.28l1.1-6.4L2.71 9.35l6.42-.93L12 2.6z"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4 12.5l5 5L20 6.5"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3l8 3v6c0 4.5-3.4 8.5-8 9-4.6-.5-8-4.5-8-9V6l8-3z"/>
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/>
+    </symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/>
+    </symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/>
+    </symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2l1.6 4.6L18 8l-4.4 1.4L12 14l-1.6-4.6L6 8l4.4-1.4L12 2zM19 14l.9 2.4L22 17l-2.1.6L19 20l-.9-2.4L16 17l2.1-.6L19 14zM5 15l.8 2.2L8 18l-2.2.8L5 21l-.8-2.2L2 18l2.2-.8L5 15z"/>
+    </symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 21V4M5 4h12l-2 4 2 4H5"/>
+    </symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M4 5h16v11H8l-4 4V5z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>
+    </symbol>
+    <symbol id="i-more" viewBox="0 0 24 24">
+      <circle cx="6" cy="12" r="1.6" fill="currentColor"/>
+      <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+      <circle cx="18" cy="12" r="1.6" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M3 10h18M8 3v4M16 3v4"/>
+    </symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/>
+    </symbol>
+    <symbol id="i-share" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v13M12 3l-4 4M12 3l4 4M5 13v6h14v-6"/>
+    </symbol>
+    <symbol id="i-signal" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M2 18h3v3H2zM7 14h3v7H7zM12 10h3v11h-3zM17 6h3v15h-3z"/>
+    </symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M2 9c6-5 14-5 20 0M5 13c4-3 10-3 14 0M8 17c2-1.5 6-1.5 8 0"/>
+      <circle cx="12" cy="20" r="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-battery" viewBox="0 0 24 24">
+      <rect x="2" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="4" y="9" width="14" height="6" rx="1" fill="currentColor"/>
+      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M22 10v4"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- Top navigator -->
+<div class="top-bar" role="toolbar" aria-label="Prototype navigation">
+  <div class="pill nav-chips" role="tablist" aria-label="Jump to screen">
+    <span class="pill-label">Screen</span>
+    <button class="chip" data-goto="1" aria-label="Screen 1">1</button>
+    <button class="chip" data-goto="2" aria-label="Screen 2">2</button>
+    <button class="chip" data-goto="3" aria-label="Screen 3">3</button>
+    <button class="chip" data-goto="4" aria-label="Screen 4">4</button>
+    <button class="chip" data-goto="5" aria-label="Screen 5">5</button>
+    <button class="chip" data-goto="6" aria-label="Screen 6">6</button>
+  </div>
+  <button class="toggle-btn" id="role-toggle" aria-label="Switch view">
+    <span class="mono" style="text-transform:uppercase; letter-spacing: 0.10em;">View as</span>
+    <span class="role-opt active" data-role="homeowner">Homeowner</span>
+    <span class="role-sep">/</span>
+    <span class="role-opt" data-role="tradesman">Tradesman</span>
+  </button>
+  <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+    <svg width="14" height="14" aria-hidden="true"><use href="#i-sun"/></svg>
+    <span id="theme-label">Light</span>
+  </button>
+</div>
+
+<div class="stage">
+  <div class="caption">
+    <span class="caption-num" id="cap-num">1</span>
+    <span id="cap-label">Job complete · rate prompt</span>
+  </div>
+
+  <div class="phone" role="application" aria-label="FairFix phone prototype">
+    <div class="screen-container" id="screens">
+
+      <div class="notch" aria-hidden="true"></div>
+      <div class="status-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="14" height="14"><use href="#i-signal"/></svg>
+          <svg width="14" height="14"><use href="#i-wifi"/></svg>
+          <svg width="22" height="14"><use href="#i-battery"/></svg>
+        </span>
+      </div>
+
+      <!-- =============== SCREEN 1 =============== -->
+      <section class="screen active" data-screen="1" aria-label="Screen 1: How did it go">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Close">
+            <svg width="20" height="20"><use href="#i-close"/></svg>
+          </button>
+          <span class="app-nav-title">Job wrap-up</span>
+          <button class="icon-btn" aria-label="More">
+            <svg width="20" height="20"><use href="#i-more"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body">
+          <div class="check-hero">
+            <div class="check-circle" aria-hidden="true">
+              <svg width="42" height="42"><use href="#i-check"/></svg>
+            </div>
+          </div>
+
+          <div style="text-align:center; display:flex; flex-direction:column; gap:8px;">
+            <h1 class="display xl" id="s1-headline">How did John do?</h1>
+            <p class="body subtle" style="max-width: 300px; margin: 0 auto;">
+              Your rating helps 2,500+ Irish tradesmen keep improving.
+            </p>
+          </div>
+
+          <div class="card job-summary">
+            <div class="job-summary-head">
+              <div class="avatar avatar-rose" style="width:56px; height:56px; font-size:22px;" id="s1-avatar">JB</div>
+              <div class="who grow">
+                <div class="display sm" id="s1-name">John Byrne</div>
+                <span class="mono" id="s1-service">Electrician · Kitchen sockets</span>
+              </div>
+              <span class="tag-note-mono" style="text-align:right;">
+                <span class="num" style="color:var(--brand-1); font-size:14px;">Paid</span>
+              </span>
+            </div>
+            <div class="divider"></div>
+            <div class="job-summary-meta">
+              <div class="meta-cell">
+                <span class="mono">Completed</span>
+                <span class="body">Today · 4:20 PM</span>
+              </div>
+              <div class="meta-cell">
+                <span class="mono">Duration</span>
+                <span class="body num">1 h 15 m</span>
+              </div>
+              <div class="meta-cell">
+                <span class="mono">Job</span>
+                <span class="body num">€120.00</span>
+              </div>
+              <div class="meta-cell">
+                <span class="mono">Inspection</span>
+                <span class="body num">€15.00</span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row-between" style="padding-top: 4px;">
+              <span class="mono">Total paid</span>
+              <span class="num" style="font-size:22px; color:var(--ink);">€135.00</span>
+            </div>
+          </div>
+
+          <div class="col" style="gap: 10px;">
+            <button class="btn btn-primary btn-block" data-go="2" aria-label="Start rating">
+              <svg width="18" height="18"><use href="#i-star"/></svg>
+              Rate 1-min job
+            </button>
+            <button class="btn btn-ghost btn-block" aria-label="Remind me later">Remind me later</button>
+          </div>
+        </div>
+
+        <div class="footnote-strip" style="margin-top:auto;">
+          <span class="mono plain">You can't book another tradesman until you rate this job. Fair to everyone.</span>
+        </div>
+      </section>
+
+      <!-- =============== SCREEN 2 =============== -->
+      <section class="screen" data-screen="2" aria-label="Screen 2: Rate five dimensions">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Back" data-go="1">
+            <svg width="20" height="20"><use href="#i-arrow-left"/></svg>
+          </button>
+          <span class="app-nav-title" id="s2-title-mono">Rating · 5 dimensions</span>
+          <button class="icon-btn" aria-label="Help">
+            <svg width="20" height="20"><use href="#i-sparkle"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body tight">
+          <div class="rating-header">
+            <div class="title-block">
+              <h1 class="display lg" id="s2-title">Rate John Byrne</h1>
+              <span class="mono">Tap a star for each</span>
+            </div>
+            <div class="live-overall" id="s2-live" aria-live="polite">
+              <span class="mono">Overall</span>
+              <span class="num" id="s2-overall">—</span>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 8px 16px;">
+            <div class="dimension-list" id="dimension-list">
+              <!-- dimensions injected here -->
+            </div>
+          </div>
+
+          <div class="col" style="gap:6px;">
+            <div class="row" style="justify-content:center; gap: 6px;">
+              <span class="mono">Progress</span>
+              <span class="mono num" id="s2-progress" style="color:var(--amber); font-size:11px;">0 / 5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="continue-dock" style="margin-top:auto;">
+          <button class="btn btn-primary btn-block" id="s2-continue" disabled data-go="3">
+            Continue
+            <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+          </button>
+          <span class="mono">Ratings are anonymous to the tradesman until the job cycle closes.</span>
+        </div>
+      </section>
+
+      <!-- =============== SCREEN 3 =============== -->
+      <section class="screen" data-screen="3" aria-label="Screen 3: Written review">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Back" data-go="2">
+            <svg width="20" height="20"><use href="#i-arrow-left"/></svg>
+          </button>
+          <span class="app-nav-title">Step 2 of 2</span>
+          <button class="icon-btn" aria-label="Close">
+            <svg width="20" height="20"><use href="#i-close"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body">
+          <div class="col" style="gap:6px;">
+            <h1 class="display lg">Anything you'd like to add?</h1>
+            <span class="body subtle" style="font-size:14px;">Optional. A short line helps the next homeowner decide.</span>
+          </div>
+
+          <div class="textarea-shell">
+            <textarea id="review-text" placeholder="John came bang on time and had a look under the sink first before touching the sockets. Cleaned up after himself." maxlength="500"></textarea>
+            <div class="textarea-footer">
+              <div class="prompt-row">
+                <span class="mono">Would you recommend John?</span>
+                <span class="dot mono">·</span>
+                <span class="mono">Anything surprising?</span>
+              </div>
+              <span class="num" id="char-count">0 / 500</span>
+            </div>
+          </div>
+
+          <div class="col" style="gap:8px;">
+            <span class="mono">Quick tags · tap to add</span>
+            <div class="tag-row" id="tag-row">
+              <button class="tag" data-phrase="Great work">Well done</button>
+              <button class="tag" data-phrase="On time">On time</button>
+              <button class="tag" data-phrase="Fair price">Fair price</button>
+              <button class="tag" data-phrase="Left area clean">Left area clean</button>
+              <button class="tag" data-phrase="Would book again">Would book again</button>
+            </div>
+          </div>
+
+          <div class="card inset">
+            <div class="row" style="gap:12px; align-items:flex-start;">
+              <div style="width:34px; height:34px; border-radius:999px; background: rgba(16,185,129,0.12); color: var(--brand-1); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="18" height="18"><use href="#i-shield"/></svg>
+              </div>
+              <div class="col" style="gap:2px;">
+                <span class="body" style="font-size:14px; color:var(--ink);">Reviews are public.</span>
+                <span class="body subtle" style="font-size:13px;">Names show as first name + initial. Reports of abusive language are removed within 24 hours.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="continue-dock" style="margin-top:auto;">
+          <div class="actions-row">
+            <button class="btn btn-secondary" data-go="4">Skip</button>
+            <button class="btn btn-primary" data-go="4">
+              Submit rating
+              <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== SCREEN 4 =============== -->
+      <section class="screen" data-screen="4" aria-label="Screen 4: Thanks">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Close" data-go="5">
+            <svg width="20" height="20"><use href="#i-close"/></svg>
+          </button>
+          <span class="app-nav-title">Rating submitted</span>
+          <button class="icon-btn" aria-label="Share">
+            <svg width="20" height="20"><use href="#i-share"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body">
+          <div class="success-hero">
+            <div class="check-circle" aria-hidden="true" style="width:72px; height:72px;">
+              <svg width="36" height="36"><use href="#i-check"/></svg>
+            </div>
+          </div>
+
+          <div style="text-align:center; display:flex; flex-direction:column; gap:8px;">
+            <h1 class="display xl">Thanks, Tarek.</h1>
+            <p class="body subtle" style="margin:0;">Your rating is in.</p>
+          </div>
+
+          <div class="movement-line" aria-live="polite">
+            <span class="mono" style="font-size:10px;">John's overall</span>
+            <span class="num">4.9</span>
+            <span class="arrow" aria-hidden="true">
+              <svg width="14" height="14"><use href="#i-arrow-right"/></svg>
+            </span>
+            <span class="num">4.9</span>
+            <span class="mono plain" style="color:var(--ink-3); font-size:10px;">+1 rating</span>
+          </div>
+
+          <div class="card preview-card">
+            <span class="preview-badge">This is what John sees</span>
+            <div class="row-between" style="margin-top:4px;">
+              <div class="row" style="gap:10px;">
+                <div class="avatar avatar-navy" style="width:36px; height:36px; font-size:14px;">TS</div>
+                <div class="col" style="gap:2px;">
+                  <span class="body" style="font-size:13px; color:var(--ink); font-weight:600;">Tarek S.</span>
+                  <span class="mono" style="font-size:9px;">Kitchen sockets · Aug 2026</span>
+                </div>
+              </div>
+              <div class="col" style="align-items:flex-end; gap:2px;">
+                <div class="stars-inline" aria-label="Rating 5 stars">
+                  <svg><use href="#i-star"/></svg>
+                  <svg><use href="#i-star"/></svg>
+                  <svg><use href="#i-star"/></svg>
+                  <svg><use href="#i-star"/></svg>
+                  <svg><use href="#i-star"/></svg>
+                </div>
+                <span class="num" style="font-size:14px; color:var(--ink);" id="s4-user-score">5.0</span>
+              </div>
+            </div>
+            <div class="divider" style="margin: 12px 0;"></div>
+            <p class="preview-quote" id="s4-quote">"On time, well done, fair price. Would book again."</p>
+          </div>
+
+          <div class="col" style="gap:10px;">
+            <button class="btn btn-primary btn-block" data-go="5">
+              Book another service
+              <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+            </button>
+            <button class="btn btn-secondary btn-block">
+              <svg width="14" height="14" style="color:var(--coral);"><use href="#i-flag"/></svg>
+              <span style="color:var(--ink-2);">Report an issue with this job</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== SCREEN 5 =============== -->
+      <section class="screen" data-screen="5" aria-label="Screen 5: Tradesman profile">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Back" data-go="4">
+            <svg width="20" height="20"><use href="#i-arrow-left"/></svg>
+          </button>
+          <span class="app-nav-title">Profile</span>
+          <button class="icon-btn" aria-label="Share">
+            <svg width="20" height="20"><use href="#i-share"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body">
+          <div class="profile-hero">
+            <div class="avatar avatar-rose" style="width:88px; height:88px; font-size:34px;">JB</div>
+            <div class="col" style="gap:4px; align-items:center;">
+              <h1 class="display lg">John Byrne</h1>
+              <span class="body subtle" style="font-size:13px;">Electrician · Dublin 2 area</span>
+            </div>
+            <div class="badges">
+              <span class="badge-verified">
+                <svg><use href="#i-shield"/></svg> RECI verified
+              </span>
+              <span class="badge-verified" style="background: rgba(230,164,41,0.10); border-color: rgba(230,164,41,0.30); color: var(--amber);">
+                <svg><use href="#i-bolt"/></svg> Top Match
+              </span>
+            </div>
+            <div class="overall-block">
+              <span class="num">4.9</span>
+              <div class="stars-inline">
+                <svg><use href="#i-star"/></svg>
+                <svg><use href="#i-star"/></svg>
+                <svg><use href="#i-star"/></svg>
+                <svg><use href="#i-star"/></svg>
+                <svg><use href="#i-star"/></svg>
+              </div>
+            </div>
+            <span class="overall-sub">
+              <span class="num">128</span> ratings
+              <span style="margin-left:6px;">·</span>
+              <span class="num">+1</span> today
+            </span>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <span class="mono">Rating breakdown</span>
+              <span class="mono" style="color:var(--amber);"><span class="num" style="color:var(--amber); font-size:12px;">5</span> dimensions</span>
+            </div>
+
+            <div class="breakdown-row">
+              <div class="breakdown-label">
+                <span class="body">Punctuality</span>
+                <div class="bar"><div class="bar-fill" style="width:98%"></div></div>
+              </div>
+              <span class="num">4.9</span>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-label">
+                <span class="body">Quality of work</span>
+                <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+              </div>
+              <span class="num">5.0</span>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-label">
+                <span class="body">Price adherence</span>
+                <div class="bar"><div class="bar-fill" style="width:96%"></div></div>
+              </div>
+              <span class="num">4.8</span>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-label">
+                <span class="body">Professionalism</span>
+                <div class="bar"><div class="bar-fill" style="width:98%"></div></div>
+              </div>
+              <span class="num">4.9</span>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-label">
+                <span class="body">Communication</span>
+                <div class="bar"><div class="bar-fill" style="width:96%"></div></div>
+              </div>
+              <span class="num">4.8</span>
+            </div>
+          </div>
+
+          <div class="col" style="gap:10px;">
+            <span class="mono">Trust signals</span>
+            <div class="stat-tiles">
+              <div class="stat-tile">
+                <span class="num">98%</span>
+                <span class="mono">Response rate</span>
+              </div>
+              <div class="stat-tile">
+                <span class="num">96%</span>
+                <span class="mono">On-time</span>
+              </div>
+              <div class="stat-tile">
+                <span class="num">42%</span>
+                <span class="mono">Repeat customers</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col" style="gap:10px;">
+            <span class="mono">Certifications</span>
+            <div class="chip-row">
+              <span class="cert-chip"><svg><use href="#i-check"/></svg> RECI</span>
+              <span class="cert-chip"><svg><use href="#i-check"/></svg> Safe Pass</span>
+              <span class="cert-chip"><svg><use href="#i-check"/></svg> RGII</span>
+              <span class="cert-chip"><svg><use href="#i-check"/></svg> €2M liability</span>
+            </div>
+          </div>
+
+          <div class="col" style="gap:6px;">
+            <div class="section-head">
+              <span class="mono">Recent reviews</span>
+              <span class="mono num" style="color:var(--ink-2); font-size:11px;">128 total</span>
+            </div>
+
+            <div class="review-item your-review">
+              <div class="rev-head">
+                <div class="col" style="gap:4px;">
+                  <span class="your-tag">
+                    <svg width="9" height="9" style="color:#1a1200;"><use href="#i-sparkle"/></svg>
+                    Your review · just now
+                  </span>
+                  <span class="rev-name">Tarek S.</span>
+                </div>
+                <div class="col" style="align-items:flex-end; gap:2px;">
+                  <div class="stars-inline" id="s5-your-stars">
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                  </div>
+                  <span class="num" style="font-size:13px; color:var(--ink);" id="s5-your-score">5.0</span>
+                </div>
+              </div>
+              <p class="rev-quote" id="s5-your-quote">"On time, well done, fair price. Would book again."</p>
+            </div>
+
+            <div class="review-item">
+              <div class="rev-head">
+                <div class="row" style="gap:10px;">
+                  <div class="avatar avatar-sage" style="width:32px; height:32px; font-size:13px;">MO</div>
+                  <div class="col" style="gap:1px;">
+                    <span class="rev-name">Máire O'Connor</span>
+                    <span class="mono" style="font-size:9px;">Rathmines · 3 weeks ago</span>
+                  </div>
+                </div>
+                <div class="col" style="align-items:flex-end; gap:2px;">
+                  <div class="stars-inline">
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                  </div>
+                  <span class="num" style="font-size:13px; color:var(--ink);">5.0</span>
+                </div>
+              </div>
+              <p class="rev-quote">"Rewired two rooms in an afternoon. Left the place tidier than he found it."</p>
+            </div>
+
+            <div class="review-item">
+              <div class="rev-head">
+                <div class="row" style="gap:10px;">
+                  <div class="avatar avatar-navy" style="width:32px; height:32px; font-size:13px;">CW</div>
+                  <div class="col" style="gap:1px;">
+                    <span class="rev-name">Ciarán Walsh</span>
+                    <span class="mono" style="font-size:9px;">Ranelagh · Last month</span>
+                  </div>
+                </div>
+                <div class="col" style="align-items:flex-end; gap:2px;">
+                  <div class="stars-inline" style="color:var(--amber);">
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg><use href="#i-star"/></svg>
+                    <svg style="color:var(--line);"><use href="#i-star"/></svg>
+                  </div>
+                  <span class="num" style="font-size:13px; color:var(--ink);">4.0</span>
+                </div>
+              </div>
+              <p class="rev-quote">"Fair price, arrived within the window. Explained what he was doing at every step."</p>
+            </div>
+          </div>
+
+          <div class="sticky-cta">
+            <button class="btn btn-primary btn-block">
+              Book John again
+              <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== SCREEN 6 =============== -->
+      <section class="screen" data-screen="6" aria-label="Screen 6: Tradesman rates homeowner">
+        <div class="app-nav">
+          <button class="icon-btn" aria-label="Back" data-go="5">
+            <svg width="20" height="20"><use href="#i-arrow-left"/></svg>
+          </button>
+          <span class="app-nav-title">Tradesman view</span>
+          <button class="icon-btn" aria-label="Help">
+            <svg width="20" height="20"><use href="#i-sparkle"/></svg>
+          </button>
+        </div>
+
+        <div class="screen-body tight">
+          <div class="card inset" style="background: linear-gradient(180deg, rgba(16,185,129,0.08), transparent); border-color: rgba(16,185,129,0.24);">
+            <div class="row" style="gap:12px; align-items:center;">
+              <div class="avatar avatar-navy" style="width:44px; height:44px; font-size:16px;">TS</div>
+              <div class="grow col" style="gap:2px;">
+                <span class="display sm">Tarek Sallabi</span>
+                <span class="mono">Ballsbridge · Repeat customer</span>
+              </div>
+              <div class="col" style="align-items:flex-end; gap:2px;">
+                <span class="mono" style="color:var(--brand-1); font-size:10px;">Homeowner</span>
+                <span class="num" style="font-size:18px; color:var(--ink);">4.8</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rating-header">
+            <div class="title-block">
+              <h1 class="display lg">Rate Tarek</h1>
+              <span class="mono">Two-sided ratings keep it fair</span>
+            </div>
+            <div class="live-overall" id="s6-live" aria-live="polite">
+              <span class="mono">Overall</span>
+              <span class="num" id="s6-overall">—</span>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 8px 16px;">
+            <div class="dimension-list" id="dimension-list-tradesman"></div>
+          </div>
+
+          <div class="row" style="justify-content:center; gap:6px;">
+            <span class="mono">Progress</span>
+            <span class="mono num" id="s6-progress" style="color:var(--amber); font-size:11px;">0 / 4</span>
+          </div>
+        </div>
+
+        <div class="continue-dock" style="margin-top:auto;">
+          <button class="btn btn-primary btn-block" id="s6-continue" disabled>
+            Submit rating
+            <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+          </button>
+          <span class="mono">Tarek won't see your rating until this cycle closes.</span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="caption" style="max-width: 380px;">
+    <span style="text-transform:none; letter-spacing:0.02em; color:#8FA3BE; font-family: var(--sans); font-size:12px; display:block; margin-top:4px;">
+      Tap the numbered chips above to jump between screens. Stars are live · overall score updates as you rate.
+    </span>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---------- State ----------
+  const HOMEOWNER_DIMENSIONS = [
+    { key: 'punctuality', label: 'Punctuality', desc: 'Did he arrive when he said?' },
+    { key: 'quality', label: 'Quality of work', desc: 'Was the job well done?' },
+    { key: 'price', label: 'Price adherence', desc: 'Did the price match what you agreed?' },
+    { key: 'professionalism', label: 'Professionalism', desc: 'Was he respectful, tidy, respectful of your home?' },
+    { key: 'communication', label: 'Communication', desc: 'Did he explain what he was doing?' }
+  ];
+  const TRADESMAN_DIMENSIONS = [
+    { key: 'description', label: 'Accurate description', desc: 'Did the job match what was booked?' },
+    { key: 'payment', label: 'Payment', desc: 'Was payment settled on time?' },
+    { key: 'access', label: 'Access provided', desc: 'Was the property ready and accessible?' },
+    { key: 'respectful', label: 'Respectful', desc: 'Was Tarek courteous throughout?' }
+  ];
+
+  const SCREEN_LABELS = {
+    1: "Job complete · rate prompt",
+    2: "Rate five dimensions",
+    3: "Written review · optional",
+    4: "Rating submitted",
+    5: "Tradesman profile · the payoff",
+    6: "Two-sided · tradesman rates homeowner"
+  };
+
+  const ratings = { homeowner: {}, tradesman: {} };
+  let currentRole = 'homeowner';
+
+  // ---------- Screen navigation ----------
+  const screens = document.querySelectorAll('.screen');
+  const chips = document.querySelectorAll('.nav-chips .chip');
+  const capNum = document.getElementById('cap-num');
+  const capLabel = document.getElementById('cap-label');
+  let activeScreen = 1;
+
+  function goTo(n) {
+    n = parseInt(n, 10);
+    if (isNaN(n) || n < 1 || n > 6) return;
+    if (n === activeScreen) return;
+    screens.forEach(s => {
+      const num = parseInt(s.dataset.screen, 10);
+      s.classList.remove('active', 'exit-left');
+      if (num === n) {
+        s.classList.add('active');
+        s.scrollTop = 0;
+      } else if (num < n) {
+        s.classList.add('exit-left');
+      }
+    });
+    chips.forEach(c => c.classList.toggle('active', parseInt(c.dataset.goto,10) === n));
+    activeScreen = n;
+    capNum.textContent = n;
+    capLabel.textContent = SCREEN_LABELS[n];
+
+    // If jumping to screen 6, ensure the correct dimensions render + toggle role UI
+    if (n === 6) setRole('tradesman', false);
+    if (n === 2) setRole('homeowner', false);
+  }
+
+  chips.forEach(c => {
+    c.addEventListener('click', () => goTo(c.dataset.goto));
+  });
+  document.querySelectorAll('[data-go]').forEach(el => {
+    el.addEventListener('click', () => goTo(el.dataset.go));
+  });
+  // Set default active chip
+  chips[0].classList.add('active');
+
+  // ---------- Dimension rendering + interactive stars ----------
+  function renderDimensions(containerId, dims, role) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    dims.forEach((d) => {
+      const row = document.createElement('div');
+      row.className = 'dimension';
+      row.innerHTML = `
+        <div class="label-block">
+          <div class="display" style="font-family: var(--serif); font-weight:400; font-size:17px; color: var(--ink); margin-bottom: 3px;">${d.label}</div>
+          <div class="body" style="font-size:13px; color: var(--ink-3);">${d.desc}</div>
+        </div>
+        <div class="stars" role="radiogroup" aria-label="${d.label} rating">
+          ${[1,2,3,4,5].map(i => `
+            <button type="button" class="star" data-value="${i}" data-key="${d.key}" data-role="${role}" role="radio" aria-label="${i} star${i>1?'s':''}" aria-checked="false">
+              <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><use href="#i-star"/></svg>
+            </button>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    // Wire up
+    container.querySelectorAll('.star').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const value = parseInt(this.dataset.value, 10);
+        const key = this.dataset.key;
+        const r = this.dataset.role;
+        ratings[r][key] = value;
+
+        // Fill stars for this row
+        const parent = this.parentElement;
+        parent.querySelectorAll('.star').forEach(s => {
+          const v = parseInt(s.dataset.value, 10);
+          const filled = v <= value;
+          s.classList.toggle('filled', filled);
+          s.setAttribute('aria-checked', String(v === value));
+        });
+
+        // Pop animation
+        this.classList.add('pop');
+        setTimeout(() => this.classList.remove('pop'), 220);
+
+        updateLiveScore(r);
+      });
+    });
+  }
+
+  function updateLiveScore(role) {
+    const dims = role === 'homeowner' ? HOMEOWNER_DIMENSIONS : TRADESMAN_DIMENSIONS;
+    const rated = dims.filter(d => ratings[role][d.key]).length;
+    const total = dims.length;
+    const overallEl = document.getElementById(role === 'homeowner' ? 's2-overall' : 's6-overall');
+    const liveEl = document.getElementById(role === 'homeowner' ? 's2-live' : 's6-live');
+    const progressEl = document.getElementById(role === 'homeowner' ? 's2-progress' : 's6-progress');
+    const continueEl = document.getElementById(role === 'homeowner' ? 's2-continue' : 's6-continue');
+
+    if (rated === 0) {
+      overallEl.textContent = '—';
+      liveEl.classList.remove('filled');
+    } else {
+      const sum = dims.reduce((acc, d) => acc + (ratings[role][d.key] || 0), 0);
+      const avg = sum / rated;
+      overallEl.textContent = avg.toFixed(1);
+      liveEl.classList.add('filled');
+    }
+    progressEl.textContent = `${rated} / ${total}`;
+    if (rated === total) {
+      continueEl.removeAttribute('disabled');
+    } else {
+      continueEl.setAttribute('disabled', 'true');
+    }
+
+    // Sync Screen 4 + 5 with the homeowner rating (when finished)
+    if (role === 'homeowner' && rated === total) {
+      const sum = dims.reduce((acc, d) => acc + (ratings[role][d.key] || 0), 0);
+      const avg = sum / rated;
+      const scoreStr = avg.toFixed(1);
+      document.getElementById('s4-user-score').textContent = scoreStr;
+      document.getElementById('s5-your-score').textContent = scoreStr;
+      // fill Screen 5 stars visually according to rounded avg
+      const rounded = Math.round(avg);
+      document.querySelectorAll('#s5-your-stars svg').forEach((s, i) => {
+        s.style.color = i < rounded ? 'var(--amber)' : 'var(--line)';
+      });
+    }
+  }
+
+  renderDimensions('dimension-list', HOMEOWNER_DIMENSIONS, 'homeowner');
+  renderDimensions('dimension-list-tradesman', TRADESMAN_DIMENSIONS, 'tradesman');
+
+  // ---------- Role toggle (homeowner / tradesman) ----------
+  const roleOpts = document.querySelectorAll('.role-opt');
+  function setRole(role, jump) {
+    currentRole = role;
+    roleOpts.forEach(o => o.classList.toggle('active', o.dataset.role === role));
+    if (jump !== false) {
+      // switching role jumps to the correct rating screen
+      goTo(role === 'homeowner' ? 2 : 6);
+    }
+  }
+  roleOpts.forEach(o => {
+    o.addEventListener('click', () => setRole(o.dataset.role, true));
+  });
+  document.getElementById('role-toggle').addEventListener('click', (e) => {
+    if (e.target.classList.contains('role-opt')) return; // handled above
+    setRole(currentRole === 'homeowner' ? 'tradesman' : 'homeowner', true);
+  });
+
+  // ---------- Theme toggle ----------
+  const themeBtn = document.getElementById('theme-toggle');
+  const themeLabel = document.getElementById('theme-label');
+  function currentTheme() {
+    const explicit = document.documentElement.getAttribute('data-theme');
+    if (explicit) return explicit;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function updateThemeUI() {
+    const t = currentTheme();
+    themeLabel.textContent = t === 'dark' ? 'Dark' : 'Light';
+    themeBtn.querySelector('svg use').setAttribute('href', t === 'dark' ? '#i-moon' : '#i-sun');
+  }
+  themeBtn.addEventListener('click', () => {
+    const t = currentTheme();
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
+    updateThemeUI();
+  });
+  updateThemeUI();
+
+  // ---------- Screen 3 textarea + tags ----------
+  const textarea = document.getElementById('review-text');
+  const charCount = document.getElementById('char-count');
+  const tagRow = document.getElementById('tag-row');
+
+  textarea.addEventListener('input', () => {
+    const len = textarea.value.length;
+    charCount.textContent = `${len} / 500`;
+    updateQuotePreview();
+  });
+
+  tagRow.querySelectorAll('.tag').forEach(t => {
+    t.addEventListener('click', () => {
+      const phrase = t.dataset.phrase;
+      if (t.classList.contains('used')) {
+        // remove phrase
+        textarea.value = textarea.value.replace(new RegExp('(^|\\s)' + phrase.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(\\.|$|\\s)', 'g'), (m, p1, p2) => {
+          return (p1 || '') + (p2 === '.' ? '' : p2 || '');
+        }).replace(/\s{2,}/g,' ').trim();
+        t.classList.remove('used');
+      } else {
+        const sep = textarea.value.length && !/[.!?]\s*$/.test(textarea.value.trim()) ? '. ' : (textarea.value.length ? ' ' : '');
+        textarea.value = (textarea.value.trim() + sep + phrase + '.').trim();
+        t.classList.add('used');
+      }
+      charCount.textContent = `${textarea.value.length} / 500`;
+      textarea.focus();
+      updateQuotePreview();
+    });
+  });
+
+  function updateQuotePreview() {
+    const raw = textarea.value.trim();
+    const preview = raw ? `"${raw}"` : `"On time, well done, fair price. Would book again."`;
+    document.getElementById('s4-quote').textContent = preview;
+    document.getElementById('s5-your-quote').textContent = preview;
+  }
+
+  // ---------- Keyboard: arrow keys navigate ----------
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight') goTo(Math.min(6, activeScreen + 1));
+    if (e.key === 'ArrowLeft') goTo(Math.max(1, activeScreen - 1));
+  });
+
+})();
+</script>
+
+</body>
+</html>
