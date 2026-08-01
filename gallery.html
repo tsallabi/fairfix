@@ -69,8 +69,23 @@
 
   .lede {
     font-size: 18px; color: var(--ink-2);
-    max-width: 620px; line-height: 1.6; margin: 0 0 60px;
+    max-width: 620px; line-height: 1.6; margin: 0 0 40px;
   }
+
+  .count-strip {
+    display: inline-flex; align-items: center; gap: 20px;
+    padding: 12px 20px; background: var(--paper-2);
+    border: 1px solid var(--line); border-radius: 12px;
+    margin-bottom: 40px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.06em; color: var(--ink-3);
+  }
+  .count-strip strong {
+    color: var(--brand-1);
+    font-family: "Iowan Old Style", Palatino, serif;
+    font-size: 20px; font-weight: 400; letter-spacing: -0.01em;
+  }
+  .count-strip span { display: flex; align-items: center; gap: 8px; }
 
   .rule {
     height: 1px; background: var(--line);
@@ -163,6 +178,24 @@
   .card.hero .card-meta { color: rgba(255, 255, 255, 0.5); border-top-color: rgba(255, 255, 255, 0.15); }
   .card.hero .card-meta .go { color: var(--brand-3); }
 
+  .card.amber-hero {
+    grid-column: span 2;
+    background: linear-gradient(135deg, #7A4E15 0%, #A67824 100%);
+    color: white; border-color: transparent;
+  }
+  @media (max-width: 720px) { .card.amber-hero { grid-column: span 1; } }
+  .card.amber-hero::after {
+    content: ""; position: absolute; top: -30px; right: -30px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(230, 164, 41, 0.5) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card.amber-hero .card-num { color: #FCD34D; }
+  .card.amber-hero .card-title { font-size: 32px; }
+  .card.amber-hero .card-desc { color: rgba(255, 255, 255, 0.75); font-size: 16px; }
+  .card.amber-hero .card-meta { color: rgba(255, 255, 255, 0.5); border-top-color: rgba(255, 255, 255, 0.15); }
+  .card.amber-hero .card-meta .go { color: #FCD34D; }
+
   .footer {
     margin-top: 80px; padding-top: 32px;
     border-top: 1px solid var(--line);
@@ -179,18 +212,25 @@
     <span class="brand-doc">— DESIGN GALLERY</span>
   </div>
 
-  <h1>All six pieces of the <em>FairFix</em> product, one link away.</h1>
-  <p class="lede">Everything designed and prototyped for Ireland's fair-price tradesman marketplace. Tap any card to open the live design. Every prototype is fully interactive on mobile and desktop.</p>
+  <h1>Eight pieces of the <em>FairFix</em> product, one link away.</h1>
+  <p class="lede">Everything designed and prototyped for Ireland's fair-price tradesman marketplace — customer-side, tradesman-side, and the admin console that runs it all. Tap any card to open the live design.</p>
+
+  <div class="count-strip">
+    <span><strong>8</strong> deliverables</span>
+    <span><strong>40+</strong> screens</span>
+    <span><strong>3</strong> audiences</span>
+    <span><strong>1</strong> design system</span>
+  </div>
 
   <div class="rule"></div>
 
-  <div class="section-label">For customers &amp; partners</div>
+  <div class="section-label">The three sides of the marketplace</div>
 
   <div class="card-grid">
     <a class="card hero" href="./index.html">
-      <div class="card-num">01 · MARKETING</div>
+      <div class="card-num">01 · CUSTOMER · MARKETING</div>
       <h2 class="card-title">Landing Page</h2>
-      <p class="card-desc">The public front door of fairfix.ie — hero, how it works, categories, AI feature, testimonials, tradesman CTA, FAQ, and footer. This is what customers land on when they visit.</p>
+      <p class="card-desc">The public front door of fairfix.ie — hero, how it works, categories, AI feature, testimonials, tradesman CTA, FAQ, and footer. This is what Irish homeowners land on.</p>
       <div class="card-meta">
         <span>PUBLIC WEB</span>
         <span class="go">OPEN →</span>
@@ -198,31 +238,51 @@
     </a>
 
     <a class="card" href="./app.html">
-      <div class="card-num">02 · APP</div>
-      <h2 class="card-title">Interactive Prototype</h2>
-      <p class="card-desc">Six tappable screens end-to-end: Home → Category → Describe &amp; Price → Matches → Confirm → Success. Real navigation and AI reveal animation.</p>
+      <div class="card-num">02 · CUSTOMER · MOBILE APP</div>
+      <h2 class="card-title">Customer App</h2>
+      <p class="card-desc">Six tappable screens end-to-end: Home → Category → Describe &amp; Price → Matches → Confirm → Success. Real navigation, AI reveal animation.</p>
       <div class="card-meta">
         <span>6 SCREENS · MOBILE</span>
         <span class="go">OPEN →</span>
       </div>
     </a>
 
-    <a class="card" href="./visual.html">
-      <div class="card-num">03 · VISUAL</div>
-      <h2 class="card-title">Visual Preview</h2>
-      <p class="card-desc">Three phone screens rendered in full colour with design notes — the visual language explained. Great for pitching to designers and investors.</p>
+    <a class="card" href="./tradesman.html">
+      <div class="card-num">03 · TRADESMAN · MOBILE APP</div>
+      <h2 class="card-title">Tradesman App</h2>
+      <p class="card-desc">The other side of the market. Seven screens: live job feed with countdown, job details, counter-offer, en route, on the job, complete, and earnings dashboard with Revenue.ie export.</p>
       <div class="card-meta">
-        <span>DESIGN LANGUAGE</span>
+        <span>7 SCREENS · MOBILE</span>
+        <span class="go">OPEN →</span>
+      </div>
+    </a>
+
+    <a class="card amber-hero" href="./admin.html">
+      <div class="card-num">04 · OWNER · DESKTOP CONSOLE</div>
+      <h2 class="card-title">Admin Panel</h2>
+      <p class="card-desc">The operator's desk — dark-navy sidebar, six switchable views: Dashboard, Orders, Tradesmen verification queue, Complaints casebook, Services &amp; Prices editor, and the AI Estimates control room.</p>
+      <div class="card-meta">
+        <span>6 VIEWS · DESKTOP</span>
         <span class="go">OPEN →</span>
       </div>
     </a>
   </div>
 
-  <div class="section-label">For engineering &amp; product</div>
+  <div class="section-label">Design &amp; engineering references</div>
 
   <div class="card-grid">
+    <a class="card" href="./visual.html">
+      <div class="card-num">05 · VISUAL LANGUAGE</div>
+      <h2 class="card-title">Visual Preview</h2>
+      <p class="card-desc">Three phone screens rendered in full colour with design notes — the palette, typography, and pattern library explained. Great for pitching to designers and investors.</p>
+      <div class="card-meta">
+        <span>DESIGN SYSTEM</span>
+        <span class="go">OPEN →</span>
+      </div>
+    </a>
+
     <a class="card" href="./wireframes.html">
-      <div class="card-num">04 · SKELETON</div>
+      <div class="card-num">06 · STRUCTURAL</div>
       <h2 class="card-title">Wireframes v1</h2>
       <p class="card-desc">Structural blueprint of the five core screens with design rationale for every choice — for engineers picking up the build.</p>
       <div class="card-meta">
@@ -232,7 +292,7 @@
     </a>
 
     <a class="card" href="./rating.html">
-      <div class="card-num">05 · TRUST</div>
+      <div class="card-num">07 · TRUST FLOW</div>
       <h2 class="card-title">Rating System</h2>
       <p class="card-desc">Six-screen two-sided rating flow with five dimensions per side, live scores, and the tradesman profile that ratings feed into.</p>
       <div class="card-meta">
@@ -242,9 +302,9 @@
     </a>
 
     <a class="card" href="./scope-revision.html">
-      <div class="card-num">06 · FAIRNESS</div>
+      <div class="card-num">08 · FAIRNESS FLOW</div>
       <h2 class="card-title">Scope Revision Flow</h2>
-      <p class="card-desc">Five screens handling the moment a tradesman finds the job is bigger than the AI estimate. Approve, decline, or counter — with an AI fairness verdict.</p>
+      <p class="card-desc">Five screens for the moment a tradesman finds the job is bigger than the AI estimate. Approve, decline, or counter — with an AI fairness verdict on the revision.</p>
       <div class="card-meta">
         <span>5 SCREENS · MOBILE</span>
         <span class="go">OPEN →</span>
@@ -253,7 +313,7 @@
   </div>
 
   <div class="footer">
-    <span>FAIRFIX.IE · DESIGN GALLERY · v1</span>
+    <span>FAIRFIX.IE · DESIGN GALLERY · v2</span>
     <span>DUBLIN → BAGHDAD · TAREK SALLABI</span>
   </div>
 </div>

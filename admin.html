@@ -1,0 +1,3041 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FairFix Admin — Operations Console</title>
+<style>
+/* =========================================================================
+   FAIRFIX ADMIN — OPERATIONS CONSOLE
+   Desktop-first, dense, data-driven. Sidebar always dark navy.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+
+:root {
+  /* Palette (light) */
+  --paper: #FBF7EE;
+  --paper-2: #F3ECD9;
+  --surface: #FFFFFF;
+  --surface-2: #FAF6EC;
+  --ink: #0B1F33;
+  --ink-2: #34455A;
+  --ink-3: #7A879A;
+  --ink-4: #A9B3C1;
+  --line: #E3DAC3;
+  --line-2: #EFE7D2;
+  --brand-1: #0B7F58;
+  --brand-2: #10B981;
+  --brand-3: #34D399;
+  --brand-glow: rgba(16,185,129,0.28);
+  --brand-tint: rgba(16,185,129,0.10);
+  --navy-1: #0B1F33;
+  --navy-2: #14314D;
+  --navy-3: #1B4068;
+  --coral: #F26D5B;
+  --coral-tint: rgba(242,109,91,0.12);
+  --amber: #E6A429;
+  --amber-tint: rgba(230,164,41,0.14);
+  --red: #DC2626;
+  --sky: #38BDF8;
+
+  --shadow-1: 0 1px 2px rgba(11,31,51,0.05), 0 1px 3px rgba(11,31,51,0.06);
+  --shadow-2: 0 4px 12px rgba(11,31,51,0.08), 0 2px 4px rgba(11,31,51,0.05);
+  --shadow-drawer: -12px 0 32px rgba(11,31,51,0.10);
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+
+  --sidebar-w: 240px;
+  --topbar-h: 56px;
+}
+
+:root[data-theme="dark"] {
+  --paper: #071626;
+  --paper-2: #0B1F33;
+  --surface: #0F2841;
+  --surface-2: #0B213A;
+  --ink: #F1E7CE;
+  --ink-2: #C5CDD9;
+  --ink-3: #8A97AB;
+  --ink-4: #5C6B82;
+  --line: #1E3A5C;
+  --line-2: #17304C;
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+  --shadow-2: 0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+  --shadow-drawer: -12px 0 32px rgba(0,0,0,0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #071626;
+    --paper-2: #0B1F33;
+    --surface: #0F2841;
+    --surface-2: #0B213A;
+    --ink: #F1E7CE;
+    --ink-2: #C5CDD9;
+    --ink-3: #8A97AB;
+    --ink-4: #5C6B82;
+    --line: #1E3A5C;
+    --line-2: #17304C;
+    --shadow-1: 0 1px 2px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.5);
+    --shadow-2: 0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.4);
+    --shadow-drawer: -12px 0 32px rgba(0,0,0,0.6);
+  }
+}
+
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(11,31,51,0.15); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(11,31,51,0.28); }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
+
+/* ------- App shell ------- */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: 100vh;
+  height: 100vh;
+}
+
+/* ------- Sidebar (always dark navy) ------- */
+.sidebar {
+  background: var(--navy-1);
+  color: #C5CDD9;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.sidebar::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(16,185,129,0.08), transparent 60%);
+  pointer-events: none;
+}
+.brand {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: #FBF7EE;
+  position: relative;
+  z-index: 1;
+}
+.brand-mark {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 12px var(--brand-glow);
+}
+.brand-mark svg { width: 16px; height: 16px; color: #FBF7EE; }
+.brand-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  font-weight: 500;
+}
+.brand-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--brand-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: -2px;
+}
+.brand-col { display: flex; flex-direction: column; line-height: 1.1; }
+
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0 20px;
+  position: relative;
+  z-index: 1;
+}
+.nav-group { margin: 12px 0 4px; }
+.nav-group-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(197,205,217,0.4);
+  padding: 8px 20px 6px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: rgba(197,205,217,0.75);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background 120ms ease, color 120ms ease;
+  user-select: none;
+  position: relative;
+}
+.nav-item:hover { color: #FBF7EE; background: rgba(255,255,255,0.03); }
+.nav-item svg { width: 15px; height: 15px; opacity: 0.85; flex-shrink: 0; }
+.nav-item .badge {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--amber);
+  color: var(--navy-1);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.nav-item .badge.critical { background: var(--coral); color: #fff; }
+.nav-item .badge.info { background: rgba(56,189,248,0.9); color: var(--navy-1); }
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(16,185,129,0.14), transparent 90%);
+  color: #FBF7EE;
+  border-left-color: var(--brand-2);
+}
+.nav-item.active svg { color: var(--brand-3); opacity: 1; }
+
+.sidebar-foot {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F26D5B, #E6A429);
+  color: #FBF7EE;
+  font-weight: 700;
+  display: grid; place-items: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.foot-info { flex: 1; min-width: 0; }
+.foot-info b { color: #FBF7EE; font-size: 12px; font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.foot-info small { font-family: var(--mono); font-size: 10px; color: rgba(197,205,217,0.55); }
+.foot-btn {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: rgba(197,205,217,0.7);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease;
+}
+.foot-btn:hover { color: #FBF7EE; background: rgba(255,255,255,0.08); }
+.foot-btn svg { width: 14px; height: 14px; }
+
+/* ------- Main area ------- */
+.main {
+  display: grid;
+  grid-template-rows: var(--topbar-h) 1fr;
+  overflow: hidden;
+  position: relative;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  z-index: 5;
+}
+.crumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.crumb b { color: var(--ink); font-weight: 600; }
+.crumb-sep { color: var(--ink-4); }
+
+.search {
+  flex: 1;
+  max-width: 460px;
+  margin-left: 8px;
+  position: relative;
+}
+.search input {
+  width: 100%;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  padding: 0 12px 0 34px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.search input:focus { border-color: var(--brand-2); box-shadow: 0 0 0 3px var(--brand-tint); }
+.search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--ink-3); }
+.search kbd {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.top-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.icon-btn {
+  width: 34px; height: 34px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  border-radius: 6px;
+  display: grid; place-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.icon-btn:hover { background: var(--paper); border-color: var(--ink-4); }
+.icon-btn svg { width: 15px; height: 15px; }
+.icon-btn .dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.top-avatar {
+  height: 34px;
+  padding: 0 10px 0 6px;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.top-avatar .avatar { width: 24px; height: 24px; font-size: 10px; }
+.top-avatar b { font-size: 12px; }
+
+/* ------- Content ------- */
+.content {
+  overflow-y: auto;
+  padding: 24px 28px 60px;
+  position: relative;
+}
+.view { display: none; }
+.view.active { display: block; }
+
+/* ------- Page header ------- */
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 24px;
+}
+.page-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+.page-sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+.page-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ------- Buttons ------- */
+.btn {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+  white-space: nowrap;
+}
+.btn svg { width: 14px; height: 14px; }
+.btn:hover { background: var(--paper); }
+.btn:active { transform: translateY(1px); }
+.btn.primary {
+  background: var(--brand-1);
+  border-color: var(--brand-1);
+  color: #FBF7EE;
+}
+.btn.primary:hover { background: var(--brand-2); border-color: var(--brand-2); }
+.btn.ghost { background: transparent; }
+.btn.danger { color: var(--red); border-color: rgba(220,38,38,0.35); }
+.btn.danger:hover { background: rgba(220,38,38,0.06); }
+.btn.sm { height: 28px; padding: 0 10px; font-size: 12px; }
+.btn.xs { height: 24px; padding: 0 8px; font-size: 11px; }
+
+/* ------- Pills ------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  color: var(--ink-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill.ok { background: var(--brand-tint); color: var(--brand-1); }
+.pill.warn { background: var(--amber-tint); color: #8a5f0e; }
+.pill.crit { background: var(--coral-tint); color: #c04a3a; }
+.pill.info { background: rgba(56,189,248,0.15); color: #0369a1; }
+.pill.neutral { background: var(--paper-2); color: var(--ink-2); }
+:root[data-theme="dark"] .pill.warn { color: var(--amber); }
+:root[data-theme="dark"] .pill.crit { color: var(--coral); }
+:root[data-theme="dark"] .pill.info { color: var(--sky); }
+.pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ------- Cards ------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-head h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.card-head .sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+.card-body { padding: 18px; }
+.card-body.flush { padding: 0; }
+
+/* ------- KPI tiles ------- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--brand-2);
+  opacity: 0.5;
+}
+.kpi.warn::before { background: var(--amber); }
+.kpi.crit::before { background: var(--coral); }
+.kpi .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.kpi .value {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.kpi.warn .value { color: var(--amber); }
+.kpi.crit .value { color: var(--coral); }
+.kpi .foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+}
+.kpi .delta { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; }
+.kpi .delta.up { color: var(--brand-1); }
+.kpi .delta.down { color: var(--coral); }
+.kpi .delta svg { width: 10px; height: 10px; }
+.kpi .spark { width: 60px; height: 20px; }
+
+/* ------- Grid rows for dashboard ------- */
+.row-2 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.row-2-eq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* ------- Bar chart (jobs by hour) ------- */
+.bars {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+  height: 160px;
+  align-items: end;
+  padding: 8px 4px 30px;
+  position: relative;
+}
+.bar {
+  background: var(--brand-tint);
+  border-radius: 2px 2px 0 0;
+  position: relative;
+  min-height: 4px;
+  transition: filter 120ms ease;
+}
+.bar.done { background: var(--brand-1); }
+.bar.now { background: var(--amber); box-shadow: 0 0 0 2px var(--amber-tint); }
+.bar.future { background: var(--paper-2); border: 1px dashed var(--line); }
+.bar:hover { filter: brightness(1.1); }
+.bar-labels {
+  position: absolute; bottom: 6px; left: 4px; right: 4px;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.chart-legend {
+  display: flex; gap: 14px; margin-top: 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.chart-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.chart-legend i { display: block; width: 10px; height: 10px; border-radius: 2px; }
+
+/* ------- Tables ------- */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+.tbl thead th {
+  position: sticky; top: 0;
+  background: var(--surface-2);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  z-index: 2;
+}
+.tbl tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line-2);
+  color: var(--ink);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.tbl tbody tr { transition: background 100ms ease; cursor: pointer; }
+.tbl tbody tr:nth-child(even) { background: rgba(11,31,51,0.015); }
+:root[data-theme="dark"] .tbl tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tbl tbody tr:hover { background: var(--paper-2); }
+.tbl tbody tr.selected { background: var(--brand-tint); }
+.tbl tbody tr.selected td { color: var(--ink); }
+.tbl .num, .tbl .amount {
+  text-align: right;
+  font-family: var(--serif);
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+}
+.tbl .id { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.tbl .cust b { display: block; color: var(--ink); font-weight: 600; }
+.tbl .cust small { color: var(--ink-3); font-family: var(--mono); font-size: 10.5px; }
+.tbl-check { width: 32px; }
+.tbl-check input { accent-color: var(--brand-1); }
+.tbl-actions { text-align: right; width: 40px; }
+.tbl-actions button {
+  border: none; background: none; color: var(--ink-3); cursor: pointer;
+  padding: 4px; border-radius: 4px;
+}
+.tbl-actions button:hover { background: var(--paper-2); color: var(--ink); }
+.tbl-actions svg { width: 14px; height: 14px; }
+
+/* ------- Supply/demand table ------- */
+.sd-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sd-track {
+  flex: 1;
+  height: 6px;
+  background: var(--paper-2);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.sd-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--brand-2);
+}
+.sd-fill.warn { background: var(--amber); }
+.sd-fill.crit { background: var(--coral); }
+.sd-num {
+  font-family: var(--serif);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ------- Activity feed ------- */
+.feed { max-height: 340px; overflow-y: auto; }
+.feed-item {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line-2);
+  align-items: flex-start;
+}
+.feed-item:last-child { border-bottom: 0; }
+.feed-item:hover { background: var(--paper-2); }
+.feed-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--brand-2);
+  margin-top: 6px;
+}
+.feed-dot.warn { background: var(--amber); }
+.feed-dot.crit { background: var(--coral); }
+.feed-dot.info { background: var(--sky); }
+.feed-dot.neutral { background: var(--ink-4); }
+.feed-body { font-size: 12.5px; color: var(--ink-2); }
+.feed-body b { color: var(--ink); font-weight: 600; }
+.feed-time {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  padding-top: 1px;
+}
+
+/* ------- Alerts panel ------- */
+.alert-item {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-2);
+  align-items: center;
+}
+.alert-item:last-child { border-bottom: 0; }
+.alert-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--amber-tint);
+  color: var(--amber);
+  display: grid; place-items: center;
+}
+.alert-icon.crit { background: var(--coral-tint); color: var(--coral); }
+.alert-icon.info { background: rgba(56,189,248,0.15); color: var(--sky); }
+.alert-icon svg { width: 16px; height: 16px; }
+.alert-body b { font-size: 13px; color: var(--ink); font-weight: 600; display: block; }
+.alert-body small { font-size: 11.5px; color: var(--ink-3); }
+
+/* ------- Filter bar ------- */
+.filterbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.filterbar .search { max-width: 260px; margin-left: 0; }
+.filterbar .search input { height: 30px; font-size: 12px; }
+.chip {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.chip:hover { border-color: var(--ink-4); }
+.chip.active { background: var(--navy-1); border-color: var(--navy-1); color: #FBF7EE; }
+.chip.ok { border-color: var(--brand-2); color: var(--brand-1); }
+.chip.ok.active { background: var(--brand-1); border-color: var(--brand-1); color: #FBF7EE; }
+.chip .count { opacity: 0.6; font-weight: 700; }
+
+.select {
+  height: 30px;
+  padding: 0 24px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%237A879A' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>") no-repeat right 8px center;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+.select:focus { border-color: var(--brand-2); }
+
+/* ------- Orders detail drawer ------- */
+.orders-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 16px;
+  align-items: start;
+}
+.orders-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.bulk {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--navy-1);
+  color: #FBF7EE;
+  font-size: 12px;
+}
+.bulk.active { display: flex; }
+.bulk b { font-family: var(--mono); font-size: 11px; }
+.bulk .btn { height: 26px; font-size: 11px; padding: 0 10px; }
+
+.drawer {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+}
+.drawer-head {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--paper-2), var(--surface));
+}
+.drawer-head .close { float: right; }
+.drawer-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.drawer-title b { color: var(--ink); }
+.drawer-amount {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin: 6px 0 4px;
+  line-height: 1;
+}
+.drawer-meta {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.drawer-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  padding: 0 18px;
+  gap: 4px;
+}
+.drawer-tab {
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.drawer-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--brand-1);
+}
+.drawer-body { padding: 16px 18px; max-height: calc(100vh - 400px); overflow-y: auto; }
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 8px 14px;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.meta-grid dt {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  padding-top: 1px;
+}
+.meta-grid dd { margin: 0; color: var(--ink); font-weight: 500; }
+
+.section-h {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin: 18px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.timeline { padding-left: 4px; }
+.timeline-item {
+  position: relative;
+  padding: 8px 0 8px 20px;
+  border-left: 1px dashed var(--line);
+  margin-left: 5px;
+}
+.timeline-item::before {
+  content: ""; position: absolute; left: -5px; top: 12px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--brand-2); box-shadow: 0 0 0 3px var(--surface);
+}
+.timeline-item.done::before { background: var(--brand-1); }
+.timeline-item.warn::before { background: var(--amber); }
+.timeline-item b { display: block; font-size: 12.5px; color: var(--ink); }
+.timeline-item small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+
+.chat-log {
+  background: var(--paper-2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.chat-line { padding: 4px 0; }
+.chat-line b { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); margin-right: 6px; }
+
+.rating-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+.rate-card {
+  padding: 10px 12px;
+  background: var(--paper-2);
+  border-radius: 6px;
+}
+.rate-card small {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  display: block;
+}
+.stars { color: var(--amber); font-size: 14px; letter-spacing: 1px; margin-top: 3px; }
+
+.drawer-foot {
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  display: flex; gap: 8px;
+}
+
+/* ------- Verification queue (tradesmen) ------- */
+.stats-strip {
+  display: flex;
+  gap: 24px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat b {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1;
+}
+.stat small {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+.stat.warn b { color: var(--amber); }
+.stat.ok b { color: var(--brand-1); }
+
+.trades-list { display: flex; flex-direction: column; gap: 14px; }
+.trade-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 64px 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+.trade-avatar {
+  width: 64px; height: 64px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: #FBF7EE;
+}
+.tv-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.tv-role {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+.tv-meta {
+  display: flex;
+  gap: 16px;
+  margin: 10px 0 12px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tv-meta span { display: inline-flex; align-items: center; gap: 5px; }
+.tv-meta svg { width: 12px; height: 12px; color: var(--ink-3); }
+.certs {
+  display: flex; flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  font-size: 11.5px;
+  color: var(--ink-2);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cert.on { background: var(--brand-tint); border-color: var(--brand-2); color: var(--brand-1); }
+.cert.off { color: var(--ink-3); }
+.cert svg { width: 12px; height: 12px; }
+.docs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.doc {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 10px;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.doc svg { width: 14px; height: 14px; color: var(--brand-1); margin-bottom: 4px; }
+.doc b { display: block; color: var(--ink); font-weight: 600; font-size: 11.5px; }
+.doc small { font-family: var(--mono); font-size: 10px; color: var(--ink-3); }
+.actions-col { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.actions-col .btn { justify-content: center; }
+
+/* ------- Complaints ------- */
+.complaint {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.complaint-head {
+  display: grid;
+  grid-template-columns: 90px 1fr 1fr 130px 100px 24px;
+  gap: 14px;
+  padding: 14px 18px;
+  align-items: center;
+  cursor: pointer;
+}
+.complaint-head:hover { background: var(--paper-2); }
+.complaint.expanded { box-shadow: var(--shadow-2); border-color: var(--brand-2); }
+.complaint.expanded .complaint-head { background: var(--paper-2); }
+.complaint-id { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.complaint-parties b { display: block; color: var(--ink); font-weight: 600; font-size: 12.5px; }
+.complaint-parties small { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+.complaint-body {
+  display: none;
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.complaint.expanded .complaint-body { display: block; }
+.sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.side {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.side.customer { border-left: 3px solid var(--coral); }
+.side.tradesman { border-left: 3px solid var(--brand-2); }
+.side-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.side-head b { font-size: 12px; color: var(--ink); }
+.side-head small { font-family: var(--mono); font-size: 10px; color: var(--ink-3); }
+.side p { margin: 6px 0 10px; font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+.evidence {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+.evi {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, var(--paper-2), var(--surface));
+  display: grid; place-items: center;
+  color: var(--ink-3);
+  position: relative;
+  overflow: hidden;
+}
+.evi::after {
+  content: attr(data-tag);
+  position: absolute; bottom: 4px; left: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  background: rgba(11,31,51,0.7);
+  color: #FBF7EE;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.evi svg { width: 20px; height: 20px; }
+.resolution {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.res-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ------- Services grid ------- */
+.services-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 16px;
+  align-items: start;
+}
+.svc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.svc {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+.svc:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.svc.active { border-color: var(--brand-2); box-shadow: 0 0 0 2px var(--brand-tint); }
+.svc-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  display: grid; place-items: center;
+  margin-bottom: 14px;
+}
+.svc-icon svg { width: 20px; height: 20px; color: #FBF7EE; }
+.svc-name {
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 0 0 2px;
+}
+.svc-count {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.svc-price {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.svc-price small { font-family: var(--mono); font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.svc-price b {
+  font-family: var(--serif);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.svc-detail {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+}
+.sub-list {
+  padding: 4px 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper-2);
+  margin-bottom: 14px;
+}
+.sub-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--line-2);
+}
+.sub-item:last-child { border-bottom: 0; }
+.sub-item b { font-weight: 500; }
+.sub-item small { font-family: var(--mono); color: var(--ink-3); }
+
+.slider-row { margin-bottom: 12px; }
+.slider-row label {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.slider-row label b { font-family: var(--serif); font-size: 14px; color: var(--ink); text-transform: none; letter-spacing: 0; }
+.range-track {
+  height: 6px;
+  background: var(--paper-2);
+  border-radius: 3px;
+  position: relative;
+  margin: 8px 0 12px;
+}
+.range-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-3), var(--brand-1));
+  border-radius: 3px;
+}
+.range-thumb {
+  position: absolute;
+  width: 14px; height: 14px;
+  background: var(--surface);
+  border: 2px solid var(--brand-1);
+  border-radius: 50%;
+  top: -4px;
+  transform: translateX(-50%);
+}
+
+/* ------- Toggle switch ------- */
+.switch {
+  position: relative;
+  width: 36px; height: 20px;
+  background: var(--paper-2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 140ms ease;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 1px; left: 1px;
+  width: 16px; height: 16px;
+  background: var(--surface);
+  border-radius: 50%;
+  transition: left 140ms ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.switch.on { background: var(--brand-1); border-color: var(--brand-1); }
+.switch.on::after { left: 17px; background: #FBF7EE; }
+
+/* ------- AI view ------- */
+.ai-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.confidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.conf-bar {
+  width: 40px; height: 5px;
+  background: var(--paper-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.conf-fill { height: 100%; background: var(--brand-2); }
+.conf-fill.warn { background: var(--amber); }
+
+.delta-cell {
+  font-family: var(--serif);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.delta-cell.up { color: var(--brand-1); }
+.delta-cell.down { color: var(--coral); }
+.delta-cell.zero { color: var(--ink-3); }
+
+.override-row {
+  display: grid;
+  grid-template-columns: auto 140px auto 90px 90px auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--paper-2);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.override-row .select, .override-row input {
+  height: 28px;
+  font-size: 12px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mono);
+  outline: none;
+}
+.override-row input { text-align: right; }
+
+.big-primary {
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  color: #FBF7EE;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px var(--brand-glow);
+  transition: transform 100ms ease, box-shadow 140ms ease;
+  width: 100%;
+  justify-content: center;
+}
+.big-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px var(--brand-glow); }
+.big-primary svg { width: 18px; height: 18px; }
+
+/* ------- Toast ------- */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--navy-1);
+  color: #FBF7EE;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 100;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
+/* ------- Responsive collapse ------- */
+@media (max-width: 1200px) {
+  .kpi-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpi .value { font-size: 26px; }
+  .row-2 { grid-template-columns: 1fr; }
+  .orders-layout { grid-template-columns: 1fr; }
+  .services-layout { grid-template-columns: 1fr; }
+  .drawer { position: relative; top: auto; }
+}
+@media (max-width: 1024px) {
+  :root { --sidebar-w: 60px; }
+  .brand-col, .nav-group-title, .nav-item span:not(.badge), .foot-info { display: none; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .nav-item .badge { position: absolute; top: 4px; right: 4px; font-size: 8px; padding: 1px 4px; }
+  .kpi-row { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .svc-grid { grid-template-columns: repeat(3, 1fr); }
+  .trade-card { grid-template-columns: 56px 1fr; }
+  .actions-col { grid-column: 1 / -1; flex-direction: row; }
+  .actions-col .btn { flex: 1; }
+}
+@media (max-width: 768px) {
+  body { overflow: auto; }
+  .app { grid-template-columns: 1fr; grid-template-rows: 1fr auto; height: auto; min-height: 100vh; }
+  .sidebar { position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+    flex-direction: row; height: 60px; border-right: none; border-top: 1px solid rgba(255,255,255,0.06); z-index: 20; }
+  .brand, .sidebar-foot { display: none; }
+  .nav { display: flex; padding: 0; overflow-x: auto; }
+  .nav-group { display: contents; }
+  .nav-group-title { display: none; }
+  .nav-item { flex-direction: column; gap: 3px; font-size: 9px; padding: 8px; border-left: none; border-top: 2px solid transparent; }
+  .nav-item.active { border-top-color: var(--brand-2); border-left-color: transparent; }
+  .content { padding-bottom: 80px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .svc-grid { grid-template-columns: 1fr 1fr; }
+  .complaint-head { grid-template-columns: 1fr; gap: 6px; }
+  .sides { grid-template-columns: 1fr; }
+  .trade-card { grid-template-columns: 1fr; text-align: center; }
+  .trade-avatar { margin: 0 auto; }
+  .ai-grid { grid-template-columns: 1fr; }
+}
+
+/* small helpers */
+.mt-0 { margin-top: 0; }
+.spacer { flex: 1; }
+.mono { font-family: var(--mono); }
+.serif { font-family: var(--serif); }
+.right { text-align: right; }
+.muted { color: var(--ink-3); }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+    <symbol id="i-orders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M9 4v2h6V4"/><path d="M8 10h8M8 14h8M8 18h5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><circle cx="17" cy="6" r="2.5"/><path d="M17 11c2.5 0 4.5 2 4.5 4.5"/></symbol>
+    <symbol id="i-customer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 18l-5.8 3 1.1-6.5L2.6 9.9l6.5-1z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 8l4-4h10l4 4"/><path d="M4 8l3 8h4l-3-8M20 8l-3 8h-4l3-8"/></symbol>
+    <symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M5 9v.01M19 15v.01"/></symbol>
+    <symbol id="i-payout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v6a2 2 0 002 2h12a2 2 0 002-2v-6"/><path d="M12 15V3M8 7l4-4 4 4"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-3 2-3-2-2 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 105.9 4.5l-2.5-1.4-.6-2.5z"/><path d="M14 11L4 21l-2-2 10-10"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.5 7-13a7 7 0 10-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 004 0"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="3"/><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.5 7.5a5 5 0 11-7-7 5 5 0 017 7zM15 7l4 4M17 5l4 4"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-chev-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 12l5 5 5-5M4 21h16"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13H6z"/><path d="M15 3v5h5"/><path d="M9 14h6M9 18h4"/></symbol>
+    <symbol id="i-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-5 5 5 3-3 5 5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M17 7l2-2M5 19l2-2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13A9 9 0 1111 3a7 7 0 0010 10z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0115.9-5.7L21 8M21 4v4h-4M21 12a9 9 0 01-15.9 5.7L3 16M3 20v-4h4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15l4-8h4l-2 5h4l-4 8h-4l2-5z" fill="currentColor" stroke="none"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg><use href="#i-brand"/></svg></div>
+      <div class="brand-col">
+        <div class="brand-name">FairFix</div>
+        <div class="brand-tag">Operator Console</div>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+
+      <div class="nav-group">
+        <div class="nav-group-title">Overview</div>
+        <div class="nav-item active" data-view="dashboard">
+          <svg><use href="#i-dashboard"/></svg><span>Dashboard</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Marketplace</div>
+        <div class="nav-item" data-view="orders">
+          <svg><use href="#i-orders"/></svg><span>Orders</span>
+          <span class="badge info">184</span>
+        </div>
+        <div class="nav-item" data-view="tradesmen">
+          <svg><use href="#i-users"/></svg><span>Tradesmen</span>
+          <span class="badge">18</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Customers">
+          <svg><use href="#i-customer"/></svg><span>Customers</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Quality</div>
+        <div class="nav-item" data-view="complaints">
+          <svg><use href="#i-alert"/></svg><span>Complaints</span>
+          <span class="badge critical">3</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Reviews">
+          <svg><use href="#i-star"/></svg><span>Reviews</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Disputes">
+          <svg><use href="#i-scale"/></svg><span>Disputes</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Money</div>
+        <div class="nav-item" data-view="_stub" data-label="Payments">
+          <svg><use href="#i-cash"/></svg><span>Payments</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Payouts">
+          <svg><use href="#i-payout"/></svg><span>Payouts</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="VAT">
+          <svg><use href="#i-receipt"/></svg><span>VAT</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Setup</div>
+        <div class="nav-item" data-view="services">
+          <svg><use href="#i-wrench"/></svg><span>Services &amp; Prices</span>
+        </div>
+        <div class="nav-item" data-view="ai">
+          <svg><use href="#i-spark"/></svg><span>AI Estimates</span>
+          <span class="badge info">Beta</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Cities &amp; Zones">
+          <svg><use href="#i-pin"/></svg><span>Cities &amp; Zones</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Notifications">
+          <svg><use href="#i-bell"/></svg><span>Notifications</span>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">You</div>
+        <div class="nav-item" data-view="_stub" data-label="Team">
+          <svg><use href="#i-team"/></svg><span>Team</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="Settings">
+          <svg><use href="#i-cog"/></svg><span>Settings</span>
+        </div>
+        <div class="nav-item" data-view="_stub" data-label="API keys">
+          <svg><use href="#i-key"/></svg><span>API keys</span>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="avatar">TS</div>
+      <div class="foot-info">
+        <b>Tarek S.</b>
+        <small>Owner · Dublin</small>
+      </div>
+      <button class="foot-btn" title="Sign out"><svg><use href="#i-logout"/></svg></button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="crumb">
+        <span>FairFix</span>
+        <span class="crumb-sep">/</span>
+        <b id="crumbCurrent">Dashboard</b>
+      </div>
+
+      <div class="search">
+        <svg><use href="#i-search"/></svg>
+        <input type="text" placeholder="Search orders, tradesmen, customers, job IDs…" />
+        <kbd>&#8984;K</kbd>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="themeToggle" title="Toggle theme">
+          <svg id="themeIcon"><use href="#i-moon"/></svg>
+        </button>
+        <button class="icon-btn" title="Notifications">
+          <svg><use href="#i-bell"/></svg>
+          <span class="dot"></span>
+        </button>
+        <button class="top-avatar">
+          <span class="avatar">TS</span>
+          <b>Tarek</b>
+          <svg style="width:12px;height:12px;color:var(--ink-3)"><use href="#i-chev-down"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="content" id="content">
+
+      <!-- =========== VIEW 1: DASHBOARD =========== -->
+      <div class="view active" data-view="dashboard">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Marketplace pulse</h1>
+            <div class="page-sub">Wednesday, 1 August 2026 · Dublin office · Live data every 60s</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn"><svg><use href="#i-download"/></svg>Export CSV</button>
+            <button class="btn"><svg><use href="#i-refresh"/></svg>Refresh</button>
+            <button class="btn primary"><svg><use href="#i-plus"/></svg>New announcement</button>
+          </div>
+        </div>
+
+        <!-- KPI TILES -->
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="label"><span>Today's jobs</span><span>32 booked</span></div>
+            <div class="value">&euro;4,340</div>
+            <div class="foot">
+              <span class="delta up"><svg><use href="#i-up"/></svg>+12% vs Tue</span>
+              <svg class="spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--brand-1)" stroke-width="1.5" points="0,15 6,13 12,14 18,10 24,11 30,9 36,10 42,7 48,8 54,5 60,4"/></svg>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="label"><span>Active tradesmen</span><span>online now 812</span></div>
+            <div class="value">2,547</div>
+            <div class="foot">
+              <span class="delta up"><svg><use href="#i-up"/></svg>+42 this week</span>
+              <svg class="spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--brand-1)" stroke-width="1.5" points="0,17 6,16 12,14 18,15 24,13 30,12 36,11 42,10 48,9 54,7 60,6"/></svg>
+            </div>
+          </div>
+          <div class="kpi warn">
+            <div class="label"><span>Pending verifications</span><span>needs attention</span></div>
+            <div class="value">18</div>
+            <div class="foot">
+              <span class="delta down"><svg><use href="#i-up"/></svg>+5 since Mon</span>
+              <svg class="spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--amber)" stroke-width="1.5" points="0,14 6,13 12,15 18,12 24,10 30,11 36,9 42,10 48,8 54,7 60,5"/></svg>
+            </div>
+          </div>
+          <div class="kpi crit">
+            <div class="label"><span>Open complaints</span><span>critical</span></div>
+            <div class="value">3</div>
+            <div class="foot">
+              <span class="delta up"><svg><use href="#i-up"/></svg>+1 vs Tue</span>
+              <svg class="spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--coral)" stroke-width="1.5" points="0,17 6,16 12,15 18,14 24,15 30,13 36,12 42,13 48,11 54,10 60,8"/></svg>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="label"><span>Revenue this week</span><span>Mon–Wed</span></div>
+            <div class="value">&euro;12,430</div>
+            <div class="foot">
+              <span class="delta up"><svg><use href="#i-up"/></svg>+8% vs LW</span>
+              <svg class="spark" viewBox="0 0 60 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--brand-1)" stroke-width="1.5" points="0,16 6,14 12,15 18,12 24,13 30,10 36,11 42,8 48,9 54,6 60,4"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 2: Jobs by hour + Supply/demand -->
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Jobs by hour today</h3>
+                <div class="sub">32 completed · 4 in-progress · 6 scheduled</div>
+              </div>
+              <div class="chart-legend">
+                <span><i style="background:var(--brand-1)"></i>completed</span>
+                <span><i style="background:var(--amber)"></i>current hour</span>
+                <span><i style="background:var(--paper-2);border:1px dashed var(--line)"></i>upcoming</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="bars" id="hourBars">
+                <!-- 24 bars, filled below via JS -->
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Supply / demand by category</h3>
+                <div class="sub">Available vs open jobs · updated 2m ago</div>
+              </div>
+              <button class="btn xs ghost"><svg><use href="#i-filter"/></svg>Filter</button>
+            </div>
+            <div class="card-body flush">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th class="right">Available</th>
+                    <th class="right">Open jobs</th>
+                    <th style="width:40%">Coverage</th>
+                    <th>Gap</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Plumbing</td><td class="num">412</td><td class="num">38</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill" style="width:88%"></div></div><span class="sd-num">88%</span></div></td><td><span class="pill ok"><span class="dot"></span>Surplus</span></td></tr>
+                  <tr><td>Electrical</td><td class="num">287</td><td class="num">31</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill" style="width:82%"></div></div><span class="sd-num">82%</span></div></td><td><span class="pill ok"><span class="dot"></span>Surplus</span></td></tr>
+                  <tr><td>Carpentry</td><td class="num">198</td><td class="num">22</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill" style="width:74%"></div></div><span class="sd-num">74%</span></div></td><td><span class="pill ok"><span class="dot"></span>Healthy</span></td></tr>
+                  <tr><td>Painting</td><td class="num">156</td><td class="num">19</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill" style="width:66%"></div></div><span class="sd-num">66%</span></div></td><td><span class="pill ok"><span class="dot"></span>Healthy</span></td></tr>
+                  <tr><td>Tiling</td><td class="num">89</td><td class="num">17</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill warn" style="width:52%"></div></div><span class="sd-num">52%</span></div></td><td><span class="pill warn"><span class="dot"></span>Tight</span></td></tr>
+                  <tr><td>Roofing</td><td class="num">44</td><td class="num">14</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill warn" style="width:38%"></div></div><span class="sd-num">38%</span></div></td><td><span class="pill warn"><span class="dot"></span>Tight</span></td></tr>
+                  <tr><td>Boiler / gas</td><td class="num">31</td><td class="num">21</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill crit" style="width:22%"></div></div><span class="sd-num">22%</span></div></td><td><span class="pill crit"><span class="dot"></span>Shortage</span></td></tr>
+                  <tr><td>Locksmith</td><td class="num">18</td><td class="num">12</td><td><div class="sd-bar"><div class="sd-track"><div class="sd-fill crit" style="width:16%"></div></div><span class="sd-num">16%</span></div></td><td><span class="pill crit"><span class="dot"></span>Shortage</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 3: Recent activity + Alerts -->
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Recent activity</h3>
+                <div class="sub">Live feed · last 15 minutes</div>
+              </div>
+              <span class="pill ok"><span class="dot" style="background:var(--brand-2);animation:pulse 1.4s infinite"></span>Live</span>
+            </div>
+            <div class="card-body flush">
+              <div class="feed">
+                <div class="feed-item"><span class="feed-dot"></span>
+                  <div class="feed-body"><b>Diarmuid Kelly</b> accepted job <span class="mono">FX-8321</span> · Blocked drain, Rathmines</div>
+                  <div class="feed-time">10:42:18</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot info"></span>
+                  <div class="feed-body">New tradesman signed up: <b>Emma O'Sullivan</b> · Painter, Cork · awaiting docs</div>
+                  <div class="feed-time">10:41:03</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot"></span>
+                  <div class="feed-body">Payment released to <b>Padraig Byrne</b> · <span class="serif" style="font-variant-numeric:tabular-nums">&euro;285.00</span> · Job FX-8318</div>
+                  <div class="feed-time">10:39:44</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot warn"></span>
+                  <div class="feed-body"><b>Refund requested</b> by Aoife Nolan · Job FX-8302 · Reason: no-show</div>
+                  <div class="feed-time">10:37:12</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot"></span>
+                  <div class="feed-body">Job <span class="mono">FX-8319</span> booked · Electrical socket, Sandymount · <span class="serif" style="font-variant-numeric:tabular-nums">&euro;120</span></div>
+                  <div class="feed-time">10:34:57</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot crit"></span>
+                  <div class="feed-body"><b>Complaint filed</b> · Cormac Walsh vs. Anna Fitzgerald · Category: Damage during work</div>
+                  <div class="feed-time">10:31:22</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot"></span>
+                  <div class="feed-body">RECI verified: <b>Sean McCarthy</b> · Electrical · Reg &num;RECI-4491</div>
+                  <div class="feed-time">10:28:04</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot neutral"></span>
+                  <div class="feed-body">5-star review · <b>Niamh Doyle</b> for <b>Michael O'Brien</b> · &quot;Fixed our boiler on Sunday evening — legend&quot;</div>
+                  <div class="feed-time">10:24:38</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot info"></span>
+                  <div class="feed-body">AI estimate generated: Bathroom tiling · Ballymun · <span class="serif" style="font-variant-numeric:tabular-nums">&euro;480</span> &plusmn; &euro;60</div>
+                  <div class="feed-time">10:22:11</div>
+                </div>
+                <div class="feed-item"><span class="feed-dot"></span>
+                  <div class="feed-body">Job completed <span class="mono">FX-8305</span> · Kitchen leak · <span class="pill ok" style="margin-left:4px"><span class="dot"></span>OK</span></div>
+                  <div class="feed-time">10:19:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Alerts</h3>
+                <div class="sub">4 items need your attention</div>
+              </div>
+              <button class="btn xs ghost">Dismiss all</button>
+            </div>
+            <div class="card-body flush">
+              <div class="alert-item">
+                <div class="alert-icon"><svg><use href="#i-clock"/></svg></div>
+                <div class="alert-body">
+                  <b>7 tradesman docs waiting &gt; 48h</b>
+                  <small>Oldest: Ronan Brady, Plumber, Galway · 3d 4h</small>
+                </div>
+                <button class="btn sm">Review queue</button>
+              </div>
+              <div class="alert-item">
+                <div class="alert-icon crit"><svg><use href="#i-alert"/></svg></div>
+                <div class="alert-body">
+                  <b>Refund request pending &gt; 24h</b>
+                  <small>Aoife Nolan · Job FX-8302 · &euro;180 held</small>
+                </div>
+                <button class="btn sm">Resolve</button>
+              </div>
+              <div class="alert-item">
+                <div class="alert-icon crit"><svg><use href="#i-cash"/></svg></div>
+                <div class="alert-body">
+                  <b>2 payout failures (Stripe SEPA)</b>
+                  <small>Padraig Byrne, Cathal Lynch · IBAN mismatch</small>
+                </div>
+                <button class="btn sm">Retry</button>
+              </div>
+              <div class="alert-item">
+                <div class="alert-icon info"><svg><use href="#i-alert"/></svg></div>
+                <div class="alert-body">
+                  <b>Shortage: Locksmith (Dublin 2)</b>
+                  <small>16% coverage · consider boost campaign</small>
+                </div>
+                <button class="btn sm">Launch boost</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =========== VIEW 2: ORDERS =========== -->
+      <div class="view" data-view="orders">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Orders</h1>
+            <div class="page-sub">184 jobs today &middot; 32 completed &middot; 4 in progress &middot; 148 upcoming</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn"><svg><use href="#i-download"/></svg>Export</button>
+            <button class="btn primary"><svg><use href="#i-plus"/></svg>Manual booking</button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filterbar">
+          <div class="search">
+            <svg><use href="#i-search"/></svg>
+            <input type="text" placeholder="Search by job ID, customer, tradesman&hellip;" />
+          </div>
+          <select class="select">
+            <option>All trades</option>
+            <option>Plumbing</option>
+            <option>Electrical</option>
+            <option>Carpentry</option>
+            <option>Boiler / gas</option>
+          </select>
+          <div style="display:flex;gap:6px">
+            <span class="chip active">All <span class="count">184</span></span>
+            <span class="chip">Open <span class="count">148</span></span>
+            <span class="chip ok">In progress <span class="count">4</span></span>
+            <span class="chip">Completed <span class="count">32</span></span>
+            <span class="chip">Cancelled <span class="count">7</span></span>
+          </div>
+          <select class="select" style="margin-left:auto">
+            <option>Last 24 hours</option>
+            <option>Last 7 days</option>
+            <option>Last 30 days</option>
+            <option>Custom&hellip;</option>
+          </select>
+          <button class="btn sm"><svg><use href="#i-filter"/></svg>More filters</button>
+        </div>
+
+        <div class="orders-layout">
+          <!-- LEFT: table -->
+          <div class="orders-table-wrap">
+            <div class="bulk">
+              <b>1 selected</b>
+              <button class="btn sm">Assign</button>
+              <button class="btn sm">Reschedule</button>
+              <button class="btn sm danger">Cancel &amp; refund</button>
+              <span class="spacer"></span>
+              <button class="btn sm ghost" style="color:#FBF7EE;border-color:rgba(255,255,255,0.15)">Clear</button>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="tbl-check"><input type="checkbox"/></th>
+                  <th>Job ID</th>
+                  <th>Time</th>
+                  <th>Customer</th>
+                  <th>Tradesman</th>
+                  <th>Trade</th>
+                  <th class="right">Amount</th>
+                  <th>Status</th>
+                  <th class="tbl-actions"></th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody">
+                <tr class="selected">
+                  <td><input type="checkbox" checked/></td>
+                  <td class="id">FX-8321</td>
+                  <td class="mono">10:42</td>
+                  <td class="cust"><b>Aisling Byrne</b><small>Rathmines, D6</small></td>
+                  <td class="cust"><b>Diarmuid Kelly</b><small>&starf; 4.9 &middot; 312 jobs</small></td>
+                  <td>Plumbing</td>
+                  <td class="amount">&euro;185.00</td>
+                  <td><span class="pill warn"><span class="dot"></span>In progress</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8320</td>
+                  <td class="mono">10:36</td>
+                  <td class="cust"><b>Ciaran Murphy</b><small>Ranelagh, D6</small></td>
+                  <td class="cust"><b>Sean McCarthy</b><small>&starf; 4.8 &middot; 189 jobs</small></td>
+                  <td>Electrical</td>
+                  <td class="amount">&euro;120.00</td>
+                  <td><span class="pill info"><span class="dot"></span>Scheduled</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8319</td>
+                  <td class="mono">10:34</td>
+                  <td class="cust"><b>Niamh Doyle</b><small>Sandymount, D4</small></td>
+                  <td class="cust"><b>&mdash; unassigned</b><small>1 quote received</small></td>
+                  <td>Electrical</td>
+                  <td class="amount">&euro;120.00</td>
+                  <td><span class="pill neutral"><span class="dot"></span>Awaiting</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8318</td>
+                  <td class="mono">09:58</td>
+                  <td class="cust"><b>Ronan O'Sullivan</b><small>Clontarf, D3</small></td>
+                  <td class="cust"><b>Padraig Byrne</b><small>&starf; 5.0 &middot; 447 jobs</small></td>
+                  <td>Carpentry</td>
+                  <td class="amount">&euro;285.00</td>
+                  <td><span class="pill ok"><span class="dot"></span>Completed</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8317</td>
+                  <td class="mono">09:41</td>
+                  <td class="cust"><b>Cormac Walsh</b><small>Ballsbridge, D4</small></td>
+                  <td class="cust"><b>Anna Fitzgerald</b><small>&starf; 4.6 &middot; 78 jobs</small></td>
+                  <td>Painting</td>
+                  <td class="amount">&euro;340.00</td>
+                  <td><span class="pill crit"><span class="dot"></span>Disputed</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8316</td>
+                  <td class="mono">09:22</td>
+                  <td class="cust"><b>Laura Kennedy</b><small>Blackrock, Co. Dublin</small></td>
+                  <td class="cust"><b>Michael O'Brien</b><small>&starf; 4.9 &middot; 501 jobs</small></td>
+                  <td>Boiler / gas</td>
+                  <td class="amount">&euro;420.00</td>
+                  <td><span class="pill ok"><span class="dot"></span>Completed</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8315</td>
+                  <td class="mono">09:12</td>
+                  <td class="cust"><b>Colm Fitzpatrick</b><small>Drumcondra, D9</small></td>
+                  <td class="cust"><b>Sinead Ryan</b><small>&starf; 4.8 &middot; 219 jobs</small></td>
+                  <td>Plumbing</td>
+                  <td class="amount">&euro;165.00</td>
+                  <td><span class="pill ok"><span class="dot"></span>Completed</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8314</td>
+                  <td class="mono">08:55</td>
+                  <td class="cust"><b>Roisin Gallagher</b><small>Stoneybatter, D7</small></td>
+                  <td class="cust"><b>Cathal Lynch</b><small>&starf; 4.7 &middot; 145 jobs</small></td>
+                  <td>Tiling</td>
+                  <td class="amount">&euro;520.00</td>
+                  <td><span class="pill warn"><span class="dot"></span>In progress</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8313</td>
+                  <td class="mono">08:41</td>
+                  <td class="cust"><b>Eoin Connolly</b><small>Malahide, Co. Dublin</small></td>
+                  <td class="cust"><b>Fergal Mahony</b><small>&starf; 4.9 &middot; 267 jobs</small></td>
+                  <td>Roofing</td>
+                  <td class="amount">&euro;680.00</td>
+                  <td><span class="pill info"><span class="dot"></span>Scheduled</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8312</td>
+                  <td class="mono">08:22</td>
+                  <td class="cust"><b>Sarah Doyle</b><small>Terenure, D6W</small></td>
+                  <td class="cust"><b>Kevin McGrath</b><small>&starf; 5.0 &middot; 388 jobs</small></td>
+                  <td>Electrical</td>
+                  <td class="amount">&euro;95.00</td>
+                  <td><span class="pill ok"><span class="dot"></span>Completed</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"/></td>
+                  <td class="id">FX-8311</td>
+                  <td class="mono">08:08</td>
+                  <td class="cust"><b>Brian O'Neill</b><small>Phibsborough, D7</small></td>
+                  <td class="cust"><b>&mdash; cancelled</b><small>customer requested</small></td>
+                  <td>Plumbing</td>
+                  <td class="amount muted">&euro;0.00</td>
+                  <td><span class="pill neutral"><span class="dot"></span>Cancelled</span></td>
+                  <td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;color:var(--ink-3);border-top:1px solid var(--line);text-transform:uppercase;letter-spacing:0.08em">
+              <span>Showing 1&ndash;11 of 184</span>
+              <span>
+                <button class="btn xs">Prev</button>
+                <button class="btn xs">Next</button>
+              </span>
+            </div>
+          </div>
+
+          <!-- RIGHT: Drawer (open by default) -->
+          <aside class="drawer" id="ordersDrawer">
+            <div class="drawer-head">
+              <button class="icon-btn close" style="width:28px;height:28px" title="Close"><svg><use href="#i-x"/></svg></button>
+              <div class="drawer-title">Job <b class="mono">FX-8321</b> <span class="pill warn" style="margin-left:6px"><span class="dot"></span>In progress</span></div>
+              <div class="drawer-amount">&euro;185.00</div>
+              <div class="drawer-meta">Blocked drain &middot; Rathmines, D6 &middot; Booked 42m ago</div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <button class="btn xs"><svg><use href="#i-clock"/></svg>Reschedule</button>
+                <button class="btn xs">Message parties</button>
+                <button class="btn xs danger">Refund</button>
+              </div>
+            </div>
+            <div class="drawer-tabs">
+              <div class="drawer-tab active">Overview</div>
+              <div class="drawer-tab">Timeline</div>
+              <div class="drawer-tab">Chat</div>
+              <div class="drawer-tab">Ratings</div>
+              <div class="drawer-tab">Payment</div>
+            </div>
+            <div class="drawer-body">
+              <dl class="meta-grid">
+                <dt>Customer</dt><dd>Aisling Byrne &middot; +353 87 123 4488</dd>
+                <dt>Address</dt><dd>42 Rathmines Rd Upper, Dublin 6, D06 X4H2</dd>
+                <dt>Tradesman</dt><dd>Diarmuid Kelly &middot; Plumbing</dd>
+                <dt>RECI / Safe Pass</dt><dd>Both verified &middot; Reg &num;RECI-1120</dd>
+                <dt>Booked at</dt><dd>1 Aug 2026, 10:00 &middot; via mobile app</dd>
+                <dt>Scheduled</dt><dd>1 Aug 2026, 11:30&ndash;13:00</dd>
+                <dt>AI estimate</dt><dd>&euro;165&ndash;&euro;220 &middot; 87% confidence &middot; 24 comps</dd>
+                <dt>Actual price</dt><dd><b class="serif" style="font-variant-numeric:tabular-nums;font-size:14px">&euro;185.00</b> &middot; within band</dd>
+              </dl>
+
+              <div class="section-h">Timeline</div>
+              <div class="timeline">
+                <div class="timeline-item done">
+                  <b>Job booked by Aisling</b>
+                  <small>10:00:12 &middot; via customer app &middot; iPhone</small>
+                </div>
+                <div class="timeline-item done">
+                  <b>3 quotes received (avg &euro;192)</b>
+                  <small>10:04&ndash;10:18 &middot; from D. Kelly, R. Brady, F. Mahony</small>
+                </div>
+                <div class="timeline-item done">
+                  <b>Quote accepted &middot; Diarmuid Kelly &middot; &euro;185</b>
+                  <small>10:22:31 &middot; deposit &euro;20 held</small>
+                </div>
+                <div class="timeline-item">
+                  <b>Tradesman en route (2.4km)</b>
+                  <small>10:42:18 &middot; ETA 11:04 &middot; live tracking on</small>
+                </div>
+                <div class="timeline-item warn">
+                  <b>Job start</b>
+                  <small>Scheduled 11:30 &middot; not started yet</small>
+                </div>
+              </div>
+
+              <div class="section-h">Chat log excerpt</div>
+              <div class="chat-log">
+                <div class="chat-line"><b>10:22 &middot; Aisling:</b> Great, thanks! Front door bell doesn't work &mdash; ring my mobile.</div>
+                <div class="chat-line"><b>10:24 &middot; Diarmuid:</b> No bother, will do. Anything under the sink I should know? Any leaks visible?</div>
+                <div class="chat-line"><b>10:25 &middot; Aisling:</b> No visible leak, water backs up when both sinks drain at once.</div>
+                <div class="chat-line"><b>10:41 &middot; Diarmuid:</b> On my way, should be with you in 20.</div>
+              </div>
+
+              <div class="section-h">Ratings so far</div>
+              <div class="rating-row">
+                <div class="rate-card">
+                  <small>Customer rating history</small>
+                  <div class="stars">&starf;&starf;&starf;&starf;&starf;</div>
+                  <div class="mono" style="font-size:11px;color:var(--ink-3);margin-top:2px">4.9 avg &middot; 8 prior jobs</div>
+                </div>
+                <div class="rate-card">
+                  <small>Tradesman rating</small>
+                  <div class="stars">&starf;&starf;&starf;&starf;&starf;</div>
+                  <div class="mono" style="font-size:11px;color:var(--ink-3);margin-top:2px">4.9 avg &middot; 312 jobs</div>
+                </div>
+              </div>
+            </div>
+            <div class="drawer-foot">
+              <button class="btn sm ghost">Contact both</button>
+              <span class="spacer"></span>
+              <button class="btn sm danger">Cancel job</button>
+              <button class="btn sm primary">Mark resolved</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- =========== VIEW 3: TRADESMEN =========== -->
+      <div class="view" data-view="tradesmen">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Verification queue</h1>
+            <div class="page-sub">Review new tradesmen, check RECI / Safe Pass / RGII and approve or reject</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn"><svg><use href="#i-download"/></svg>Export queue</button>
+            <button class="btn primary"><svg><use href="#i-plus"/></svg>Invite tradesman</button>
+          </div>
+        </div>
+
+        <div class="stats-strip">
+          <div class="stat warn"><b>18</b><small>Pending &middot; oldest 3d 4h</small></div>
+          <div class="stat ok"><b>2,529</b><small>Approved</small></div>
+          <div class="stat"><b>47</b><small>Rejected all-time</small></div>
+          <div class="stat"><b>12</b><small>Suspended</small></div>
+          <span style="flex:1"></span>
+          <div class="stat"><b>94.2%</b><small>Response rate this week</small></div>
+        </div>
+
+        <div class="filterbar">
+          <div style="display:flex;gap:6px">
+            <span class="chip active">Pending <span class="count">18</span></span>
+            <span class="chip">Approved <span class="count">2,529</span></span>
+            <span class="chip">Rejected <span class="count">47</span></span>
+            <span class="chip">Suspended <span class="count">12</span></span>
+          </div>
+          <select class="select">
+            <option>All trades</option>
+            <option>Plumbing</option>
+            <option>Electrical</option>
+          </select>
+          <select class="select">
+            <option>All counties</option>
+            <option>Dublin</option>
+            <option>Cork</option>
+            <option>Galway</option>
+          </select>
+          <div class="search" style="margin-left:auto;max-width:220px">
+            <svg><use href="#i-search"/></svg>
+            <input placeholder="Search by name, reg&hellip;"/>
+          </div>
+        </div>
+
+        <div class="trades-list">
+
+          <div class="trade-card">
+            <div class="trade-avatar" style="background:linear-gradient(135deg,#F26D5B,#E6A429)">RB</div>
+            <div>
+              <h3 class="tv-name">Ronan Brady</h3>
+              <div class="tv-role">Plumbing &middot; Galway City</div>
+              <div class="tv-meta">
+                <span><svg><use href="#i-clock"/></svg>Waiting 3d 4h</span>
+                <span><svg><use href="#i-pin"/></svg>Salthill, H91 K42V</span>
+                <span><svg><use href="#i-brand"/></svg>Referred by S. Ryan</span>
+              </div>
+              <div class="certs">
+                <span class="cert on"><svg><use href="#i-check"/></svg>RECI &num;5521</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Safe Pass 2028</span>
+                <span class="cert off"><svg><use href="#i-x"/></svg>RGII pending</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Public liability &euro;6.5M</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Tax clearance</span>
+              </div>
+              <div class="docs">
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Public liability</b>
+                  <small>PDF &middot; 428KB &middot; Zurich</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Tax clearance</b>
+                  <small>PDF &middot; 89KB &middot; Revenue.ie</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-photo"/></svg>
+                  <b>Safe Pass ID</b>
+                  <small>JPG &middot; 1.2MB &middot; expires 2028</small>
+                </div>
+              </div>
+            </div>
+            <div class="actions-col">
+              <button class="btn primary"><svg><use href="#i-check"/></svg>Approve</button>
+              <button class="btn">Request more info</button>
+              <button class="btn danger"><svg><use href="#i-x"/></svg>Reject</button>
+              <button class="btn xs ghost">View full profile</button>
+            </div>
+          </div>
+
+          <div class="trade-card">
+            <div class="trade-avatar" style="background:linear-gradient(135deg,#10B981,#0B7F58)">EO</div>
+            <div>
+              <h3 class="tv-name">Emma O'Sullivan</h3>
+              <div class="tv-role">Painting &amp; decorating &middot; Cork City</div>
+              <div class="tv-meta">
+                <span><svg><use href="#i-clock"/></svg>Waiting 2h 12m</span>
+                <span><svg><use href="#i-pin"/></svg>Douglas, T12 W3V4</span>
+                <span><svg><use href="#i-star"/></svg>7 yrs experience</span>
+              </div>
+              <div class="certs">
+                <span class="cert on"><svg><use href="#i-check"/></svg>Safe Pass 2029</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Public liability &euro;2M</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Tax clearance</span>
+                <span class="cert off"><svg><use href="#i-x"/></svg>Trade insurance not uploaded</span>
+              </div>
+              <div class="docs">
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Public liability</b>
+                  <small>PDF &middot; 512KB &middot; AXA</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Tax clearance</b>
+                  <small>PDF &middot; 76KB &middot; Revenue.ie</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-photo"/></svg>
+                  <b>Portfolio (12)</b>
+                  <small>ZIP &middot; 24MB &middot; sample work</small>
+                </div>
+              </div>
+            </div>
+            <div class="actions-col">
+              <button class="btn primary"><svg><use href="#i-check"/></svg>Approve</button>
+              <button class="btn">Request more info</button>
+              <button class="btn danger"><svg><use href="#i-x"/></svg>Reject</button>
+              <button class="btn xs ghost">View full profile</button>
+            </div>
+          </div>
+
+          <div class="trade-card">
+            <div class="trade-avatar" style="background:linear-gradient(135deg,#0B1F33,#1B4068)">CQ</div>
+            <div>
+              <h3 class="tv-name">Ciarán Quinlan</h3>
+              <div class="tv-role">Electrical &middot; Dublin 15</div>
+              <div class="tv-meta">
+                <span><svg><use href="#i-clock"/></svg>Waiting 1d 18h</span>
+                <span><svg><use href="#i-pin"/></svg>Blanchardstown, D15</span>
+                <span><svg><use href="#i-star"/></svg>Ex-ESB Networks</span>
+              </div>
+              <div class="certs">
+                <span class="cert on"><svg><use href="#i-check"/></svg>RECI &num;7821</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Safe Pass 2027</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Public liability &euro;5M</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Tax clearance</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Van insurance</span>
+              </div>
+              <div class="docs">
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Public liability</b>
+                  <small>PDF &middot; 621KB &middot; Aviva</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>RECI certificate</b>
+                  <small>PDF &middot; 245KB &middot; verified</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-photo"/></svg>
+                  <b>Safe Pass ID</b>
+                  <small>JPG &middot; 890KB &middot; front + back</small>
+                </div>
+              </div>
+            </div>
+            <div class="actions-col">
+              <button class="btn primary"><svg><use href="#i-check"/></svg>Approve</button>
+              <button class="btn">Request more info</button>
+              <button class="btn danger"><svg><use href="#i-x"/></svg>Reject</button>
+              <button class="btn xs ghost">View full profile</button>
+            </div>
+          </div>
+
+          <div class="trade-card">
+            <div class="trade-avatar" style="background:linear-gradient(135deg,#E6A429,#F26D5B)">MG</div>
+            <div>
+              <h3 class="tv-name">Máire Geraghty</h3>
+              <div class="tv-role">Tiling &middot; Wexford Town</div>
+              <div class="tv-meta">
+                <span><svg><use href="#i-clock"/></svg>Waiting 4h 08m</span>
+                <span><svg><use href="#i-pin"/></svg>Wexford, Y35</span>
+                <span><svg><use href="#i-star"/></svg>Solo trader &middot; 12 yrs</span>
+              </div>
+              <div class="certs">
+                <span class="cert on"><svg><use href="#i-check"/></svg>Safe Pass 2027</span>
+                <span class="cert off"><svg><use href="#i-x"/></svg>Tax clearance missing</span>
+                <span class="cert on"><svg><use href="#i-check"/></svg>Public liability &euro;3M</span>
+              </div>
+              <div class="docs">
+                <div class="doc">
+                  <svg><use href="#i-doc"/></svg>
+                  <b>Public liability</b>
+                  <small>PDF &middot; 388KB &middot; Zurich</small>
+                </div>
+                <div class="doc">
+                  <svg><use href="#i-photo"/></svg>
+                  <b>Portfolio (8)</b>
+                  <small>ZIP &middot; 18MB</small>
+                </div>
+                <div class="doc" style="opacity:0.5">
+                  <svg style="color:var(--coral)"><use href="#i-x"/></svg>
+                  <b>Tax clearance</b>
+                  <small>&mdash; awaiting upload</small>
+                </div>
+              </div>
+            </div>
+            <div class="actions-col">
+              <button class="btn">Request more info</button>
+              <button class="btn danger"><svg><use href="#i-x"/></svg>Reject</button>
+              <button class="btn xs ghost">View full profile</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- =========== VIEW 4: COMPLAINTS =========== -->
+      <div class="view" data-view="complaints">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Complaints</h1>
+            <div class="page-sub">3 open &middot; oldest 8h 12m &middot; median resolution 14h</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn"><svg><use href="#i-download"/></svg>Export month</button>
+            <button class="btn primary">Bulk resolve</button>
+          </div>
+        </div>
+
+        <div class="filterbar">
+          <div style="display:flex;gap:6px">
+            <span class="chip active">Open <span class="count">3</span></span>
+            <span class="chip">In review <span class="count">2</span></span>
+            <span class="chip">Resolved <span class="count">142</span></span>
+            <span class="chip">Escalated <span class="count">1</span></span>
+          </div>
+          <select class="select">
+            <option>All categories</option>
+            <option>Late arrival</option>
+            <option>Poor quality</option>
+            <option>Damage during work</option>
+            <option>Overcharging</option>
+          </select>
+          <div class="search" style="margin-left:auto;max-width:220px">
+            <svg><use href="#i-search"/></svg>
+            <input placeholder="Search job ID or party&hellip;"/>
+          </div>
+        </div>
+
+        <!-- Complaint 1 (expanded by default) -->
+        <div class="complaint expanded" id="cmp1">
+          <div class="complaint-head">
+            <div class="complaint-id">FX-8317<br/><small>3h 42m open</small></div>
+            <div class="complaint-parties">
+              <b>Cormac Walsh</b>
+              <small>Customer &middot; Ballsbridge D4</small>
+            </div>
+            <div class="complaint-parties">
+              <b>Anna Fitzgerald</b>
+              <small>Painter &middot; &starf; 4.6</small>
+            </div>
+            <div><span class="pill crit"><span class="dot"></span>Damage during work</span></div>
+            <div><span class="pill warn"><span class="dot"></span>Under review</span></div>
+            <div><svg style="width:14px;height:14px;color:var(--ink-3)"><use href="#i-chev-down"/></svg></div>
+          </div>
+          <div class="complaint-body">
+            <div class="sides">
+              <div class="side customer">
+                <div class="side-head">
+                  <b>Customer complaint &middot; Cormac Walsh</b>
+                  <small>Submitted 07:12 today</small>
+                </div>
+                <p>&ldquo;Painter left overspray on the oak floor in the hallway. I noticed 20 minutes after they finished. The stain won't rub off with white spirit. Attaching photos of the floor and the painter's dust sheet setup which clearly didn't cover this area.&rdquo;</p>
+                <div class="mono" style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em">Evidence &middot; 4 photos</div>
+                <div class="evidence">
+                  <div class="evi" data-tag="floor 1"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="floor 2"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="dust sheet"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="close-up"><svg><use href="#i-photo"/></svg></div>
+                </div>
+              </div>
+              <div class="side tradesman">
+                <div class="side-head">
+                  <b>Tradesman response &middot; Anna Fitzgerald</b>
+                  <small>Replied 09:03 today</small>
+                </div>
+                <p>&ldquo;I laid heavy dust sheets across the whole hall and taped the skirting. The mark near the door isn't paint &mdash; the customer's dog walked through the tray while I was in the utility room. I have a photo of the sheets before I started and video of the dog. Happy to come back and try to remove it as goodwill but I do not accept liability.&rdquo;</p>
+                <div class="mono" style="font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em">Evidence &middot; 3 photos + video</div>
+                <div class="evidence">
+                  <div class="evi" data-tag="setup"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="dog"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="video"><svg><use href="#i-photo"/></svg></div>
+                  <div class="evi" data-tag="tray"><svg><use href="#i-photo"/></svg></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-h">Job history &middot; Anna Fitzgerald (78 jobs)</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+              <div class="rate-card"><small>Avg rating</small><div class="serif" style="font-size:20px;font-variant-numeric:tabular-nums">4.6</div></div>
+              <div class="rate-card"><small>Prior complaints</small><div class="serif" style="font-size:20px;font-variant-numeric:tabular-nums">1</div></div>
+              <div class="rate-card"><small>Resolved &lsquo;in favor&rsquo;</small><div class="serif" style="font-size:20px;font-variant-numeric:tabular-nums">1 / 1</div></div>
+              <div class="rate-card"><small>Response time avg</small><div class="serif" style="font-size:20px;font-variant-numeric:tabular-nums">28m</div></div>
+            </div>
+
+            <div class="resolution">
+              <div style="flex:1">
+                <label class="res-label">Resolution</label>
+                <select class="select" style="width:280px;height:34px;font-size:13px">
+                  <option>Choose resolution&hellip;</option>
+                  <option>Refund customer in full (&euro;340)</option>
+                  <option>Partial refund + tradesman returns to fix</option>
+                  <option>Warn tradesman &middot; no refund</option>
+                  <option>No action &middot; evidence favours tradesman</option>
+                  <option>Both parties agree &middot; goodwill callback</option>
+                  <option>Escalate to insurance claim</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn">Save draft</button>
+                <button class="btn primary">Apply resolution</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Complaint 2 (collapsed) -->
+        <div class="complaint">
+          <div class="complaint-head">
+            <div class="complaint-id">FX-8302<br/><small>8h 12m open</small></div>
+            <div class="complaint-parties"><b>Aoife Nolan</b><small>Customer &middot; Rathfarnham</small></div>
+            <div class="complaint-parties"><b>&mdash; No-show</b><small>Tradesman didn't arrive</small></div>
+            <div><span class="pill crit"><span class="dot"></span>No-show</span></div>
+            <div><span class="pill warn"><span class="dot"></span>Refund pending</span></div>
+            <div><svg style="width:14px;height:14px;color:var(--ink-3)"><use href="#i-chevron"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Complaint 3 (collapsed) -->
+        <div class="complaint">
+          <div class="complaint-head">
+            <div class="complaint-id">FX-8288<br/><small>1d 4h open</small></div>
+            <div class="complaint-parties"><b>Padraig Hennessy</b><small>Customer &middot; Kilkenny</small></div>
+            <div class="complaint-parties"><b>Tomás Ó Dálaigh</b><small>Boiler / gas &middot; &starf; 4.4</small></div>
+            <div><span class="pill warn"><span class="dot"></span>Overcharging</span></div>
+            <div><span class="pill neutral"><span class="dot"></span>Awaiting reply</span></div>
+            <div><svg style="width:14px;height:14px;color:var(--ink-3)"><use href="#i-chevron"/></svg></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- =========== VIEW 5: SERVICES & PRICES =========== -->
+      <div class="view" data-view="services">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Services &amp; prices</h1>
+            <div class="page-sub">8 categories &middot; 61 sub-services &middot; edits go live without app update</div>
+          </div>
+          <div class="page-actions">
+            <button class="btn"><svg><use href="#i-download"/></svg>Export price list</button>
+            <button class="btn primary"><svg><use href="#i-plus"/></svg>Add new service</button>
+          </div>
+        </div>
+
+        <div class="services-layout">
+          <div>
+            <div class="svc-grid">
+              <div class="svc active" data-svc="plumbing">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#0B7F58,#10B981)"><svg><use href="#i-wrench"/></svg></div>
+                <h3 class="svc-name">Plumbing</h3>
+                <div class="svc-count">12 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;168</b></div>
+              </div>
+              <div class="svc" data-svc="electrical">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#E6A429,#F26D5B)"><svg><use href="#i-spark"/></svg></div>
+                <h3 class="svc-name">Electrical</h3>
+                <div class="svc-count">14 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;142</b></div>
+              </div>
+              <div class="svc" data-svc="carpentry">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#14314D,#1B4068)"><svg><use href="#i-wrench"/></svg></div>
+                <h3 class="svc-name">Carpentry</h3>
+                <div class="svc-count">9 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;220</b></div>
+              </div>
+              <div class="svc" data-svc="painting">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#F26D5B,#DC2626)"><svg><use href="#i-photo"/></svg></div>
+                <h3 class="svc-name">Painting</h3>
+                <div class="svc-count">7 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;310</b></div>
+              </div>
+              <div class="svc" data-svc="tiling">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#38BDF8,#0B7F58)"><svg><use href="#i-dashboard"/></svg></div>
+                <h3 class="svc-name">Tiling</h3>
+                <div class="svc-count">5 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;480</b></div>
+              </div>
+              <div class="svc" data-svc="roofing">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#7A879A,#0B1F33)"><svg><use href="#i-alert"/></svg></div>
+                <h3 class="svc-name">Roofing</h3>
+                <div class="svc-count">6 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;620</b></div>
+              </div>
+              <div class="svc" data-svc="boiler">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#DC2626,#E6A429)"><svg><use href="#i-alert"/></svg></div>
+                <h3 class="svc-name">Boiler / gas</h3>
+                <div class="svc-count">4 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;385</b></div>
+              </div>
+              <div class="svc" data-svc="locksmith">
+                <div class="svc-icon" style="background:linear-gradient(135deg,#0B7F58,#14314D)"><svg><use href="#i-key"/></svg></div>
+                <h3 class="svc-name">Locksmith</h3>
+                <div class="svc-count">4 sub-services</div>
+                <div class="svc-price"><small>Avg</small><b>&euro;145</b></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div>
+                  <h3>Regional overrides</h3>
+                  <div class="sub">Zones with different pricing</div>
+                </div>
+                <button class="btn xs"><svg><use href="#i-plus"/></svg>Add zone</button>
+              </div>
+              <div class="card-body flush">
+                <table class="tbl">
+                  <thead><tr><th>Zone</th><th>Multiplier</th><th>Emergency premium</th><th>Applied to</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>Dublin 2 &middot; city centre</td><td class="num">1.15x</td><td class="num">+30%</td><td>All trades</td><td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>Cork City</td><td class="num">1.00x</td><td class="num">+25%</td><td>All trades</td><td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>Galway City</td><td class="num">1.00x</td><td class="num">+25%</td><td>All trades</td><td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td></tr>
+                    <tr><td>Kerry &middot; rural</td><td class="num">0.95x</td><td class="num">+40%</td><td>Boiler/gas, roofing</td><td class="tbl-actions"><button><svg><use href="#i-more"/></svg></button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detail panel -->
+          <div class="svc-detail">
+            <div class="card-head">
+              <div>
+                <h3>Plumbing</h3>
+                <div class="sub">12 sub-services &middot; updated 2h ago</div>
+              </div>
+              <button class="btn xs ghost"><svg><use href="#i-more"/></svg></button>
+            </div>
+            <div class="card-body">
+
+              <div class="section-h" style="margin-top:0">Sub-services</div>
+              <div class="sub-list">
+                <div class="sub-item"><b>Blocked drain</b><small>&euro;120&ndash;&euro;220</small></div>
+                <div class="sub-item"><b>Leaking tap / mixer</b><small>&euro;80&ndash;&euro;150</small></div>
+                <div class="sub-item"><b>Toilet cistern repair</b><small>&euro;95&ndash;&euro;180</small></div>
+                <div class="sub-item"><b>Burst pipe</b><small>&euro;150&ndash;&euro;340</small></div>
+                <div class="sub-item"><b>Shower installation</b><small>&euro;280&ndash;&euro;520</small></div>
+                <div class="sub-item"><b>Water pressure issue</b><small>&euro;110&ndash;&euro;260</small></div>
+                <div class="sub-item"><b>New tap install</b><small>&euro;95&ndash;&euro;170</small></div>
+              </div>
+              <button class="btn xs" style="width:100%;justify-content:center;margin-bottom:14px"><svg><use href="#i-plus"/></svg>Add sub-service</button>
+
+              <div class="section-h">Typical range &middot; category default</div>
+              <div class="slider-row">
+                <label><span>Minimum</span><b>&euro;80</b></label>
+                <div class="range-track">
+                  <div class="range-fill" style="left:12%;right:60%"></div>
+                  <div class="range-thumb" style="left:12%"></div>
+                  <div class="range-thumb" style="left:40%"></div>
+                </div>
+                <label><span>Maximum</span><b>&euro;340</b></label>
+              </div>
+
+              <div class="section-h">Inspection fee</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                <input class="select" style="height:32px;width:100px;text-align:right;font-family:var(--serif);font-size:14px" value="&euro;35"/>
+                <span style="font-size:12px;color:var(--ink-3)">applied if quote not accepted</span>
+              </div>
+
+              <div class="section-h">Emergency premium</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                <input class="select" style="height:32px;width:100px;text-align:right;font-family:var(--serif);font-size:14px" value="+35%"/>
+                <span style="font-size:12px;color:var(--ink-3)">outside 08:00&ndash;18:00 or bank hols</span>
+              </div>
+
+              <div class="section-h">Visibility</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+                <div>
+                  <b style="font-size:12.5px">Show category in customer app</b>
+                  <div style="font-size:11.5px;color:var(--ink-3)">Turn off to pause new bookings</div>
+                </div>
+                <div class="switch on"></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+                <div>
+                  <b style="font-size:12.5px">Featured on home</b>
+                  <div style="font-size:11.5px;color:var(--ink-3)">Larger card, top of category grid</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+            </div>
+            <div class="drawer-foot">
+              <span class="spacer"></span>
+              <button class="btn sm">Discard</button>
+              <button class="btn sm primary">Publish changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =========== VIEW 6: AI PRICE ESTIMATES =========== -->
+      <div class="view" data-view="ai">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">AI price estimates</h1>
+            <div class="page-sub">Control panel &middot; Model v3.2 &middot; Last retrained 4 days ago &middot; 87.4% within &plusmn;15% of actual</div>
+          </div>
+          <div class="page-actions">
+            <span class="pill ok"><span class="dot"></span>Model healthy</span>
+            <button class="btn"><svg><use href="#i-download"/></svg>Export predictions</button>
+          </div>
+        </div>
+
+        <!-- KPI row for AI -->
+        <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="kpi">
+            <div class="label"><span>Estimates today</span><span></span></div>
+            <div class="value">1,247</div>
+            <div class="foot"><span class="delta up"><svg><use href="#i-up"/></svg>+18% vs Tue</span></div>
+          </div>
+          <div class="kpi">
+            <div class="label"><span>Within &plusmn;15% band</span><span></span></div>
+            <div class="value">87.4%</div>
+            <div class="foot"><span class="delta up"><svg><use href="#i-up"/></svg>+2.1pp WoW</span></div>
+          </div>
+          <div class="kpi warn">
+            <div class="label"><span>Avg confidence</span><span></span></div>
+            <div class="value">82%</div>
+            <div class="foot"><span class="delta down"><svg><use href="#i-up"/></svg>-1.4pp WoW</span></div>
+          </div>
+          <div class="kpi">
+            <div class="label"><span>Flagged for review</span><span>manual override</span></div>
+            <div class="value">14</div>
+            <div class="foot"><span class="delta up"><svg><use href="#i-up"/></svg>+3 today</span></div>
+          </div>
+        </div>
+
+        <div class="ai-grid">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Live estimate feed</h3>
+                <div class="sub">Last 20 predictions &middot; auto-refresh</div>
+              </div>
+              <span class="pill ok"><span class="dot" style="background:var(--brand-2);animation:pulse 1.4s infinite"></span>Live</span>
+            </div>
+            <div class="card-body flush">
+              <table class="tbl">
+                <thead><tr><th>Time</th><th>Service</th><th>Location</th><th class="right">AI est.</th><th>Confidence</th><th class="right">Comps</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">10:42</td><td>Blocked drain</td><td>Rathmines</td><td class="amount">&euro;185</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:87%"></div></div>87%</span></td><td class="num">24</td></tr>
+                  <tr><td class="mono">10:39</td><td>Socket install</td><td>Sandymount</td><td class="amount">&euro;120</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:91%"></div></div>91%</span></td><td class="num">58</td></tr>
+                  <tr><td class="mono">10:34</td><td>Boiler service</td><td>Dun Laoghaire</td><td class="amount">&euro;145</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:83%"></div></div>83%</span></td><td class="num">31</td></tr>
+                  <tr><td class="mono">10:22</td><td>Bathroom tiling (12m&sup2;)</td><td>Ballymun</td><td class="amount">&euro;480</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill warn" style="width:64%"></div></div>64%</span></td><td class="num">9</td></tr>
+                  <tr><td class="mono">10:18</td><td>Roof tile replace (x4)</td><td>Malahide</td><td class="amount">&euro;340</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:78%"></div></div>78%</span></td><td class="num">17</td></tr>
+                  <tr><td class="mono">10:12</td><td>Emergency lockout</td><td>D2 city centre</td><td class="amount">&euro;220</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:88%"></div></div>88%</span></td><td class="num">41</td></tr>
+                  <tr><td class="mono">10:04</td><td>Full room paint</td><td>Terenure</td><td class="amount">&euro;385</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:80%"></div></div>80%</span></td><td class="num">22</td></tr>
+                  <tr><td class="mono">09:58</td><td>Wardrobe assembly</td><td>Clontarf</td><td class="amount">&euro;125</td><td><span class="confidence"><div class="conf-bar"><div class="conf-fill" style="width:74%"></div></div>74%</span></td><td class="num">12</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Accuracy by service</h3>
+                <div class="sub">Predicted vs actual &middot; last 30 days</div>
+              </div>
+              <button class="btn xs ghost">See all</button>
+            </div>
+            <div class="card-body flush">
+              <table class="tbl">
+                <thead><tr><th>Service</th><th class="right">Typical</th><th class="right">AI est.</th><th class="right">&Delta;</th><th class="right">n</th></tr></thead>
+                <tbody>
+                  <tr><td>Blocked drain</td><td class="amount">&euro;168</td><td class="amount">&euro;172</td><td class="delta-cell up">+2.4%</td><td class="num">143</td></tr>
+                  <tr><td>Socket install</td><td class="amount">&euro;118</td><td class="amount">&euro;120</td><td class="delta-cell up">+1.7%</td><td class="num">98</td></tr>
+                  <tr><td>Boiler service</td><td class="amount">&euro;145</td><td class="amount">&euro;145</td><td class="delta-cell zero">&plusmn;0.0%</td><td class="num">201</td></tr>
+                  <tr><td>Bathroom tiling</td><td class="amount">&euro;520</td><td class="amount">&euro;465</td><td class="delta-cell down">&minus;10.6%</td><td class="num">34</td></tr>
+                  <tr><td>Roof tile replace</td><td class="amount">&euro;310</td><td class="amount">&euro;340</td><td class="delta-cell down">+9.7%</td><td class="num">51</td></tr>
+                  <tr><td>Emergency lockout</td><td class="amount">&euro;215</td><td class="amount">&euro;220</td><td class="delta-cell up">+2.3%</td><td class="num">67</td></tr>
+                  <tr><td>Full room paint</td><td class="amount">&euro;370</td><td class="amount">&euro;385</td><td class="delta-cell up">+4.1%</td><td class="num">88</td></tr>
+                  <tr><td>Wardrobe assembly</td><td class="amount">&euro;140</td><td class="amount">&euro;125</td><td class="delta-cell down">&minus;10.7%</td><td class="num">44</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-grid">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Retrain model</h3>
+                <div class="sub">Pull last 30 days of completed jobs &middot; ~14 minutes</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="font-size:12.5px;color:var(--ink-2);margin-bottom:14px;line-height:1.5">
+                Retraining uses <b>4,891 completed jobs</b> with actual invoiced prices, filtered by RECI/Safe Pass verified tradesmen only. The current model was trained on <b>4,102 jobs</b> ending 28 July. Accuracy is expected to improve by <b>+1.2&ndash;1.8pp</b>.
+              </div>
+              <button class="big-primary" id="retrainBtn">
+                <svg><use href="#i-refresh"/></svg>
+                Retrain AI on last 30 days
+              </button>
+              <div style="margin-top:14px;padding:10px 12px;background:var(--paper-2);border-radius:6px;font-size:11.5px;color:var(--ink-3);font-family:var(--mono)">
+                Last run: 28 Jul 2026 &middot; 12 min 08s &middot; +0.9pp accuracy &middot; deployed automatically
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3>Manual overrides</h3>
+                <div class="sub">Flag AI estimates for human review when they fall outside your ranges</div>
+              </div>
+              <button class="btn xs"><svg><use href="#i-plus"/></svg>Add rule</button>
+            </div>
+            <div class="card-body">
+              <div class="override-row">
+                <span>If</span>
+                <select class="select"><option>Bathroom tiling</option></select>
+                <span>is</span>
+                <input value="&euro;300"/>
+                <input value="&euro;700"/>
+                <button class="btn xs ghost" title="Remove"><svg><use href="#i-x"/></svg></button>
+              </div>
+              <div class="override-row">
+                <span>If</span>
+                <select class="select"><option>Boiler / gas</option></select>
+                <span>is</span>
+                <input value="&euro;150"/>
+                <input value="&euro;600"/>
+                <button class="btn xs ghost" title="Remove"><svg><use href="#i-x"/></svg></button>
+              </div>
+              <div class="override-row">
+                <span>If</span>
+                <select class="select"><option>Roofing</option></select>
+                <span>is</span>
+                <input value="&euro;250"/>
+                <input value="&euro;900"/>
+                <button class="btn xs ghost" title="Remove"><svg><use href="#i-x"/></svg></button>
+              </div>
+              <div style="margin-top:12px;font-size:11.5px;color:var(--ink-3)">
+                Flagged estimates route to your review queue instead of being shown to customers directly.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Customer-facing behaviour</h3>
+              <div class="sub">What customers see when the AI produces an estimate</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-2)">
+              <div>
+                <b style="font-size:13px">Show AI confidence % to customers</b>
+                <div style="font-size:12px;color:var(--ink-3);margin-top:2px">Currently <b style="color:var(--brand-1)">ON</b>. Turning off reduces trust; recommended: leave on.</div>
+              </div>
+              <div class="switch on"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-2)">
+              <div>
+                <b style="font-size:13px">Show comparable-jobs count</b>
+                <div style="font-size:12px;color:var(--ink-3);margin-top:2px">&ldquo;Based on 24 similar jobs in your area&rdquo;</div>
+              </div>
+              <div class="switch on"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0;border-bottom:1px solid var(--line-2)">
+              <div>
+                <b style="font-size:13px">Show &plusmn; range instead of single number</b>
+                <div style="font-size:12px;color:var(--ink-3);margin-top:2px">&euro;165&ndash;&euro;220 rather than &euro;192</div>
+              </div>
+              <div class="switch on"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;padding:10px 0">
+              <div>
+                <b style="font-size:13px">Auto-hide estimate below 60% confidence</b>
+                <div style="font-size:12px;color:var(--ink-3);margin-top:2px">Show &ldquo;get quotes instead&rdquo; button</div>
+              </div>
+              <div class="switch"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast">Coming soon</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+</style>
+
+<script>
+(function() {
+  // ---- View switching ----
+  var nav = document.getElementById('nav');
+  var views = document.querySelectorAll('.view');
+  var crumb = document.getElementById('crumbCurrent');
+  var toast = document.getElementById('toast');
+  var toastTimer;
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2200);
+  }
+
+  function labelFor(view) {
+    var map = {
+      dashboard: 'Dashboard', orders: 'Orders', tradesmen: 'Tradesmen',
+      complaints: 'Complaints', services: 'Services & Prices', ai: 'AI Estimates'
+    };
+    return map[view] || 'Dashboard';
+  }
+
+  nav.addEventListener('click', function(e) {
+    var item = e.target.closest('.nav-item');
+    if (!item) return;
+    var target = item.getAttribute('data-view');
+
+    if (target === '_stub') {
+      showToast((item.getAttribute('data-label') || 'This section') + ' — coming soon');
+      return;
+    }
+
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    item.classList.add('active');
+
+    views.forEach(function(v) { v.classList.remove('active'); });
+    var next = document.querySelector('.view[data-view="' + target + '"]');
+    if (next) next.classList.add('active');
+
+    crumb.textContent = labelFor(target);
+    var content = document.getElementById('content');
+    if (content) content.scrollTop = 0;
+  });
+
+  // ---- Bar chart (24 hours) ----
+  var bars = document.getElementById('hourBars');
+  if (bars) {
+    var nowHour = 10;
+    var data = [0,0,0,0,0,0,1,2,4,6,5,7,3,5,4,3,2,2,1,1,1,0,0,0]; // sample distribution
+    // Set upcoming hours to future style with faded height representing forecast
+    for (var h = 0; h < 24; h++) {
+      var b = document.createElement('div');
+      b.className = 'bar';
+      var val = data[h];
+      var height = Math.max(6, val * 14); // px
+      if (h < nowHour) b.classList.add('done');
+      else if (h === nowHour) { b.classList.add('now'); height = Math.max(20, val * 14); }
+      else b.classList.add('future');
+      b.style.height = height + 'px';
+      b.title = (h < 10 ? '0' + h : h) + ':00 — ' + (val || 0) + ' jobs';
+      bars.appendChild(b);
+    }
+    var labels = document.createElement('div');
+    labels.className = 'bar-labels';
+    labels.innerHTML = '<span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:59</span>';
+    bars.appendChild(labels);
+  }
+
+  // ---- Complaint expand/collapse ----
+  document.querySelectorAll('.complaint').forEach(function(c) {
+    var head = c.querySelector('.complaint-head');
+    head.addEventListener('click', function() {
+      c.classList.toggle('expanded');
+    });
+  });
+
+  // ---- Services selection ----
+  document.querySelectorAll('.svc').forEach(function(s) {
+    s.addEventListener('click', function() {
+      document.querySelectorAll('.svc').forEach(function(x) { x.classList.remove('active'); });
+      s.classList.add('active');
+    });
+  });
+
+  // ---- Orders row selection (simulated drawer) ----
+  document.querySelectorAll('#ordersBody tr').forEach(function(r) {
+    r.addEventListener('click', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.closest('button')) return;
+      document.querySelectorAll('#ordersBody tr').forEach(function(x) { x.classList.remove('selected'); });
+      r.classList.add('selected');
+    });
+  });
+
+  // ---- Bulk bar ----
+  var checks = document.querySelectorAll('#ordersBody input[type="checkbox"]');
+  var bulk = document.querySelector('.orders-table-wrap .bulk');
+  function refreshBulk() {
+    var n = 0;
+    checks.forEach(function(c) { if (c.checked) n++; });
+    if (n > 0) {
+      bulk.classList.add('active');
+      bulk.querySelector('b').textContent = n + ' selected';
+    } else {
+      bulk.classList.remove('active');
+    }
+  }
+  checks.forEach(function(c) { c.addEventListener('change', refreshBulk); });
+  refreshBulk();
+
+  // ---- Switches ----
+  document.querySelectorAll('.switch').forEach(function(s) {
+    s.addEventListener('click', function() { s.classList.toggle('on'); });
+  });
+
+  // ---- Drawer tabs ----
+  document.querySelectorAll('.drawer-tab').forEach(function(t) {
+    t.addEventListener('click', function() {
+      var siblings = t.parentElement.querySelectorAll('.drawer-tab');
+      siblings.forEach(function(x) { x.classList.remove('active'); });
+      t.classList.add('active');
+    });
+  });
+
+  // ---- Chips (filter groups) ----
+  document.querySelectorAll('.filterbar').forEach(function(bar) {
+    var group = bar.querySelectorAll('.chip');
+    group.forEach(function(c) {
+      c.addEventListener('click', function() {
+        group.forEach(function(x) { x.classList.remove('active'); });
+        c.classList.add('active');
+      });
+    });
+  });
+
+  // ---- Theme toggle ----
+  var themeBtn = document.getElementById('themeToggle');
+  var themeIcon = document.getElementById('themeIcon');
+  var root = document.documentElement;
+  function setThemeIcon() {
+    var isDark = root.getAttribute('data-theme') === 'dark';
+    themeIcon.innerHTML = '<use href="#' + (isDark ? 'i-sun' : 'i-moon') + '"/>';
+  }
+  themeBtn.addEventListener('click', function() {
+    var current = root.getAttribute('data-theme');
+    root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    setThemeIcon();
+  });
+  // Respect system preference on load
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    root.setAttribute('data-theme', 'dark');
+  }
+  setThemeIcon();
+
+  // ---- Drawer close ----
+  var drawer = document.getElementById('ordersDrawer');
+  if (drawer) {
+    var close = drawer.querySelector('.close');
+    close.addEventListener('click', function() {
+      drawer.style.display = 'none';
+      var wrap = document.querySelector('.orders-layout');
+      if (wrap) wrap.style.gridTemplateColumns = '1fr';
+    });
+  }
+
+  // ---- Retrain button ----
+  var retrain = document.getElementById('retrainBtn');
+  if (retrain) {
+    retrain.addEventListener('click', function() {
+      retrain.disabled = true;
+      var orig = retrain.innerHTML;
+      retrain.innerHTML = '<svg><use href="#i-refresh"/></svg>Training on 4,891 jobs&hellip;';
+      showToast('Retraining started — you can leave this page');
+      setTimeout(function() {
+        retrain.disabled = false;
+        retrain.innerHTML = orig;
+        showToast('Retraining complete: +1.3pp accuracy');
+      }, 3600);
+    });
+  }
+
+  // ---- Cmd/Ctrl+K focuses search ----
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      var s = document.querySelector('.topbar .search input');
+      if (s) s.focus();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
+
+
+

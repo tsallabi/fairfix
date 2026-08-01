@@ -1,0 +1,2595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FairFix · Tradesman App</title>
+<style>
+:root {
+  --paper: #FBF7EE;
+  --paper-2: #F3ECD9;
+  --paper-3: #EEE4CC;
+  --ink: #0B1F33;
+  --ink-2: #34455A;
+  --ink-3: #7A879A;
+  --line: #E3DAC3;
+  --line-2: #D6CBAE;
+  --brand-1: #0B7F58;
+  --brand-2: #10B981;
+  --brand-3: #34D399;
+  --brand-glow: rgba(16,185,129,0.35);
+  --navy-1: #0B1F33;
+  --navy-2: #14314D;
+  --coral: #F26D5B;
+  --amber: #E6A429;
+  --amber-soft: #F4C86A;
+
+  --stage: #08111C;
+  --stage-2: #0F1D2E;
+  --chip-bg: rgba(255,255,255,0.06);
+  --chip-bg-active: rgba(16,185,129,0.2);
+  --chip-border: rgba(255,255,255,0.12);
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0E1A26;
+    --paper-2: #142331;
+    --paper-3: #1B2E42;
+    --ink: #F5EFDF;
+    --ink-2: #C7D0DB;
+    --ink-3: #8A97A8;
+    --line: #23364C;
+    --line-2: #2E4562;
+    --navy-1: #06121D;
+    --navy-2: #0D1E30;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0E1A26;
+  --paper-2: #142331;
+  --paper-3: #1B2E42;
+  --ink: #F5EFDF;
+  --ink-2: #C7D0DB;
+  --ink-3: #8A97A8;
+  --line: #23364C;
+  --line-2: #2E4562;
+  --navy-1: #06121D;
+  --navy-2: #0D1E30;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin:0; padding:0; }
+
+body {
+  font-family: var(--sans);
+  background: radial-gradient(ellipse at top, var(--stage-2), var(--stage) 70%);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 20px 60px;
+  gap: 32px;
+}
+
+/* Prototype navigator */
+.navigator {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(11, 31, 51, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.nav-label {
+  color: rgba(255,255,255,0.55);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0 10px 0 6px;
+  font-family: var(--mono);
+}
+
+.nav-chip {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: var(--serif);
+}
+.nav-chip:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+.nav-chip.active {
+  background: var(--brand-2);
+  border-color: var(--brand-3);
+  color: #04231A;
+  box-shadow: 0 0 20px var(--brand-glow);
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(11,31,51,0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Phone frame */
+.phone {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  background: #000;
+  border-radius: 54px;
+  padding: 12px;
+  box-shadow:
+    0 0 0 2px #1a1a1a,
+    0 40px 100px rgba(0,0,0,0.6),
+    0 20px 60px var(--brand-glow);
+}
+
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--paper);
+  border-radius: 44px;
+  overflow: hidden;
+}
+
+.notch {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 50;
+}
+
+/* Screens */
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 56px 20px 100px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  z-index: 10;
+}
+.screen.exit-left {
+  transform: translateX(-30%);
+  opacity: 0.5;
+  visibility: visible;
+  z-index: 5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { transition: none; }
+}
+
+/* Status bar */
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  z-index: 40;
+  pointer-events: none;
+}
+.status-right { display: flex; align-items: center; gap: 4px; }
+
+/* Screen 1 - Home */
+.top-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+  position: relative;
+}
+.avatar::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background: var(--brand-2);
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+}
+.avatar.offline::after { background: var(--ink-3); }
+.header-info { flex: 1; min-width: 0; }
+.header-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.header-sub {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--brand-1);
+  font-weight: 600;
+}
+
+/* Availability toggle */
+.avail-toggle {
+  width: 52px;
+  height: 32px;
+  background: var(--brand-2);
+  border-radius: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.25s ease;
+  border: none;
+  padding: 0;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+.avail-toggle.off { background: var(--ink-3); }
+.avail-toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.25s ease;
+}
+.avail-toggle:not(.off)::after { transform: translateX(20px); }
+
+/* Today ticker */
+.ticker {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink-2);
+  margin-bottom: 18px;
+  letter-spacing: 0.01em;
+}
+.ticker .num { color: var(--ink); font-weight: 600; }
+
+/* LIVE job card */
+.live-card {
+  background: linear-gradient(180deg, var(--navy-1), var(--navy-2));
+  border-radius: 20px;
+  padding: 18px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 30px rgba(11,31,51,0.25), 0 0 40px var(--brand-glow);
+}
+.live-card::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, var(--brand-glow), transparent 70%);
+  pointer-events: none;
+}
+
+.live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.35);
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--brand-3);
+  margin-bottom: 12px;
+}
+.live-tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-3);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--brand-glow); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 6px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-tag .dot { animation: none; }
+}
+
+.job-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.job-meta {
+  color: rgba(245,239,223,0.7);
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 14px;
+}
+.job-meta .price {
+  font-family: var(--serif);
+  color: var(--brand-3);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.countdown-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(230,164,41,0.12);
+  border: 1px solid rgba(230,164,41,0.25);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  color: var(--amber-soft);
+  font-size: 12px;
+}
+.countdown-row .time {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+}
+.btn {
+  border: none;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-accept {
+  background: var(--brand-2);
+  color: #04231A;
+  box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+}
+.btn-counter {
+  background: var(--amber);
+  color: #2A1E00;
+}
+.btn-skip {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.6);
+  padding: 12px 14px;
+}
+
+/* Section header */
+.section-h {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin: 8px 0 12px;
+}
+
+/* Schedule card */
+.sched-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.sched-time {
+  width: 54px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.sched-time .h {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.sched-time .m {
+  font-size: 10px;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  margin-top: 3px;
+  letter-spacing: 0.08em;
+}
+.sched-divider {
+  width: 3px;
+  align-self: stretch;
+  background: var(--line);
+  border-radius: 2px;
+}
+.sched-divider.active { background: var(--brand-2); }
+.sched-body { flex: 1; min-width: 0; }
+.sched-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.sched-sub {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sched-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 8px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.status-active {
+  background: var(--brand-glow);
+  color: var(--brand-1);
+}
+.status-upcoming {
+  background: var(--line);
+  color: var(--ink-2);
+}
+
+/* Week card */
+.week-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.week-stat { text-align: left; }
+.week-stat .val {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.week-stat .lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-3);
+  letter-spacing: 0.14em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 84px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  display: flex;
+  padding: 10px 12px 24px;
+  z-index: 20;
+  backdrop-filter: blur(20px);
+}
+.bottom-nav-inner {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  font-family: var(--sans);
+}
+.nav-item.active { color: var(--brand-1); }
+.nav-item svg { width: 22px; height: 22px; }
+
+/* Screen 2 - Job details */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.top-bar-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+}
+
+.price-hero {
+  padding: 24px 4px;
+  margin-bottom: 16px;
+}
+.price-hero .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.price-hero .amt {
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.price-hero .job-name {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--ink-2);
+  margin-top: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.info-row:last-child { border-bottom: 1px solid var(--line); }
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+.info-body { flex: 1; min-width: 0; }
+.info-label {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-bottom: 2px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.info-val {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.info-val.locked { color: var(--ink-3); font-style: italic; }
+
+.quote {
+  padding: 14px 16px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--amber);
+  border-radius: 4px 12px 12px 4px;
+  margin: 14px 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+.photo {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.photo-1 {
+  background:
+    radial-gradient(circle at 40% 40%, #6b1a0a 0%, #2a0a04 40%, #0f0603 100%),
+    linear-gradient(180deg, #4a3220, #2a1a12);
+  background-blend-mode: multiply;
+}
+.photo-1::after {
+  content: "";
+  position: absolute;
+  inset: 30% 35% 30% 35%;
+  background: radial-gradient(circle, #f4b942, #d67722 50%, #6b2a0a 90%);
+  border-radius: 4px;
+  filter: blur(2px);
+  opacity: 0.6;
+}
+.photo-2 {
+  background:
+    linear-gradient(180deg, #d4c4a0 0%, #9a8460 60%, #5a4a30 100%);
+}
+.photo-2::after {
+  content: "";
+  position: absolute;
+  inset: 40% 30% 20% 30%;
+  background: #1a1210;
+  border-radius: 4px;
+  box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
+}
+.photo-tag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ai-check {
+  background: linear-gradient(135deg, var(--navy-1), var(--navy-2));
+  border-radius: 16px;
+  padding: 16px;
+  color: #fff;
+  margin: 18px 0;
+  position: relative;
+  overflow: hidden;
+}
+.ai-check::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--brand-glow), transparent 70%);
+}
+.ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--brand-3);
+}
+.ai-header svg { width: 14px; height: 14px; }
+.ai-verdict {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.ai-text {
+  color: rgba(245,239,223,0.75);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.ai-verdict .fair { color: var(--brand-3); }
+
+.stacked-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn-full {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.1s;
+}
+.btn-full:active { transform: scale(0.98); }
+.btn-primary {
+  background: var(--brand-2);
+  color: #04231A;
+  box-shadow: 0 8px 30px rgba(16,185,129,0.35);
+}
+.btn-secondary {
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn-danger {
+  background: transparent;
+  color: var(--coral);
+  border: 1px solid rgba(242,109,91,0.3);
+}
+
+/* Screen 3 - Counter offer */
+.counter-hero {
+  text-align: center;
+  padding: 30px 20px 20px;
+}
+.counter-q {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.counter-sub {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+.big-value {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 20px 0 10px;
+}
+.big-value .euro {
+  color: var(--ink-3);
+  font-weight: 400;
+  font-size: 44px;
+  vertical-align: 12px;
+  margin-right: 4px;
+}
+
+.value-delta {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--brand-1);
+  margin-bottom: 24px;
+}
+
+.slider-wrap {
+  padding: 0 4px;
+  margin-bottom: 24px;
+}
+.range-input {
+  width: 100%;
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+.range-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-2);
+  border: 4px solid var(--paper);
+  box-shadow: 0 4px 16px var(--brand-glow), 0 0 0 1px var(--brand-1);
+  cursor: pointer;
+}
+.range-input::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-2);
+  border: 4px solid var(--paper);
+  box-shadow: 0 4px 16px var(--brand-glow);
+  cursor: pointer;
+}
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.chip {
+  padding: 8px 14px;
+  border-radius: 100px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--ink-3); }
+.chip.selected {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #2A1E00;
+  font-weight: 600;
+}
+
+.textarea-field {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper-2);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  resize: none;
+  min-height: 80px;
+  outline: none;
+}
+.textarea-field:focus { border-color: var(--brand-1); }
+.textarea-field::placeholder { color: var(--ink-3); }
+
+/* Screen 4 - En route */
+.map-card {
+  background: linear-gradient(180deg, #1f3d5c, #14314D);
+  border-radius: 20px;
+  padding: 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 16px;
+  min-height: 260px;
+}
+.map-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(60deg, transparent 0 40px, rgba(255,255,255,0.03) 40px 41px),
+    repeating-linear-gradient(-30deg, transparent 0 30px, rgba(255,255,255,0.02) 30px 31px);
+}
+.map-route {
+  position: absolute;
+  top: 55%;
+  left: 15%;
+  width: 70%;
+  height: 30%;
+  pointer-events: none;
+}
+.map-route svg { width: 100%; height: 100%; overflow: visible; }
+.route-path {
+  fill: none;
+  stroke: var(--brand-3);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 6 4;
+  filter: drop-shadow(0 0 6px var(--brand-glow));
+}
+.map-pin-start, .map-pin-end {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.map-pin-start {
+  bottom: 30%;
+  left: 12%;
+  background: var(--brand-2);
+  box-shadow: 0 0 20px var(--brand-glow);
+}
+.map-pin-end {
+  top: 30%;
+  right: 12%;
+  background: var(--coral);
+  box-shadow: 0 0 18px rgba(242,109,91,0.4);
+}
+
+.map-header {
+  position: relative;
+  z-index: 2;
+}
+.map-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--brand-3);
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.map-eta {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.map-eta .sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 20px;
+  font-weight: 400;
+  margin-left: 8px;
+}
+.map-dest {
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  position: relative;
+  padding: 0 8px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+.timeline-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+}
+.timeline-step.done .timeline-dot {
+  background: var(--brand-2);
+  border-color: var(--brand-2);
+  color: #04231A;
+}
+.timeline-step.active .timeline-dot {
+  background: var(--brand-2);
+  border-color: var(--brand-2);
+  color: #04231A;
+  animation: pulse-ring 1.8s ease-in-out infinite;
+}
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 var(--brand-glow); }
+  50% { box-shadow: 0 0 0 8px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline-step.active .timeline-dot { animation: none; }
+}
+.timeline-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.2;
+}
+.timeline-step.done .timeline-lbl,
+.timeline-step.active .timeline-lbl {
+  color: var(--brand-1);
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.icon-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.sticky-summary {
+  position: sticky;
+  bottom: 0;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.sticky-summary .amt {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.sticky-summary .info { flex: 1; }
+.sticky-summary .info .t {
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.sticky-summary .info .s {
+  font-size: 10px;
+  color: var(--ink-3);
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Screen 5 - On the job */
+.on-job-hero {
+  padding: 12px 0 16px;
+}
+.on-job-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.timer-card {
+  background: linear-gradient(135deg, var(--navy-1), var(--navy-2));
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.timer-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 100%, var(--brand-glow), transparent 60%);
+  pointer-events: none;
+}
+.timer-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--brand-3);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  position: relative;
+}
+.timer-value {
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #fff;
+  position: relative;
+  font-variant-numeric: tabular-nums;
+}
+.timer-sub {
+  color: rgba(245,239,223,0.6);
+  font-size: 12px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.job-summary-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.job-summary-card .name {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.job-summary-card .detail {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-area {
+  border: 2px dashed var(--line-2);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.upload-title {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.photo-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.photo-slot {
+  aspect-ratio: 1;
+  border: 1.5px dashed var(--line-2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ink-3);
+  background: var(--paper);
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.photo-slot:hover { border-color: var(--brand-1); color: var(--brand-1); }
+
+.btn-revision {
+  background: rgba(230,164,41,0.12);
+  border: 1px solid rgba(230,164,41,0.3);
+  color: var(--amber);
+  padding: 12px;
+  border-radius: 14px;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Screen 6 - Complete */
+.complete-screen {
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.check-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--brand-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #04231A;
+  margin-bottom: 24px;
+  box-shadow: 0 0 60px var(--brand-glow), 0 10px 40px rgba(16,185,129,0.3);
+  animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .check-circle { animation: none; }
+}
+
+.complete-title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.complete-sub {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink-2);
+  margin-bottom: 32px;
+  max-width: 260px;
+  line-height: 1.4;
+}
+
+.payment-card {
+  width: 100%;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 10px 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.pay-row .lbl { color: var(--ink-2); }
+.pay-row .val {
+  font-family: var(--serif);
+  color: var(--ink);
+  font-weight: 500;
+}
+.pay-row.total {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 6px;
+  align-items: baseline;
+}
+.pay-row.total .lbl {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.pay-row.total .val {
+  font-family: var(--serif);
+  font-size: 28px;
+  color: var(--brand-1);
+  font-weight: 600;
+}
+.pay-note {
+  font-size: 11px;
+  color: var(--ink-3);
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  padding: 0 12px;
+}
+.complete-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Screen 7 - Earnings */
+.earn-hero {
+  padding: 12px 0 8px;
+}
+.earn-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--ink-3);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.earn-amount {
+  font-family: var(--serif);
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.earn-amount .euro {
+  color: var(--ink-3);
+  font-weight: 400;
+  font-size: 36px;
+  vertical-align: 10px;
+  margin-right: 2px;
+}
+.earn-delta {
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.earn-delta .pct {
+  color: var(--brand-1);
+  font-weight: 600;
+}
+
+.payout-card {
+  background: linear-gradient(135deg, var(--navy-1), var(--navy-2));
+  border-radius: 16px;
+  padding: 16px;
+  color: #fff;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.payout-card::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--brand-glow), transparent 70%);
+}
+.payout-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(16,185,129,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-3);
+  flex-shrink: 0;
+  position: relative;
+}
+.payout-body { flex: 1; position: relative; }
+.payout-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--brand-3);
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.payout-detail {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.payout-detail .money {
+  font-weight: 700;
+  color: var(--brand-3);
+}
+
+.chart-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 14px;
+  margin-bottom: 20px;
+}
+.chart-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+.chart-title .today-mark {
+  color: var(--amber);
+  font-weight: 700;
+}
+.chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 100px;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+.bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--brand-3), var(--brand-1));
+  border-radius: 6px 6px 3px 3px;
+  min-height: 6px;
+  box-shadow: 0 2px 8px rgba(11,127,88,0.2);
+}
+.bar.today {
+  background: linear-gradient(180deg, var(--amber-soft), var(--amber));
+  box-shadow: 0 2px 8px rgba(230,164,41,0.3);
+}
+.bar-day {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-3);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.bar-col.today .bar-day { color: var(--amber); font-weight: 700; }
+
+.jobs-list {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.job-row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.job-row:last-child { border-bottom: none; }
+.job-init {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--paper-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.job-info { min-width: 0; }
+.job-info .service {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.job-info .date {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+}
+.job-price {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.vat-tag {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 3px 6px;
+  border-radius: 100px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.vat-inc { background: rgba(16,185,129,0.15); color: var(--brand-1); }
+.vat-labour { background: rgba(122,135,154,0.15); color: var(--ink-3); }
+
+.revenue-card {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.revenue-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.revenue-desc {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.revenue-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.vat-note {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--ink-2);
+  border-left: 3px solid var(--brand-1);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+.vat-note svg { flex-shrink: 0; color: var(--brand-1); margin-top: 1px; }
+
+/* Toast */
+.toast {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 99;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Stage label */
+.stage-label {
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  max-width: 500px;
+}
+.stage-label .brand {
+  color: var(--brand-3);
+  font-weight: 700;
+}
+.stage-label small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.06em;
+}
+</style>
+</head>
+<body>
+
+<!-- SVG Icon Definitions -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6z"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 5l7 7-7 7"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M11 5l-7 7 7 7"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5 12.8 12.8 0 0 0 2.8.7A2 2 0 0 1 22 16.9z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l3 6.5 7 1-5 5 1.5 7-6.5-3.5-6.5 3.5 1.5-7-5-5 7-1z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5z"/><path fill="currentColor" d="M19 3l.75 2.25L22 6l-2.25.75L19 9l-.75-2.25L16 6l2.25-.75z"/></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-euro" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 7A8 8 0 0 0 6 12a8 8 0 0 0 12 5M4 10h9M4 14h9"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M8 17V10M13 17V6M18 17v-6"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10h4v-6h6v6h4V10"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="8" y="4" width="8" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18.4 6.6a9 9 0 1 1-12.8 0M12 2v10"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+    <symbol id="i-signal" viewBox="0 0 24 24"><path fill="currentColor" d="M2 20h2v-4H2zm4 0h2v-8H6zm4 0h2v-12h-2zm4 0h2V4h-2zm4 0h2V8h-2z"/></symbol>
+    <symbol id="i-battery" viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="8.5" width="12" height="7" rx="1" fill="currentColor"/><rect x="21" y="10" width="2" height="4" rx="0.5" fill="currentColor"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 8v.01M12 12v4"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" d="M18 6L6 18M6 6l12 12"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 11l19-9-9 19-2-8z"/></symbol>
+  </defs>
+</svg>
+
+<!-- Prototype Navigator -->
+<nav class="navigator" aria-label="Prototype navigator">
+  <span class="nav-label">SCREEN</span>
+  <button class="nav-chip active" data-goto="1">1</button>
+  <button class="nav-chip" data-goto="2">2</button>
+  <button class="nav-chip" data-goto="3">3</button>
+  <button class="nav-chip" data-goto="4">4</button>
+  <button class="nav-chip" data-goto="5">5</button>
+  <button class="nav-chip" data-goto="6">6</button>
+  <button class="nav-chip" data-goto="7">7</button>
+</nav>
+
+<button class="theme-toggle" aria-label="Toggle theme" id="themeToggle">
+  <svg width="18" height="18" class="theme-icon-light"><use href="#i-sun"/></svg>
+</button>
+
+<div class="stage">
+
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="notch"></div>
+
+      <!-- ================ SCREEN 1 - HOME ================ -->
+      <section class="screen active" data-screen="1">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-header">
+          <div class="avatar">JB</div>
+          <div class="header-info">
+            <div class="header-name">John Byrne</div>
+            <div class="header-sub">
+              <span class="verified-badge">
+                <svg width="10" height="10"><use href="#i-shield"/></svg>
+                RECI verified
+              </span>
+              · Dublin 2 area
+            </div>
+          </div>
+          <button class="avail-toggle" id="availToggle" aria-label="Toggle availability" aria-pressed="true"></button>
+        </div>
+
+        <div class="ticker">
+          Today · <span class="num">€340</span> · <span class="num">3 jobs</span> done
+        </div>
+
+        <div class="live-card">
+          <div class="live-tag"><span class="dot"></span> LIVE · 1 JOB NEARBY</div>
+          <div class="job-title">Kitchen socket fault</div>
+          <div class="job-meta">
+            <span><svg width="12" height="12" style="vertical-align:-2px"><use href="#i-map-pin"/></svg> D02 · 2.3 km</span>
+            <span class="price">€120 offered</span>
+          </div>
+
+          <div class="countdown-row">
+            <svg width="16" height="16"><use href="#i-clock"/></svg>
+            <div><span class="time">58s</span> to reply before it goes to the next tradesman</div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-accept" data-action="accept-live">
+              <svg width="16" height="16"><use href="#i-check"/></svg> Accept
+            </button>
+            <button class="btn btn-counter" data-goto="3">
+              <svg width="16" height="16"><use href="#i-euro"/></svg> Counter
+            </button>
+            <button class="btn btn-skip">Skip</button>
+          </div>
+        </div>
+
+        <div class="section-h">Today's schedule</div>
+
+        <div class="sched-card">
+          <div class="sched-time">
+            <div class="h">10:30</div>
+            <div class="m">NOW</div>
+          </div>
+          <div class="sched-divider active"></div>
+          <div class="sched-body">
+            <div class="sched-title">Immersion timer replacement</div>
+            <div class="sched-sub">
+              <svg width="10" height="10"><use href="#i-map-pin"/></svg>
+              Ranelagh · Mary O'Connor
+            </div>
+          </div>
+          <div class="sched-status status-active">ON JOB</div>
+        </div>
+
+        <div class="sched-card">
+          <div class="sched-time">
+            <div class="h">14:00</div>
+            <div class="m">TODAY</div>
+          </div>
+          <div class="sched-divider"></div>
+          <div class="sched-body">
+            <div class="sched-title">Fuseboard upgrade — 8-way</div>
+            <div class="sched-sub">
+              <svg width="10" height="10"><use href="#i-map-pin"/></svg>
+              Sandymount · P. Gallagher
+            </div>
+          </div>
+          <div class="sched-status status-upcoming">NEXT</div>
+        </div>
+
+        <div class="section-h">This week</div>
+
+        <div class="week-card">
+          <div class="week-stat">
+            <div class="val">€2,140</div>
+            <div class="lbl">Earned</div>
+          </div>
+          <div class="week-stat">
+            <div class="val">12</div>
+            <div class="lbl">Jobs done</div>
+          </div>
+          <div class="week-stat">
+            <div class="val">4.9</div>
+            <div class="lbl">Rating</div>
+          </div>
+        </div>
+
+        <div class="bottom-nav">
+          <div class="bottom-nav-inner">
+            <button class="nav-item active">
+              <svg><use href="#i-bolt"/></svg>
+              Jobs
+            </button>
+            <button class="nav-item">
+              <svg><use href="#i-clock"/></svg>
+              Schedule
+            </button>
+            <button class="nav-item" data-goto="7">
+              <svg><use href="#i-euro"/></svg>
+              Earnings
+            </button>
+            <button class="nav-item">
+              <svg><use href="#i-user"/></svg>
+              Profile
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================ SCREEN 2 - JOB DETAILS ================ -->
+      <section class="screen" data-screen="2">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <button class="back-btn" data-goto="1" aria-label="Back">
+            <svg width="18" height="18"><use href="#i-arrow-left"/></svg>
+          </button>
+          <div class="top-bar-title">Job details</div>
+        </div>
+
+        <div class="price-hero">
+          <div class="label">Offered</div>
+          <div class="amt">€120</div>
+          <div class="job-name">Kitchen socket fault · Fault-finding</div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-icon">
+            <svg width="18" height="18"><use href="#i-user"/></svg>
+          </div>
+          <div class="info-body">
+            <div class="info-label">Homeowner</div>
+            <div class="info-val">Tarek S. · 4.8 stars · 3 past jobs</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-icon">
+            <svg width="18" height="18"><use href="#i-map-pin"/></svg>
+          </div>
+          <div class="info-body">
+            <div class="info-label">Location</div>
+            <div class="info-val">Dublin 2, D02 XY45</div>
+            <div class="info-val locked" style="font-size:12px; margin-top:2px">Full address after accept</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-icon">
+            <svg width="18" height="18"><use href="#i-nav"/></svg>
+          </div>
+          <div class="info-body">
+            <div class="info-label">Travel from your van</div>
+            <div class="info-val">8 min drive · 2.3 km</div>
+          </div>
+        </div>
+
+        <div class="quote">
+          "Two sockets in the kitchen tripped this morning after the kettle went. Reset the RCD but they're dead. Need someone this evening if possible."
+        </div>
+
+        <div class="photo-grid">
+          <div class="photo photo-1">
+            <div class="photo-tag">Socket</div>
+          </div>
+          <div class="photo photo-2">
+            <div class="photo-tag">Wall cavity</div>
+          </div>
+        </div>
+
+        <div class="ai-check">
+          <div class="ai-header">
+            <svg><use href="#i-spark"/></svg>
+            AI CHECK
+          </div>
+          <div class="ai-verdict">The offer is <span class="fair">Fair</span></div>
+          <div class="ai-text">
+            €120 sits in the typical range for kitchen socket fault-finding in Dublin (€90-€160). Homeowner uploaded clear photos and included RCD context — a good sign.
+          </div>
+        </div>
+
+        <div class="stacked-actions">
+          <button class="btn-full btn-primary" data-action="accept-details">
+            <svg width="18" height="18"><use href="#i-check"/></svg>
+            Accept the job
+          </button>
+          <button class="btn-full btn-secondary" data-goto="3">
+            <svg width="18" height="18"><use href="#i-euro"/></svg>
+            Counter with a new price
+          </button>
+          <button class="btn-full btn-danger" data-goto="1">Decline</button>
+        </div>
+      </section>
+
+      <!-- ================ SCREEN 3 - COUNTER OFFER ================ -->
+      <section class="screen" data-screen="3">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <button class="back-btn" data-goto="2" aria-label="Back">
+            <svg width="18" height="18"><use href="#i-arrow-left"/></svg>
+          </button>
+          <div class="top-bar-title">Counter offer</div>
+        </div>
+
+        <div class="counter-hero">
+          <div class="counter-q">What's a fair price for this job?</div>
+          <div class="counter-sub">Homeowner offered €120. You set your ask.</div>
+        </div>
+
+        <div class="big-value"><span class="euro">€</span><span id="counterValue">160</span></div>
+        <div class="value-delta" id="counterDelta">+ €40 above the offer</div>
+
+        <div class="slider-wrap">
+          <input type="range" class="range-input" id="counterSlider" min="80" max="300" step="5" value="160">
+          <div class="range-labels">
+            <span>€80</span>
+            <span>€190</span>
+            <span>€300</span>
+          </div>
+        </div>
+
+        <div class="section-h">Reason for the counter</div>
+        <div class="chip-row" id="reasonChips">
+          <button class="chip selected">Job larger than described</button>
+          <button class="chip">Parts needed</button>
+          <button class="chip">Emergency premium</button>
+          <button class="chip">Distance</button>
+          <button class="chip">Out-of-hours</button>
+        </div>
+
+        <div class="section-h">Message to homeowner (optional)</div>
+        <textarea class="textarea-field" placeholder="e.g. Two sockets sounds like RCD faulting on the ring. May need new socket boxes and 30 min diagnostics."></textarea>
+
+        <div style="margin-top:20px">
+          <button class="btn-full btn-primary" data-action="send-counter">
+            <svg width="16" height="16"><use href="#i-arrow-right"/></svg>
+            Send counter to homeowner
+          </button>
+        </div>
+      </section>
+
+      <!-- ================ SCREEN 4 - EN ROUTE ================ -->
+      <section class="screen" data-screen="4">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <button class="back-btn" data-goto="1" aria-label="Back">
+            <svg width="18" height="18"><use href="#i-arrow-left"/></svg>
+          </button>
+          <div class="top-bar-title">En route to Tarek</div>
+        </div>
+
+        <div class="map-card">
+          <div class="map-bg"></div>
+          <div class="map-route">
+            <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+              <path class="route-path" d="M 20 80 Q 90 40 160 55 T 280 30"/>
+            </svg>
+          </div>
+          <div class="map-pin-start">
+            <svg width="14" height="14"><use href="#i-nav"/></svg>
+          </div>
+          <div class="map-pin-end">
+            <svg width="14" height="14"><use href="#i-map-pin"/></svg>
+          </div>
+
+          <div class="map-header">
+            <div class="map-tag">ETA</div>
+            <div class="map-eta">8 min <span class="sub">· 2.3 km</span></div>
+            <div class="map-dest">Grand Canal Dock, Dublin 2, D02 XY45</div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-step done">
+            <div class="timeline-dot">
+              <svg width="12" height="12"><use href="#i-check"/></svg>
+            </div>
+            <div class="timeline-lbl">Accepted</div>
+          </div>
+          <div class="timeline-step active">
+            <div class="timeline-dot">
+              <svg width="12" height="12"><use href="#i-nav"/></svg>
+            </div>
+            <div class="timeline-lbl">En route</div>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <div class="timeline-lbl">Arrived</div>
+          </div>
+          <div class="timeline-step">
+            <div class="timeline-dot"></div>
+            <div class="timeline-lbl">Complete</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="icon-btn" data-action="chat-toast" aria-label="Chat with Tarek">
+            <svg width="20" height="20"><use href="#i-chat"/></svg>
+          </button>
+          <button class="btn-full btn-primary" data-goto="5">
+            <svg width="18" height="18"><use href="#i-map-pin"/></svg>
+            I've arrived
+          </button>
+        </div>
+
+        <div class="section-h">Contact</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+          <button class="btn-full btn-secondary" data-action="call-toast" style="padding:12px; font-size:13px">
+            <svg width="16" height="16"><use href="#i-phone"/></svg>
+            Call
+          </button>
+          <button class="btn-full btn-secondary" data-action="chat-toast" style="padding:12px; font-size:13px">
+            <svg width="16" height="16"><use href="#i-chat"/></svg>
+            Message
+          </button>
+        </div>
+
+        <div class="sticky-summary">
+          <div class="amt">€120</div>
+          <div class="info">
+            <div class="t">Fault-finding · Kitchen sockets</div>
+            <div class="s">TAREK · D02 XY45</div>
+          </div>
+          <svg width="18" height="18" style="color:var(--ink-3)"><use href="#i-info"/></svg>
+        </div>
+      </section>
+
+      <!-- ================ SCREEN 5 - ON THE JOB ================ -->
+      <section class="screen" data-screen="5">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <button class="back-btn" data-goto="4" aria-label="Back">
+            <svg width="18" height="18"><use href="#i-arrow-left"/></svg>
+          </button>
+          <div class="top-bar-title">On the job</div>
+        </div>
+
+        <div class="on-job-hero">
+          <div class="on-job-title">You're on the job at 14:32.</div>
+        </div>
+
+        <div class="timer-card">
+          <div class="timer-label">Elapsed on site</div>
+          <div class="timer-value">00:22:14</div>
+          <div class="timer-sub">Started at 14:32 · Kitchen sockets · D02</div>
+        </div>
+
+        <div class="job-summary-card">
+          <div class="name">Kitchen socket fault</div>
+          <div class="detail">
+            <svg width="12" height="12"><use href="#i-user"/></svg>
+            Tarek S. · Fault-finding · €120
+          </div>
+        </div>
+
+        <div class="upload-area">
+          <div class="upload-title">Upload before / after photos for the record</div>
+          <div class="photo-slots">
+            <button class="photo-slot">
+              <svg width="22" height="22"><use href="#i-camera"/></svg>
+              Before
+            </button>
+            <button class="photo-slot">
+              <svg width="22" height="22"><use href="#i-plus"/></svg>
+              After
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-revision" data-action="revision-toast">
+          <svg width="16" height="16"><use href="#i-info"/></svg>
+          Request price revision — job is bigger than quoted
+        </button>
+
+        <button class="btn-full btn-primary" data-goto="6">
+          <svg width="18" height="18"><use href="#i-check"/></svg>
+          Mark job complete
+        </button>
+      </section>
+
+      <!-- ================ SCREEN 6 - COMPLETE ================ -->
+      <section class="screen" data-screen="6">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="complete-screen">
+          <div class="check-circle">
+            <svg width="48" height="48"><use href="#i-check"/></svg>
+          </div>
+
+          <div class="complete-title">Nice work, John.</div>
+          <div class="complete-sub">€120 landed in your Stripe balance.</div>
+
+          <div class="payment-card">
+            <div class="pay-row">
+              <span class="lbl">Job price</span>
+              <span class="val">€120.00</span>
+            </div>
+            <div class="pay-row">
+              <span class="lbl">Platform fee (10%)</span>
+              <span class="val">− €12.00</span>
+            </div>
+            <div class="pay-row">
+              <span class="lbl">Stripe processing</span>
+              <span class="val">− €0.00</span>
+            </div>
+            <div class="pay-row total">
+              <span class="lbl">To you</span>
+              <span class="val">€108.00</span>
+            </div>
+          </div>
+
+          <div class="pay-note">
+            Homeowner will be prompted to rate you now. You can rate them from your Jobs list.
+          </div>
+
+          <div class="complete-actions">
+            <button class="btn-full btn-primary" data-goto="7">
+              <svg width="18" height="18"><use href="#i-star"/></svg>
+              Rate the homeowner
+            </button>
+            <button class="btn-full btn-secondary" data-goto="1">
+              <svg width="18" height="18"><use href="#i-home"/></svg>
+              Back to home
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================ SCREEN 7 - EARNINGS ================ -->
+      <section class="screen" data-screen="7">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-right">
+            <svg width="16" height="10"><use href="#i-signal"/></svg>
+            <svg width="14" height="10"><use href="#i-wifi"/></svg>
+            <svg width="24" height="12"><use href="#i-battery"/></svg>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <button class="back-btn" data-goto="1" aria-label="Back">
+            <svg width="18" height="18"><use href="#i-arrow-left"/></svg>
+          </button>
+          <div class="top-bar-title">Earnings</div>
+        </div>
+
+        <div class="earn-hero">
+          <div class="earn-label">This week</div>
+          <div class="earn-amount"><span class="euro">€</span>2,140</div>
+          <div class="earn-delta">
+            vs €1,890 last week <span class="pct">(+13%)</span>
+          </div>
+        </div>
+
+        <div class="payout-card">
+          <div class="payout-icon">
+            <svg width="20" height="20"><use href="#i-euro"/></svg>
+          </div>
+          <div class="payout-body">
+            <div class="payout-title">STRIPE PAYOUT</div>
+            <div class="payout-detail">
+              <span class="money">€432</span> arrives in your bank on <span class="money">Fri 09:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>DAILY EARNINGS · MON–SUN</span>
+            <span class="today-mark">TODAY</span>
+          </div>
+          <div class="chart">
+            <div class="bar-col">
+              <div class="bar" style="height:45%"></div>
+              <div class="bar-day">M</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:62%"></div>
+              <div class="bar-day">T</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:80%"></div>
+              <div class="bar-day">W</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:52%"></div>
+              <div class="bar-day">T</div>
+            </div>
+            <div class="bar-col today">
+              <div class="bar today" style="height:92%"></div>
+              <div class="bar-day">F</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:20%"></div>
+              <div class="bar-day">S</div>
+            </div>
+            <div class="bar-col">
+              <div class="bar" style="height:8%"></div>
+              <div class="bar-day">S</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-h">Recent jobs</div>
+
+        <div class="jobs-list">
+          <div class="job-row">
+            <div class="job-init">TS</div>
+            <div class="job-info">
+              <div class="service">Kitchen socket fault</div>
+              <div class="date">TUE · 30 JUL · D02</div>
+            </div>
+            <div class="job-price">€108</div>
+            <div class="vat-tag vat-labour">LABOUR</div>
+          </div>
+          <div class="job-row">
+            <div class="job-init">MO</div>
+            <div class="job-info">
+              <div class="service">Immersion timer replacement</div>
+              <div class="date">TUE · 30 JUL · RANELAGH</div>
+            </div>
+            <div class="job-price">€95</div>
+            <div class="vat-tag vat-inc">23% VAT</div>
+          </div>
+          <div class="job-row">
+            <div class="job-init">PG</div>
+            <div class="job-info">
+              <div class="service">Fuseboard upgrade · 8-way</div>
+              <div class="date">MON · 29 JUL · SANDYMOUNT</div>
+            </div>
+            <div class="job-price">€640</div>
+            <div class="vat-tag vat-inc">23% VAT</div>
+          </div>
+          <div class="job-row">
+            <div class="job-init">CN</div>
+            <div class="job-info">
+              <div class="service">EV charger install</div>
+              <div class="date">MON · 29 JUL · RATHMINES</div>
+            </div>
+            <div class="job-price">€780</div>
+            <div class="vat-tag vat-inc">23% VAT</div>
+          </div>
+          <div class="job-row">
+            <div class="job-init">FD</div>
+            <div class="job-info">
+              <div class="service">Outdoor light fault-find</div>
+              <div class="date">SUN · 28 JUL · TERENURE</div>
+            </div>
+            <div class="job-price">€75</div>
+            <div class="vat-tag vat-labour">LABOUR</div>
+          </div>
+        </div>
+
+        <div class="revenue-card">
+          <div class="revenue-title">Revenue.ie export</div>
+          <div class="revenue-desc">
+            Download the month's earnings as CSV for your self-employed tax filing. Includes VAT split, mileage, and Stripe payout references.
+          </div>
+          <button class="revenue-btn" data-action="revenue-toast">
+            <svg width="16" height="16"><use href="#i-download"/></svg>
+            Export July 2026 · CSV
+          </button>
+          <div class="vat-note">
+            <svg width="14" height="14"><use href="#i-shield"/></svg>
+            <div>Auto-VAT tracking on: 23% for parts, 0% for labour under the €40k turnover threshold.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Toast -->
+      <div class="toast" id="toast"></div>
+
+    </div>
+  </div>
+
+  <div class="stage-label">
+    <span class="brand">FairFix Pro</span> · Tradesman-side prototype
+    <small>Tap the chips above to jump between screens · iOS-style push transitions</small>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const screens = document.querySelectorAll('.screen');
+  const chips = document.querySelectorAll('.nav-chip');
+  let currentScreen = 1;
+  let history = [1];
+
+  function showScreen(n, pushHistory = true) {
+    n = String(n);
+    let found = false;
+    screens.forEach(s => {
+      const num = s.dataset.screen;
+      s.classList.remove('active', 'exit-left');
+      if (num === n) {
+        s.classList.add('active');
+        s.scrollTop = 0;
+        found = true;
+      }
+    });
+    if (!found) return;
+
+    chips.forEach(c => {
+      c.classList.toggle('active', c.dataset.goto === n);
+    });
+
+    if (pushHistory && String(currentScreen) !== n) {
+      history.push(Number(n));
+    }
+    currentScreen = Number(n);
+  }
+
+  // Wire navigation
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const target = el.dataset.goto;
+      showScreen(target);
+    });
+  });
+
+  // Actions
+  const actionMap = {
+    'accept-live': 4,
+    'accept-details': 4,
+    'send-counter': 1
+  };
+  document.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const action = el.dataset.action;
+      if (actionMap[action]) {
+        if (action === 'send-counter') showToast('Counter sent · homeowner will reply');
+        else if (action === 'accept-details') showToast('Job accepted · address unlocked');
+        showScreen(actionMap[action]);
+      } else if (action === 'revision-toast') {
+        showToast('Revision request sent to homeowner');
+      } else if (action === 'chat-toast') {
+        showToast('Chat with Tarek — coming in demo');
+      } else if (action === 'call-toast') {
+        showToast('Calling Tarek…');
+      } else if (action === 'revenue-toast') {
+        showToast('CSV downloaded · check your Files');
+      }
+    });
+  });
+
+  // Availability toggle
+  const availToggle = document.getElementById('availToggle');
+  if (availToggle) {
+    availToggle.addEventListener('click', () => {
+      const isOff = availToggle.classList.toggle('off');
+      availToggle.setAttribute('aria-pressed', String(!isOff));
+      const avatar = document.querySelector('.avatar');
+      if (avatar) avatar.classList.toggle('offline', isOff);
+      showToast(isOff ? "You're offline · no new pings" : "You're online · listening for jobs");
+    });
+  }
+
+  // Counter slider
+  const slider = document.getElementById('counterSlider');
+  const valueLbl = document.getElementById('counterValue');
+  const deltaLbl = document.getElementById('counterDelta');
+  const baseOffer = 120;
+  if (slider) {
+    slider.addEventListener('input', () => {
+      const v = Number(slider.value);
+      valueLbl.textContent = v;
+      const d = v - baseOffer;
+      if (d > 0) {
+        deltaLbl.textContent = `+ €${d} above the offer`;
+        deltaLbl.style.color = 'var(--brand-1)';
+      } else if (d < 0) {
+        deltaLbl.textContent = `− €${Math.abs(d)} below the offer`;
+        deltaLbl.style.color = 'var(--coral)';
+      } else {
+        deltaLbl.textContent = 'Matches the offer';
+        deltaLbl.style.color = 'var(--ink-3)';
+      }
+    });
+  }
+
+  // Reason chips
+  document.querySelectorAll('#reasonChips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#reasonChips .chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+    });
+  });
+
+  // Toast
+  let toastTimer;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  // Theme toggle
+  const themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark' ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches && !root.getAttribute('data-theme'));
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.innerHTML = isDark
+      ? '<svg width="18" height="18"><use href="#i-sun"/></svg>'
+      : '<svg width="18" height="18"><use href="#i-moon"/></svg>';
+  });
+
+  // Set initial theme icon based on prefers-color-scheme
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    themeBtn.innerHTML = '<svg width="18" height="18"><use href="#i-moon"/></svg>';
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key >= '1' && e.key <= '7') showScreen(e.key);
+    if (e.key === 'ArrowLeft' && currentScreen > 1) showScreen(currentScreen - 1);
+    if (e.key === 'ArrowRight' && currentScreen < 7) showScreen(currentScreen + 1);
+  });
+
+})();
+</script>
+
+</body>
+</html>
