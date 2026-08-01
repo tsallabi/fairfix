@@ -379,6 +379,50 @@
   .store-btn .store-txt .top { font-size: 10.5px; opacity: 0.72; font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
   .store-btn .store-txt .bot { font-size: 16px; font-weight: 600; font-family: var(--serif); letter-spacing: -0.01em; }
 
+  .waitlist-block { margin-bottom: 24px; }
+  .waitlist-kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--brand-1); margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .waitlist-form { display: flex; gap: 8px; max-width: 480px; flex-wrap: wrap; }
+  .waitlist-form input[type="email"] {
+    flex: 1 1 240px; min-width: 0; padding: 14px 18px;
+    border-radius: 999px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink); font-size: 15px;
+    font-family: inherit; outline: none; transition: border-color 0.15s ease;
+  }
+  .waitlist-form input[type="email"]:focus { border-color: var(--brand-2); }
+  .waitlist-form button {
+    padding: 14px 22px; border-radius: 999px; border: 0;
+    background: linear-gradient(135deg, var(--navy-2), var(--navy-1));
+    color: var(--paper); font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: transform 0.1s ease;
+    white-space: nowrap;
+  }
+  .waitlist-form button:hover { transform: translateY(-1px); }
+  .waitlist-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .waitlist-note {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.04em; margin-top: 10px;
+  }
+  .waitlist-success {
+    padding: 20px 24px; border-radius: 16px; max-width: 480px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.10), rgba(16,185,129,0.04));
+    border: 1.5px solid var(--brand-2);
+  }
+  .waitlist-success .h { font-family: var(--serif); font-size: 22px; color: var(--ink); line-height: 1.15; }
+  .waitlist-success .p { margin-top: 6px; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .waitlist-error {
+    margin-top: 8px; font-family: var(--mono); font-size: 11px;
+    color: var(--coral); letter-spacing: 0.06em; width: 100%;
+  }
+  .download-row { margin-top: 4px; }
+  .download-row-label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3); margin: 20px 0 10px;
+  }
+
   .trust-row {
     display: flex;
     align-items: center;
@@ -1428,18 +1472,34 @@
         Describe the job — the kettle tripped the fuse again, or the boiler's finally packed in — and get an honest AI price band in under thirty seconds. Then choose from RECI, RGII and Safe-Pass verified Irish tradesmen who bid on your job. No pay-per-click. No inflated quotes.
       </p>
 
+      <div class="waitlist-block" id="waitlist">
+        <div class="waitlist-kicker">Get early access</div>
+        <form id="waitlistForm" class="waitlist-form" novalidate>
+          <label for="wl-email" style="position:absolute;left:-9999px">Email address</label>
+          <input id="wl-email" type="email" name="email" placeholder="your@email.ie" required autocomplete="email">
+          <button type="submit" id="waitlistBtn">Join waitlist</button>
+          <div id="waitlistError" class="waitlist-error" role="alert" style="display:none"></div>
+        </form>
+        <div id="waitlistSuccess" class="waitlist-success" role="status" style="display:none">
+          <div class="h">You&rsquo;re on the list.</div>
+          <div class="p">We&rsquo;ll email you the moment FairFix opens in your area. No spam, no forwarding your address anywhere. Ever.</div>
+        </div>
+        <p class="waitlist-note">No spam. One email when we open in your area.</p>
+      </div>
+
+      <div class="download-row-label">Or when the apps go live</div>
       <div class="download-row">
-        <a href="#" class="store-btn" aria-label="Download on the App Store">
+        <a href="#waitlist" class="store-btn" aria-label="App Store (coming soon)">
           <svg width="26" height="26"><use href="#i-apple"/></svg>
           <span class="store-txt">
-            <span class="top">Download on the</span>
+            <span class="top">Coming soon on</span>
             <span class="bot">App Store</span>
           </span>
         </a>
-        <a href="#" class="store-btn" aria-label="Get it on Google Play">
+        <a href="#waitlist" class="store-btn" aria-label="Google Play (coming soon)">
           <svg width="24" height="24"><use href="#i-google-play"/></svg>
           <span class="store-txt">
-            <span class="top">Get it on</span>
+            <span class="top">Coming soon on</span>
             <span class="bot">Google Play</span>
           </span>
         </a>
@@ -1983,5 +2043,51 @@
   })();
 </script>
 
+<script>
+(function() {
+  var form = document.getElementById('waitlistForm');
+  if (!form) return;
+  var btn = document.getElementById('waitlistBtn');
+  var errorEl = document.getElementById('waitlistError');
+  var successEl = document.getElementById('waitlistSuccess');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var emailEl = document.getElementById('wl-email');
+    var email = (emailEl.value || '').trim();
+    errorEl.style.display = 'none';
+
+    if (!email || email.indexOf('@') < 0 || email.length > 254) {
+      errorEl.textContent = 'Please enter a valid email.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    var originalText = btn.textContent;
+    btn.textContent = 'Adding you…';
+
+    try {
+      var res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, audience: 'homeowner' })
+      });
+      if (!res.ok) {
+        var data = {};
+        try { data = await res.json(); } catch (_) {}
+        throw new Error(data.error || 'Something went wrong.');
+      }
+      form.style.display = 'none';
+      successEl.style.display = 'block';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = originalText;
+      errorEl.textContent = (err && err.message) || 'Network trouble. Try again in a moment.';
+      errorEl.style.display = 'block';
+    }
+  });
+})();
+</script>
 </body>
 </html>
