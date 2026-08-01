@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+import { sendEmailSafe } from "@/lib/email";
+import { waitlistWelcomeEmail } from "@/lib/emails/templates";
 
 export const runtime = "edge";
 
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
   // Try to persist to Cloudflare KV. If the binding isn't configured yet
   // (local dev, brand-new deploy) we still return success so the user gets
   // a working flow; the write is best-effort.
+  let isNewSignup = true;
   try {
     const { env } = getRequestContext();
     const kv = (env as unknown as { WAITLIST?: KVNamespace }).WAITLIST;
@@ -62,6 +65,8 @@ export async function POST(request: Request) {
         await kv.put(key, JSON.stringify(record), {
           metadata: { audience, added_at: record.added_at },
         });
+      } else {
+        isNewSignup = false;
       }
     } else {
       // Nothing bound: log so we can spot it in Cloudflare Pages logs.
@@ -70,6 +75,15 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("[waitlist] KV write failed:", err);
     // Deliberately do not fail the user here; they signed up in good faith.
+  }
+
+  // Welcome email only on first signup — resubmitting the form doesn't spam.
+  // Fire-and-safe: an email outage never fails the signup.
+  if (isNewSignup) {
+    await sendEmailSafe({
+      to: email,
+      ...waitlistWelcomeEmail({ email, audience }),
+    });
   }
 
   return NextResponse.json(

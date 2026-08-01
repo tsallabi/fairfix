@@ -18,7 +18,12 @@ type State =
   | { step: "pick" }
   | { step: "describe"; service: ServiceCategory }
   | { step: "loading"; service: ServiceCategory; description: string }
-  | { step: "result"; service: ServiceCategory; estimate: Estimate }
+  | {
+      step: "result";
+      service: ServiceCategory;
+      estimate: Estimate;
+      description: string;
+    }
   | { step: "error"; service: ServiceCategory; message: string };
 
 const gradientMap: Record<ServiceCategory["gradient"], string> = {
@@ -82,7 +87,7 @@ export function EstimateWizard() {
         return;
       }
       const { ok: _drop, ...est } = data as { ok: true } & Estimate;
-      setState({ step: "result", service: svc, estimate: est });
+      setState({ step: "result", service: svc, estimate: est, description });
     } catch {
       setState({
         step: "error",
@@ -453,6 +458,11 @@ export function EstimateWizard() {
   /* ─── Result ─────────────────────────────────────────── */
   const { service: svc, estimate } = state;
   const mid = Math.round((estimate.min + estimate.max) / 2);
+  const postJobHref =
+    `/jobs/new?service=${svc.slug}` +
+    `&description=${encodeURIComponent(state.description)}` +
+    `&min=${estimate.min}&max=${estimate.max}` +
+    `&confidence=${estimate.confidence}&source=${estimate.source}`;
 
   return (
     <div>
@@ -668,24 +678,44 @@ export function EstimateWizard() {
           FairFix is rolling out to Dublin, Cork, Galway, Limerick and Waterford.
           Join the waitlist and we&rsquo;ll email you the moment we open in your area.
         </p>
-        <a
-          href="/#waitlist"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "12px 20px",
-            borderRadius: "999px",
-            background: "linear-gradient(135deg, var(--brand-2), var(--brand-1))",
-            color: "white",
-            textDecoration: "none",
-            fontWeight: 600,
-            fontSize: "14px",
-            boxShadow: "0 8px 24px -8px var(--brand-glow)",
-          }}
-        >
-          Join the waitlist →
-        </a>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <a
+            href={postJobHref}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "12px 20px",
+              borderRadius: "999px",
+              background: "linear-gradient(135deg, var(--navy-2), var(--navy-1))",
+              color: "var(--paper)",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+              boxShadow: "0 8px 24px -8px rgba(11,31,51,0.45)",
+            }}
+          >
+            Post this job →
+          </a>
+          <a
+            href="/#waitlist"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "12px 20px",
+              borderRadius: "999px",
+              background: "linear-gradient(135deg, var(--brand-2), var(--brand-1))",
+              color: "white",
+              textDecoration: "none",
+              fontWeight: 600,
+              fontSize: "14px",
+              boxShadow: "0 8px 24px -8px var(--brand-glow)",
+            }}
+          >
+            Join the waitlist →
+          </a>
+        </div>
       </div>
     </div>
   );
